@@ -1,4 +1,4 @@
-import { Phone, Bot, Settings, Puzzle } from "lucide-react";
+import { Phone, Bot, Settings, Puzzle, Sparkles, HelpCircle, MessageSquare, FileText } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -8,8 +8,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import choopilLogo from "@/assets/choopil-logo.png";
 
 const items = [
@@ -20,12 +21,10 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
-
   return (
     <Sidebar className="border-r">
       <SidebarContent>
-        <div className="p-6">
+        <div className="p-6 pb-4">
           <img 
             src={choopilLogo} 
             alt="Choopil" 
@@ -48,7 +47,7 @@ export function AppSidebar() {
                       }
                     >
                       <item.icon className="h-4 w-4" />
-                      {open && <span>{item.title}</span>}
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -57,6 +56,38 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t p-4 space-y-2">
+        <div className="flex items-center gap-2 px-2 py-1.5 text-sm">
+          <Sparkles className="h-4 w-4 text-purple-500" />
+          <div className="flex-1">
+            <span className="font-medium text-foreground">Trial</span>
+            <span className="text-muted-foreground ml-2">14 days left</span>
+          </div>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          className="w-full justify-start text-sm font-normal"
+        >
+          Upgrade now
+        </Button>
+
+        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
+          <HelpCircle className="h-4 w-4" />
+          <span>Talk to support</span>
+        </button>
+
+        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
+          <MessageSquare className="h-4 w-4" />
+          <span>What's new</span>
+        </button>
+
+        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
+          <FileText className="h-4 w-4" />
+          <span>mcclum@post.bgu.ac.il</span>
+        </button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
