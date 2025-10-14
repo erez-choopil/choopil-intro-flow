@@ -465,7 +465,7 @@ export default function AgentSettings() {
                     ))}
 
                     {/* Add New Transfer Form */}
-                    {showTransferForm && (
+                    {(savedTransfers.length === 0 || showTransferForm) && (
                       <div className="p-4 bg-success/5 rounded-lg space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="transferScenario" className="text-foreground">
@@ -527,13 +527,15 @@ export default function AgentSettings() {
                       </div>
                     )}
 
-                    <button
-                      onClick={() => setShowTransferForm(true)}
-                      className="w-full p-4 border-2 border-dashed border-success rounded-lg text-success hover:bg-success/5 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span className="font-medium">Add Another Transfer Workflow</span>
-                    </button>
+                    {savedTransfers.length > 0 && !showTransferForm && (
+                      <button
+                        onClick={() => setShowTransferForm(true)}
+                        className="w-full p-4 border-2 border-dashed border-success rounded-lg text-success hover:bg-success/5 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Plus className="h-5 w-5" />
+                        <span className="font-medium">Add Another Transfer Workflow</span>
+                      </button>
+                    )}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -586,7 +588,7 @@ export default function AgentSettings() {
                     ))}
 
                     {/* Add New Text Message Form */}
-                    {showTextMessageForm && (
+                    {(savedTextMessages.length === 0 || showTextMessageForm) && (
                       <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="textTrigger" className="text-foreground">
@@ -632,13 +634,15 @@ export default function AgentSettings() {
                       </div>
                     )}
 
-                    <button
-                      onClick={() => setShowTextMessageForm(true)}
-                      className="w-full p-4 border-2 border-dashed border-purple-500 rounded-lg text-purple-500 hover:bg-purple-500/5 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span className="font-medium">Add Another Text Workflow</span>
-                    </button>
+                    {savedTextMessages.length > 0 && !showTextMessageForm && (
+                      <button
+                        onClick={() => setShowTextMessageForm(true)}
+                        className="w-full p-4 border-2 border-dashed border-purple-500 rounded-lg text-purple-500 hover:bg-purple-500/5 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Plus className="h-5 w-5" />
+                        <span className="font-medium">Add Another Text Workflow</span>
+                      </button>
+                    )}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
