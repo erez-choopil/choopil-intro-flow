@@ -15,10 +15,10 @@ interface OnboardingLayoutProps {
 }
 
 const steps = [
-  { label: "Business details", path: "/onboarding/business" },
-  { label: "Select a voice", path: "/onboarding/voice" },
-  { label: "Agent settings", path: "/onboarding/settings" },
-  { label: "Phone number", path: "/onboarding/phone" },
+  { label: "Business Information", path: "/onboarding/business" },
+  { label: "AI Assistant Settings", path: "/onboarding/voice" },
+  { label: "Customize Assistant", path: "/onboarding/settings" },
+  { label: "Choopil Number", path: "/onboarding/phone" },
   { label: "Test & launch", path: "/onboarding/success" },
 ];
 
@@ -61,9 +61,9 @@ export function OnboardingLayout({
                   disabled={isFuture}
                   className={`flex-1 text-center relative pb-4 transition-all ${
                     isActive
-                      ? "text-success font-bold cursor-default"
+                      ? "text-primary font-bold cursor-default"
                       : isCompleted
-                      ? "text-success hover:text-success/80 cursor-pointer"
+                      ? "text-primary/60 hover:text-primary/80 cursor-pointer"
                       : "text-secondary cursor-not-allowed"
                   }`}
                 >
@@ -71,7 +71,7 @@ export function OnboardingLayout({
                   {/* Progress line */}
                   <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-muted">
                     {(isCompleted || isActive) && (
-                      <div className="h-full bg-success" />
+                      <div className="h-full bg-primary" />
                     )}
                   </div>
                 </button>
@@ -87,7 +87,7 @@ export function OnboardingLayout({
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <div
-              className="h-full bg-success transition-all duration-300"
+              className="h-full bg-primary transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>

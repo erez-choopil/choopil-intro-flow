@@ -106,11 +106,7 @@ export default function BusinessDetails() {
   const isFormValid = () => {
     return (
       formData.businessName.trim() &&
-      formData.industry &&
-      (formData.industry !== "Other" || formData.otherIndustry.trim()) &&
-      formData.phoneNumber.replace(/\D/g, "").length === 10 &&
-      formData.description.trim() &&
-      formData.description.length <= 300
+      formData.phoneNumber.replace(/\D/g, "").length === 10
     );
   };
 
@@ -120,10 +116,6 @@ export default function BusinessDetails() {
     }
   };
 
-  const handleSkip = () => {
-    navigate("/onboarding/voice");
-  };
-
   const charCount = formData.description.length;
 
   return (
@@ -131,8 +123,6 @@ export default function BusinessDetails() {
       currentStep={0}
       onNext={handleNext}
       nextDisabled={!isFormValid()}
-      showSkip={!formData.website}
-      onSkip={handleSkip}
     >
       <div className="space-y-8">
         <div>
@@ -186,7 +176,7 @@ export default function BusinessDetails() {
           {/* Industry */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-foreground">
-              Industry <span className="text-destructive">*</span>
+              Industry
             </Label>
             <Select
               value={formData.industry}
@@ -267,7 +257,7 @@ export default function BusinessDetails() {
           {/* Business Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-foreground">
-              What does your business do? <span className="text-destructive">*</span>
+              What does your business do?
             </Label>
             <Textarea
               id="description"
