@@ -52,6 +52,7 @@ export default function AgentSettings() {
   const [notifyOpen, setNotifyOpen] = useState(false);
 
   // Call Transfer states
+  const [showTransferForm, setShowTransferForm] = useState(false);
   const [savedTransfers, setSavedTransfers] = useState<Array<{
     id: string;
     scenario: string;
@@ -65,6 +66,7 @@ export default function AgentSettings() {
   const [transferResponse, setTransferResponse] = useState("Please hold while I transfer your call.");
   
   // Text Message states
+  const [showTextMessageForm, setShowTextMessageForm] = useState(false);
   const [savedTextMessages, setSavedTextMessages] = useState<Array<{
     id: string;
     trigger: string;
@@ -117,10 +119,11 @@ export default function AgentSettings() {
         countryCode: transferCountryCode,
         response: transferResponse
       }]);
-      // Clear fields
+      // Clear fields and hide form
       setTransferScenario("");
       setTransferPhone("");
       setTransferResponse("Please hold while I transfer your call.");
+      setShowTransferForm(false);
     }
   };
 
@@ -135,9 +138,10 @@ export default function AgentSettings() {
         trigger: textTrigger,
         message: textMessage
       }]);
-      // Clear fields
+      // Clear fields and hide form
       setTextTrigger("");
       setTextMessage("");
+      setShowTextMessageForm(false);
     }
   };
 
@@ -461,72 +465,70 @@ export default function AgentSettings() {
                     ))}
 
                     {/* Add New Transfer Form */}
-                    <div className="p-4 bg-success/5 rounded-lg space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="transferScenario" className="text-foreground">
-                          Scenario Description <span className="text-destructive">*</span>
-                        </Label>
-                        <Textarea
-                          id="transferScenario"
-                          value={transferScenario}
-                          onChange={(e) => setTransferScenario(e.target.value)}
-                          placeholder="e.g., 'When customer asks for technical support' or 'When customer wants to speak to sales'"
-                          className="min-h-[80px]"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="transferPhone" className="text-foreground">
-                          Phone Number
-                        </Label>
-                        <div className="flex gap-3">
-                          <Select value={transferCountryCode} onValueChange={setTransferCountryCode}>
-                            <SelectTrigger className="w-[100px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="bg-popover">
-                              <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                              <SelectItem value="+44">🇬🇧 +44</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            id="transferPhone"
-                            value={transferPhone}
-                            onChange={(e) => setTransferPhone(e.target.value)}
-                            placeholder="Phone number"
-                            className="flex-1"
+                    {showTransferForm && (
+                      <div className="p-4 bg-success/5 rounded-lg space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="transferScenario" className="text-foreground">
+                            Scenario Description <span className="text-destructive">*</span>
+                          </Label>
+                          <Textarea
+                            id="transferScenario"
+                            value={transferScenario}
+                            onChange={(e) => setTransferScenario(e.target.value)}
+                            placeholder="e.g., 'When customer asks for technical support' or 'When customer wants to speak to sales'"
+                            className="min-h-[80px]"
                           />
                         </div>
-                      </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="transferResponse" className="text-foreground">
-                          Voice Response
-                        </Label>
-                        <Textarea
-                          id="transferResponse"
-                          value={transferResponse}
-                          onChange={(e) => setTransferResponse(e.target.value)}
-                          placeholder="Please hold while I transfer your call."
-                          className="min-h-[80px]"
-                        />
-                      </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="transferPhone" className="text-foreground">
+                            Phone Number
+                          </Label>
+                          <div className="flex gap-3">
+                            <Select value={transferCountryCode} onValueChange={setTransferCountryCode}>
+                              <SelectTrigger className="w-[100px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover">
+                                <SelectItem value="+1">🇺🇸 +1</SelectItem>
+                                <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Input
+                              id="transferPhone"
+                              value={transferPhone}
+                              onChange={(e) => setTransferPhone(e.target.value)}
+                              placeholder="Phone number"
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
 
-                      <Button 
-                        onClick={saveTransfer}
-                        className="w-full bg-success hover:bg-success/90"
-                        disabled={!transferScenario.trim() || !transferPhone.trim()}
-                      >
-                        Save
-                      </Button>
-                    </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="transferResponse" className="text-foreground">
+                            Voice Response
+                          </Label>
+                          <Textarea
+                            id="transferResponse"
+                            value={transferResponse}
+                            onChange={(e) => setTransferResponse(e.target.value)}
+                            placeholder="Please hold while I transfer your call."
+                            className="min-h-[80px]"
+                          />
+                        </div>
+
+                        <Button 
+                          onClick={saveTransfer}
+                          className="w-full bg-success hover:bg-success/90"
+                          disabled={!transferScenario.trim() || !transferPhone.trim()}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    )}
 
                     <button
-                      onClick={() => {
-                        setTransferScenario("");
-                        setTransferPhone("");
-                        setTransferResponse("Please hold while I transfer your call.");
-                      }}
+                      onClick={() => setShowTransferForm(true)}
                       className="w-full p-4 border-2 border-dashed border-success rounded-lg text-success hover:bg-success/5 transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="h-5 w-5" />
@@ -584,55 +586,54 @@ export default function AgentSettings() {
                     ))}
 
                     {/* Add New Text Message Form */}
-                    <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="textTrigger" className="text-foreground">
-                          When should this text be sent? <span className="text-destructive">*</span>
-                        </Label>
-                        <Textarea
-                          id="textTrigger"
-                          value={textTrigger}
-                          onChange={(e) => setTextTrigger(e.target.value)}
-                          placeholder="e.g., 'When customer asks about hours' or 'When customer requests a quote'"
-                          className="min-h-[80px]"
-                        />
-                      </div>
+                    {showTextMessageForm && (
+                      <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="textTrigger" className="text-foreground">
+                            When should this text be sent? <span className="text-destructive">*</span>
+                          </Label>
+                          <Textarea
+                            id="textTrigger"
+                            value={textTrigger}
+                            onChange={(e) => setTextTrigger(e.target.value)}
+                            placeholder="e.g., 'When customer asks about hours' or 'When customer requests a quote'"
+                            className="min-h-[80px]"
+                          />
+                        </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="textMessage" className="text-foreground">
-                          What message should be sent? <span className="text-destructive">*</span>
-                        </Label>
-                        <Textarea
-                          id="textMessage"
-                          value={textMessage}
-                          onChange={(e) => {
-                            if (e.target.value.length <= 1000) {
-                              setTextMessage(e.target.value);
-                            }
-                          }}
-                          placeholder="Enter the text message to send..."
-                          className="min-h-[120px]"
-                          maxLength={1000}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          Max 1000 characters allowed ({textMessageCharCount}/1000)
-                        </p>
-                      </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="textMessage" className="text-foreground">
+                            What message should be sent? <span className="text-destructive">*</span>
+                          </Label>
+                          <Textarea
+                            id="textMessage"
+                            value={textMessage}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 1000) {
+                                setTextMessage(e.target.value);
+                              }
+                            }}
+                            placeholder="Enter the text message to send..."
+                            className="min-h-[120px]"
+                            maxLength={1000}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            Max 1000 characters allowed ({textMessageCharCount}/1000)
+                          </p>
+                        </div>
 
-                      <Button 
-                        onClick={saveTextMessage}
-                        className="w-full bg-purple-500 hover:bg-purple-600"
-                        disabled={!textTrigger.trim() || !textMessage.trim()}
-                      >
-                        Save
-                      </Button>
-                    </div>
+                        <Button 
+                          onClick={saveTextMessage}
+                          className="w-full bg-purple-500 hover:bg-purple-600"
+                          disabled={!textTrigger.trim() || !textMessage.trim()}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    )}
 
                     <button
-                      onClick={() => {
-                        setTextTrigger("");
-                        setTextMessage("");
-                      }}
+                      onClick={() => setShowTextMessageForm(true)}
                       className="w-full p-4 border-2 border-dashed border-purple-500 rounded-lg text-purple-500 hover:bg-purple-500/5 transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="h-5 w-5" />
@@ -726,10 +727,6 @@ export default function AgentSettings() {
                         </div>
                       )}
                     </div>
-
-                    <Button variant="outline" className="w-full">
-                      Make changes
-                    </Button>
                   </div>
                 </CollapsibleContent>
               </Collapsible>
