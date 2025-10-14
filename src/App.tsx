@@ -32,7 +32,7 @@ const App = () => (
           <Route path="/onboarding/settings" element={<AgentSettings />} />
           <Route path="/onboarding/phone" element={<PhoneNumber />} />
           <Route path="/onboarding/success" element={<Success />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
