@@ -51,17 +51,34 @@ export default function AgentSettings() {
   const [textMessageOpen, setTextMessageOpen] = useState(false);
   const [notifyOpen, setNotifyOpen] = useState(false);
 
+  // Call Transfer states
+  const [savedTransfers, setSavedTransfers] = useState<Array<{
+    id: string;
+    scenario: string;
+    phone: string;
+    countryCode: string;
+    response: string;
+  }>>([]);
   const [transferScenario, setTransferScenario] = useState("");
   const [transferPhone, setTransferPhone] = useState("");
+  const [transferCountryCode, setTransferCountryCode] = useState("+1");
   const [transferResponse, setTransferResponse] = useState("Please hold while I transfer your call.");
   
+  // Text Message states
+  const [savedTextMessages, setSavedTextMessages] = useState<Array<{
+    id: string;
+    trigger: string;
+    message: string;
+  }>>([]);
   const [textTrigger, setTextTrigger] = useState("");
   const [textMessage, setTextMessage] = useState("");
 
+  // Notify Me states
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [emailAddress, setEmailAddress] = useState("talavtur111@gmail.com");
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [smsPhone, setSmsPhone] = useState("");
+  const [smsCountryCode, setSmsCountryCode] = useState("+1");
 
   const handleBack = () => {
     if (currentPage === 2) {
@@ -89,6 +106,43 @@ export default function AgentSettings() {
 
   const deleteQuestion = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
+  };
+
+  const saveTransfer = () => {
+    if (transferScenario.trim() && transferPhone.trim()) {
+      setSavedTransfers([...savedTransfers, {
+        id: Date.now().toString(),
+        scenario: transferScenario,
+        phone: transferPhone,
+        countryCode: transferCountryCode,
+        response: transferResponse
+      }]);
+      // Clear fields
+      setTransferScenario("");
+      setTransferPhone("");
+      setTransferResponse("Please hold while I transfer your call.");
+    }
+  };
+
+  const deleteTransfer = (id: string) => {
+    setSavedTransfers(savedTransfers.filter(t => t.id !== id));
+  };
+
+  const saveTextMessage = () => {
+    if (textTrigger.trim() && textMessage.trim()) {
+      setSavedTextMessages([...savedTextMessages, {
+        id: Date.now().toString(),
+        trigger: textTrigger,
+        message: textMessage
+      }]);
+      // Clear fields
+      setTextTrigger("");
+      setTextMessage("");
+    }
+  };
+
+  const deleteTextMessage = (id: string) => {
+    setSavedTextMessages(savedTextMessages.filter(t => t.id !== id));
   };
 
   const charCount = greeting.length;
@@ -231,7 +285,7 @@ export default function AgentSettings() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-base font-medium text-foreground mb-1">
-                    What questions should be asked? <span className="text-destructive">*</span>
+                    What questions should the AI assistant ask? <span className="text-destructive">*</span>
                   </h3>
                 </div>
 
@@ -371,6 +425,42 @@ export default function AgentSettings() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-6 border-x border-b border-border rounded-b-lg space-y-4">
+                    {/* Saved Transfers */}
+                    {savedTransfers.map((transfer) => (
+                      <Collapsible key={transfer.id}>
+                        <div className="border border-success/30 rounded-lg overflow-hidden">
+                          <CollapsibleTrigger className="w-full p-4 bg-success/5 hover:bg-success/10 transition-colors flex items-center justify-between">
+                            <div className="flex items-center gap-3 flex-1">
+                              <ChevronDown className="h-4 w-4 text-success" />
+                              <span className="text-sm font-medium text-foreground truncate">{transfer.scenario}</span>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteTransfer(transfer.id);
+                              }}
+                              className="text-destructive hover:text-destructive/80 transition-colors p-1"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="p-4 space-y-3 bg-background">
+                              <div>
+                                <p className="text-xs text-muted-foreground mb-1">Phone Number</p>
+                                <p className="text-sm text-foreground">{transfer.countryCode} {transfer.phone}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-muted-foreground mb-1">Voice Response</p>
+                                <p className="text-sm text-foreground">{transfer.response}</p>
+                              </div>
+                            </div>
+                          </CollapsibleContent>
+                        </div>
+                      </Collapsible>
+                    ))}
+
+                    {/* Add New Transfer Form */}
                     <div className="p-4 bg-success/5 rounded-lg space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="transferScenario" className="text-foreground">
@@ -390,7 +480,7 @@ export default function AgentSettings() {
                           Phone Number
                         </Label>
                         <div className="flex gap-3">
-                          <Select defaultValue="+1">
+                          <Select value={transferCountryCode} onValueChange={setTransferCountryCode}>
                             <SelectTrigger className="w-[100px]">
                               <SelectValue />
                             </SelectTrigger>
@@ -421,9 +511,22 @@ export default function AgentSettings() {
                           className="min-h-[80px]"
                         />
                       </div>
+
+                      <Button 
+                        onClick={saveTransfer}
+                        className="w-full bg-success hover:bg-success/90"
+                        disabled={!transferScenario.trim() || !transferPhone.trim()}
+                      >
+                        Save
+                      </Button>
                     </div>
 
                     <button
+                      onClick={() => {
+                        setTransferScenario("");
+                        setTransferPhone("");
+                        setTransferResponse("Please hold while I transfer your call.");
+                      }}
                       className="w-full p-4 border-2 border-dashed border-success rounded-lg text-success hover:bg-success/5 transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="h-5 w-5" />
@@ -451,6 +554,36 @@ export default function AgentSettings() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-6 border-x border-b border-border rounded-b-lg space-y-4">
+                    {/* Saved Text Messages */}
+                    {savedTextMessages.map((msg) => (
+                      <Collapsible key={msg.id}>
+                        <div className="border border-purple-500/30 rounded-lg overflow-hidden">
+                          <CollapsibleTrigger className="w-full p-4 bg-purple-50 dark:bg-purple-950/20 hover:bg-purple-100 dark:hover:bg-purple-950/30 transition-colors flex items-center justify-between">
+                            <div className="flex items-center gap-3 flex-1">
+                              <ChevronDown className="h-4 w-4 text-purple-500" />
+                              <span className="text-sm font-medium text-foreground truncate">{msg.trigger}</span>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteTextMessage(msg.id);
+                              }}
+                              className="text-destructive hover:text-destructive/80 transition-colors p-1"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="p-4 bg-background">
+                              <p className="text-xs text-muted-foreground mb-1">Message</p>
+                              <p className="text-sm text-foreground whitespace-pre-wrap">{msg.message}</p>
+                            </div>
+                          </CollapsibleContent>
+                        </div>
+                      </Collapsible>
+                    ))}
+
+                    {/* Add New Text Message Form */}
                     <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="textTrigger" className="text-foreground">
@@ -485,9 +618,21 @@ export default function AgentSettings() {
                           Max 1000 characters allowed ({textMessageCharCount}/1000)
                         </p>
                       </div>
+
+                      <Button 
+                        onClick={saveTextMessage}
+                        className="w-full bg-purple-500 hover:bg-purple-600"
+                        disabled={!textTrigger.trim() || !textMessage.trim()}
+                      >
+                        Save
+                      </Button>
                     </div>
 
                     <button
+                      onClick={() => {
+                        setTextTrigger("");
+                        setTextMessage("");
+                      }}
                       className="w-full p-4 border-2 border-dashed border-purple-500 rounded-lg text-purple-500 hover:bg-purple-500/5 transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="h-5 w-5" />
@@ -556,11 +701,29 @@ export default function AgentSettings() {
                         />
                       </div>
                       {smsNotifications && (
-                        <Input
-                          value={smsPhone}
-                          onChange={(e) => setSmsPhone(e.target.value)}
-                          placeholder="Add your phone number (Recommended)"
-                        />
+                        <div className="space-y-2">
+                          <Label htmlFor="smsPhone" className="text-foreground">
+                            Phone Number
+                          </Label>
+                          <div className="flex gap-3">
+                            <Select value={smsCountryCode} onValueChange={setSmsCountryCode}>
+                              <SelectTrigger className="w-[100px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover">
+                                <SelectItem value="+1">🇺🇸 +1</SelectItem>
+                                <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Input
+                              id="smsPhone"
+                              value={smsPhone}
+                              onChange={(e) => setSmsPhone(e.target.value)}
+                              placeholder="Phone number"
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
                       )}
                     </div>
 
