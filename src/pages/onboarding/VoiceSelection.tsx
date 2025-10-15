@@ -42,7 +42,7 @@ export default function VoiceSelection() {
   const [voice, setVoice] = useState(defaultVoice.value);
   const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
   const [greeting, setGreeting] = useState(
-    "You've reached [Business Name]. This call may be recorded for quality assurance. How can I help you today?"
+    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`
   );
   const [collectInfo, setCollectInfo] = useState({
     fullName: true,
@@ -53,15 +53,29 @@ export default function VoiceSelection() {
 
   const disclaimerText = "This call may be recorded for quality assurance. ";
 
+  // Update greeting when assistant name changes
+  useEffect(() => {
+    const baseGreeting = `You've reached [Business Name]. This is ${assistantName} speaking. `;
+    const hasDisclaimer = includeLegalDisclaimer;
+    const endingText = "How can I help you today?";
+    
+    setGreeting(
+      hasDisclaimer 
+        ? baseGreeting + disclaimerText + endingText
+        : baseGreeting + endingText
+    );
+  }, [assistantName]);
+
+  // Update greeting when disclaimer checkbox changes
   useEffect(() => {
     if (includeLegalDisclaimer) {
       // Add disclaimer if not already present
       if (!greeting.includes(disclaimerText.trim())) {
-        // Find a good position to insert (after the first sentence)
-        const firstSentenceEnd = greeting.indexOf('. ');
-        if (firstSentenceEnd !== -1) {
-          const beforeDisclaimer = greeting.slice(0, firstSentenceEnd + 2);
-          const afterDisclaimer = greeting.slice(firstSentenceEnd + 2);
+        // Find a good position to insert (after assistant introduction)
+        const speakingIndex = greeting.indexOf('speaking. ');
+        if (speakingIndex !== -1) {
+          const beforeDisclaimer = greeting.slice(0, speakingIndex + 10);
+          const afterDisclaimer = greeting.slice(speakingIndex + 10);
           setGreeting(beforeDisclaimer + disclaimerText + afterDisclaimer);
         } else {
           setGreeting(greeting + " " + disclaimerText);
