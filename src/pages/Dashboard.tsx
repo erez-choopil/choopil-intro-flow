@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,6 @@ export default function Dashboard() {
         <AppSidebar />
         <main className="flex-1">
           <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-6 z-10">
-            <SidebarTrigger />
           </header>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard/calls" replace />} />
