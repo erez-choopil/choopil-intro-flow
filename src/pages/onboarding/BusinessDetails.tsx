@@ -134,32 +134,21 @@ export default function BusinessDetails() {
     setIsLoadingWebsite(true);
     
     try {
-      // TODO: Implement backend API call to fetch business information
-      // This would require a backend service that can:
-      // 1. Scrape the website or use a business data API (Clearbit, FullContact, etc.)
-      // 2. Extract business name, description, contact info
-      // 3. Return structured data
+      // Mock implementation - simulating API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Mock implementation - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Mock data based on the URL domain
+      const domain = new URL(url).hostname.replace('www.', '');
+      const businessName = domain.split('.')[0]
+        .split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       
-      // Example of what the API response might look like:
-      // const response = await fetch('/api/fetch-business-info', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ url })
-      // });
-      // const data = await response.json();
-      
-      // For now, we'll just show the loading state
-      // When you have a backend, populate the fields like this:
-      // setFormData(prev => ({
-      //   ...prev,
-      //   businessName: data.name || prev.businessName,
-      //   professional: data.industry || prev.professional,
-      //   phoneNumber: data.phone || prev.phoneNumber,
-      //   description: data.description || prev.description,
-      // }));
+      setFormData(prev => ({
+        ...prev,
+        businessName: businessName || "Example Business",
+        professional: "Consultant",
+        phoneNumber: "(555) 123-4567",
+        description: "We provide professional services to help businesses grow and succeed in their industry.",
+      }));
       
     } catch (error) {
       console.error('Error fetching business info:', error);
