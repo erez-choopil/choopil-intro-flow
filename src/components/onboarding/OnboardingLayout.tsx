@@ -63,14 +63,17 @@ export function OnboardingLayout({
                     isActive
                       ? "text-primary font-bold cursor-default"
                       : isCompleted
-                      ? "text-primary/60 hover:text-primary/80 cursor-pointer"
-                      : "text-secondary cursor-not-allowed"
+                      ? "text-secondary hover:text-secondary/80 cursor-pointer"
+                      : "text-foreground cursor-not-allowed"
                   }`}
                 >
                   <span className="text-sm">{step.label}</span>
                   {/* Progress line */}
                   <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-muted">
-                    {(isCompleted || isActive) && (
+                    {isCompleted && (
+                      <div className="h-full bg-secondary" />
+                    )}
+                    {isActive && (
                       <div className="h-full bg-primary" />
                     )}
                   </div>

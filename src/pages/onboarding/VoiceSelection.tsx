@@ -45,7 +45,7 @@ const moreVoices = [
 export default function VoiceSelection() {
   const navigate = useNavigate();
   const [language, setLanguage] = useState("english");
-  const [voice, setVoice] = useState("");
+  const [voice, setVoice] = useState("cassidy");
 
   const handleBack = () => {
     navigate("/onboarding/business");
@@ -124,32 +124,14 @@ export default function VoiceSelection() {
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="bg-popover max-h-[400px]">
-                  <SelectGroup>
-                    <SelectLabel className="text-xs uppercase text-secondary px-2 py-1.5">
-                      Recommended
-                    </SelectLabel>
-                    {recommendedVoices.map((v) => (
-                      <SelectItem
-                        key={v.value}
-                        value={v.value}
-                      >
-                        {v.label} ({v.gender})
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel className="text-xs uppercase text-secondary px-2 py-1.5 mt-2">
-                      More voices
-                    </SelectLabel>
-                    {moreVoices.map((v) => (
-                      <SelectItem
-                        key={v.value}
-                        value={v.value}
-                      >
-                        {v.label} ({v.gender})
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
+                  {[...recommendedVoices, ...moreVoices].map((v) => (
+                    <SelectItem
+                      key={v.value}
+                      value={v.value}
+                    >
+                      {v.label} ({v.gender})
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Button
