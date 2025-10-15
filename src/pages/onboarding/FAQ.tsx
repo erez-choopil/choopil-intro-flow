@@ -183,28 +183,21 @@ export default function FAQ() {
             </div>
           </div>
 
-          {/* Custom FAQs */}
+          {/* Add custom question */}
           <div className="space-y-4">
-            <Label className="text-foreground text-base font-medium">
-              Add your own questions
-            </Label>
-            
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter a question..."
-                value={newFAQ}
-                onChange={(e) => setNewFAQ(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                onClick={addCustomFAQ}
-                size="icon"
-                disabled={!newFAQ.trim()}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+            <div className="space-y-4">
+              <div className="space-y-3 p-4 rounded-lg border border-border">
+                <div className="flex items-start space-x-3">
+                  <Plus className="h-5 w-5 text-primary mt-0.5" />
+                  <Input
+                    placeholder="Add your own question..."
+                    value={newFAQ}
+                    onChange={(e) => setNewFAQ(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className="flex-1 border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 text-sm font-medium"
+                  />
+                </div>
+              </div>
             </div>
 
             {customFAQs.length > 0 && (
