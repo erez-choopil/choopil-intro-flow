@@ -110,10 +110,23 @@ export default function VoiceSelection() {
         </div>
 
         <div className="space-y-8">
+          {/* Assistant Name */}
+          <div className="space-y-2">
+            <Label htmlFor="assistantName" className="text-foreground">
+              Assistant name
+            </Label>
+            <Input
+              id="assistantName"
+              value={assistantName}
+              onChange={(e) => setAssistantName(e.target.value)}
+              placeholder="Assistant name"
+            />
+          </div>
+
           {/* Voice Selection */}
           <div className="space-y-2">
             <Label htmlFor="voice" className="text-foreground">
-              Voice
+              Assistant voice
             </Label>
             <div className="flex gap-2">
               <Select value={voice} onValueChange={setVoice}>
@@ -142,19 +155,6 @@ export default function VoiceSelection() {
                 <Play className="h-4 w-4" />
               </Button>
             </div>
-          </div>
-
-          {/* Assistant Name */}
-          <div className="space-y-2">
-            <Label htmlFor="assistantName" className="text-foreground">
-              Assistant name
-            </Label>
-            <Input
-              id="assistantName"
-              value={assistantName}
-              onChange={(e) => setAssistantName(e.target.value)}
-              placeholder="Assistant name"
-            />
           </div>
 
           {/* Greeting */}
