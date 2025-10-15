@@ -56,12 +56,12 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice && assistantName) {
-      navigate("/onboarding/phone-number");
+      navigate("/onboarding/faq");
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/phone-number");
+    navigate("/onboarding/faq");
   };
 
   const getVoiceLabel = (voiceValue: string) => {
