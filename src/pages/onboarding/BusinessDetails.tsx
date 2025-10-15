@@ -124,9 +124,15 @@ export default function BusinessDetails() {
   };
 
   const fetchBusinessInfo = async (url: string) => {
+    // Add protocol if missing
+    let validUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      validUrl = 'https://' + url;
+    }
+    
     // Validate URL format
     try {
-      new URL(url);
+      new URL(validUrl);
     } catch {
       return;
     }
@@ -138,7 +144,7 @@ export default function BusinessDetails() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Mock data based on the URL domain
-      const domain = new URL(url).hostname.replace('www.', '');
+      const domain = new URL(validUrl).hostname.replace('www.', '');
       const businessName = domain.split('.')[0]
         .split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       
