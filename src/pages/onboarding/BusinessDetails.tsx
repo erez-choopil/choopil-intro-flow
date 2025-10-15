@@ -291,7 +291,7 @@ export default function BusinessDetails() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or fill manually
+                or fill manually
               </span>
             </div>
           </div>
