@@ -66,10 +66,7 @@ export default function PhoneNumber() {
             Pick your phone number
           </h1>
           <p className="text-muted-foreground">
-            You can forward calls to this number later.{" "}
-            <a href="#" className="text-primary hover:underline">
-              Learn how
-            </a>
+            You can forward calls to this number later.
           </p>
         </div>
 
