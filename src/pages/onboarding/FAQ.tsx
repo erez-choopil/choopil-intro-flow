@@ -136,6 +136,9 @@ export default function FAQ() {
           <p className="text-muted-foreground">
             Set up what information to collect and common questions to answer.
           </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Configured for: <span className="font-medium">{businessType}</span>
+          </p>
         </div>
 
         <div className="space-y-8">
