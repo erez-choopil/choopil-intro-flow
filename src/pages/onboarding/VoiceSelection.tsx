@@ -160,18 +160,19 @@ export default function VoiceSelection() {
               className="min-h-[80px] resize-none"
               maxLength={280}
             />
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Checkbox
                 id="legalDisclaimer"
                 checked={includeLegalDisclaimer}
                 onCheckedChange={(checked) => setIncludeLegalDisclaimer(checked === true)}
+                className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
               />
-              <label
+              <Label
                 htmlFor="legalDisclaimer"
-                className="text-sm text-muted-foreground cursor-pointer"
+                className="text-sm font-normal text-foreground cursor-pointer"
               >
                 Include a legal disclaimer
-              </label>
+              </Label>
             </div>
             <Button 
               variant="outline" 
