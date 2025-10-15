@@ -29,7 +29,7 @@ All colors MUST be HSL.
     --accent: 216 100% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 160 84% 39%;
+    --success: 216 100% 50%;
     --success-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -80,7 +80,7 @@ All colors MUST be HSL.
     --accent: 216 100% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 160 84% 39%;
+    --success: 216 100% 50%;
     --success-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 50%;
