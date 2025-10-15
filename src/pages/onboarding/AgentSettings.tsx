@@ -107,6 +107,79 @@ export default function AgentSettings() {
         </div>
 
         <div className="space-y-8">
+          {/* Phone Number Selection */}
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                Pick a Choopil number
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                You can forward calls to this number later.{" "}
+                <a href="#" className="text-primary hover:underline">
+                  Learn how
+                </a>
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Label className="text-foreground">
+                Select a country and area code
+              </Label>
+
+              <div className="flex gap-3">
+                <div className="flex-[3] space-y-2">
+                  <Label htmlFor="country" className="text-foreground text-sm">
+                    Country
+                  </Label>
+                  <Select value={country} onValueChange={setCountry}>
+                    <SelectTrigger id="country">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover">
+                      {countries.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.flag} {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex-[2] space-y-2">
+                  <Label htmlFor="areaCode" className="text-foreground text-sm">
+                    Area code
+                  </Label>
+                  <Input
+                    id="areaCode"
+                    type="text"
+                    placeholder="415"
+                    value={areaCode}
+                    onChange={handleAreaCodeChange}
+                    maxLength={3}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumberSelect" className="text-foreground text-sm">
+                  Pick a number
+                </Label>
+                <Select value={selectedNumber} onValueChange={setSelectedNumber}>
+                  <SelectTrigger id="phoneNumberSelect">
+                    <SelectValue placeholder="Select a phone number" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    {availableNumbers.map((number) => (
+                      <SelectItem key={number} value={number}>
+                        {number}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
           {/* Assistant Name */}
           <div className="space-y-2">
             <Label htmlFor="assistantName" className="text-foreground">
@@ -180,7 +253,7 @@ export default function AgentSettings() {
 
               <div className="flex items-center space-x-3">
                 <Checkbox
-                  id="phoneNumber"
+                  id="phoneNumberCheck"
                   checked={collectInfo.phoneNumber}
                   onCheckedChange={(checked) =>
                     setCollectInfo({ ...collectInfo, phoneNumber: checked === true })
@@ -188,7 +261,7 @@ export default function AgentSettings() {
                   className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
                 <Label
-                  htmlFor="phoneNumber"
+                  htmlFor="phoneNumberCheck"
                   className="text-sm font-normal text-foreground cursor-pointer"
                 >
                   Phone number
@@ -211,83 +284,10 @@ export default function AgentSettings() {
                   Email address
                 </Label>
               </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phone Number Selection */}
-          <div className="space-y-6 pt-6 border-t border-border">
-            <div>
-              <h3 className="text-base font-medium text-foreground mb-1">
-                Pick a Choopil number
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                You can forward calls to this number later.{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Learn how
-                </a>
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <Label className="text-foreground">
-                Select a country and area code
-              </Label>
-
-              <div className="flex gap-3">
-                <div className="flex-[3] space-y-2">
-                  <Label htmlFor="country" className="text-foreground text-sm">
-                    Country
-                  </Label>
-                  <Select value={country} onValueChange={setCountry}>
-                    <SelectTrigger id="country">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {countries.map((c) => (
-                        <SelectItem key={c.value} value={c.value}>
-                          {c.flag} {c.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex-[2] space-y-2">
-                  <Label htmlFor="areaCode" className="text-foreground text-sm">
-                    Area code
-                  </Label>
-                  <Input
-                    id="areaCode"
-                    type="text"
-                    placeholder="415"
-                    value={areaCode}
-                    onChange={handleAreaCodeChange}
-                    maxLength={3}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phoneNumber" className="text-foreground text-sm">
-                  Pick a number
-                </Label>
-                <Select value={selectedNumber} onValueChange={setSelectedNumber}>
-                  <SelectTrigger id="phoneNumber">
-                    <SelectValue placeholder="Select a phone number" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover">
-                    {availableNumbers.map((number) => (
-                      <SelectItem key={number} value={number}>
-                        {number}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
           </div>
         </div>
+      </div>
     </OnboardingLayout>
   );
 }
