@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const languages = [
@@ -103,14 +103,8 @@ export default function VoiceSelection() {
                   <SelectItem
                     key={lang.value}
                     value={lang.value}
-                    className="data-[state=checked]:bg-[#e0f2fe]"
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <span>{lang.label}</span>
-                      {language === lang.value && (
-                        <Check className="h-4 w-4 text-success ml-2" />
-                      )}
-                    </div>
+                    {lang.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -138,7 +132,6 @@ export default function VoiceSelection() {
                       <SelectItem
                         key={v.value}
                         value={v.value}
-                        className="hover:bg-muted"
                       >
                         {v.label} ({v.gender})
                       </SelectItem>
@@ -152,7 +145,6 @@ export default function VoiceSelection() {
                       <SelectItem
                         key={v.value}
                         value={v.value}
-                        className="hover:bg-muted"
                       >
                         {v.label} ({v.gender})
                       </SelectItem>
