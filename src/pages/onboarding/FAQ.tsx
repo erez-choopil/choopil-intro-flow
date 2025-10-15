@@ -126,7 +126,7 @@ export default function FAQ() {
           <div className="space-y-4">
             <div>
               <h3 className="text-base font-medium text-foreground mb-1">
-                Questions your assistant will ask
+                Questions your assistant will ask <span className="text-muted-foreground">(optional)</span>
               </h3>
               <p className="text-sm text-muted-foreground">
                 Select questions you'd like your assistant to ask callers
