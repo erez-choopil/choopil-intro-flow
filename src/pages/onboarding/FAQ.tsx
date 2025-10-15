@@ -7,6 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 
+const callerInfoOptions = [
+  { id: "fullName", label: "Full name" },
+  { id: "phoneNumber", label: "Phone number" },
+  { id: "emailAddress", label: "Email address" },
+];
+
 const preFillFAQs = [
   "What are your business hours?",
   "How can I schedule an appointment?",
@@ -15,6 +21,11 @@ const preFillFAQs = [
 
 export default function FAQ() {
   const navigate = useNavigate();
+  const [collectInfo, setCollectInfo] = useState({
+    fullName: true,
+    phoneNumber: true,
+    emailAddress: false,
+  });
   const [selectedPreFilled, setSelectedPreFilled] = useState<string[]>([]);
   const [customFAQs, setCustomFAQs] = useState<string[]>([]);
   const [newFAQ, setNewFAQ] = useState("");
@@ -69,14 +80,46 @@ export default function FAQ() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Common Questions
+            Configure Your Assistant
           </h1>
           <p className="text-muted-foreground">
-            Help your AI assistant answer frequently asked questions.
+            Set up what information to collect and common questions to answer.
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
+          {/* Information to collect from callers */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                What should your assistant ask callers?
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                You can change these anytime
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {callerInfoOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={option.id}
+                    checked={collectInfo[option.id as keyof typeof collectInfo]}
+                    onCheckedChange={(checked) =>
+                      setCollectInfo({ ...collectInfo, [option.id]: checked === true })
+                    }
+                    className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <Label
+                    htmlFor={option.id}
+                    className="text-sm font-normal text-foreground cursor-pointer"
+                  >
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
           {/* Pre-filled FAQs */}
           <div className="space-y-4">
             <Label className="text-foreground text-base font-medium">
