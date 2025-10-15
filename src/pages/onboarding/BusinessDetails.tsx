@@ -4,6 +4,7 @@ import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Sparkles } from "lucide-react";
 
 const professionals = [
   "Lawyer",
@@ -169,15 +170,12 @@ export default function BusinessDetails() {
 
   const handleWebsiteChange = (value: string) => {
     handleChange("website", value);
-    
-    // Debounce the fetch to avoid too many requests
-    const timeoutId = setTimeout(() => {
-      if (value.trim()) {
-        fetchBusinessInfo(value);
-      }
-    }, 1000);
+  };
 
-    return () => clearTimeout(timeoutId);
+  const handleFetchBusinessInfo = () => {
+    if (formData.website.trim()) {
+      fetchBusinessInfo(formData.website);
+    }
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -237,14 +235,26 @@ export default function BusinessDetails() {
             <p className="text-sm text-muted-foreground">
               We'll grab your business details to save you time
             </p>
-            <Input
-              id="website"
-              type="url"
-              placeholder="https://yourwebsite.com"
-              value={formData.website}
-              onChange={(e) => handleWebsiteChange(e.target.value)}
-              disabled={isLoadingWebsite}
-            />
+            <div className="flex gap-2">
+              <Input
+                id="website"
+                type="url"
+                placeholder="https://yourwebsite.com"
+                value={formData.website}
+                onChange={(e) => handleWebsiteChange(e.target.value)}
+                disabled={isLoadingWebsite}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                onClick={handleFetchBusinessInfo}
+                disabled={!formData.website.trim() || isLoadingWebsite}
+                className="shrink-0"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Auto-fill
+              </Button>
+            </div>
             {isLoadingWebsite && (
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="animate-spin">⏳</span>
