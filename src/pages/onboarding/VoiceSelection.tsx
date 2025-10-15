@@ -49,6 +49,7 @@ export default function VoiceSelection() {
     phoneNumber: true,
     emailAddress: false,
   });
+  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(true);
 
   const handleBack = () => {
     navigate("/onboarding/business");
@@ -159,9 +160,19 @@ export default function VoiceSelection() {
               className="min-h-[80px] resize-none"
               maxLength={280}
             />
-            <p className="text-xs text-muted-foreground">
-              This call may be recorded for quality assurance.
-            </p>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="legalDisclaimer"
+                checked={includeLegalDisclaimer}
+                onCheckedChange={(checked) => setIncludeLegalDisclaimer(checked === true)}
+              />
+              <label
+                htmlFor="legalDisclaimer"
+                className="text-sm text-muted-foreground cursor-pointer"
+              >
+                Include a legal disclaimer
+              </label>
+            </div>
             <Button 
               variant="outline" 
               className="w-full"
