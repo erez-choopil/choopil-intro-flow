@@ -195,7 +195,10 @@ export default function BusinessDetails() {
 
   const handleNext = () => {
     if (isFormValid()) {
-      navigate("/onboarding/voice");
+      const businessType = formData.professional === "Other" 
+        ? formData.otherProfessional || "Other" 
+        : formData.professional;
+      navigate("/onboarding/voice", { state: { businessType } });
     }
   };
 

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,8 @@ const getDefaultAssistantName = (voiceGender: string) => {
 
 export default function VoiceSelection() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const businessType = location.state?.businessType;
   const defaultVoice = voices[0];
   const [voice, setVoice] = useState(defaultVoice.value);
   const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
@@ -93,12 +95,12 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice && assistantName) {
-      navigate("/onboarding/faq");
+      navigate("/onboarding/faq", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/faq");
+    navigate("/onboarding/faq", { state: { businessType } });
   };
 
   const getVoiceLabel = (voiceValue: string) => {
