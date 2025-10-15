@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
@@ -50,6 +50,28 @@ export default function VoiceSelection() {
     emailAddress: false,
   });
   const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(true);
+
+  const disclaimerText = "This call may be recorded for quality assurance. ";
+
+  useEffect(() => {
+    if (includeLegalDisclaimer) {
+      // Add disclaimer if not already present
+      if (!greeting.includes(disclaimerText.trim())) {
+        // Find a good position to insert (after the first sentence)
+        const firstSentenceEnd = greeting.indexOf('. ');
+        if (firstSentenceEnd !== -1) {
+          const beforeDisclaimer = greeting.slice(0, firstSentenceEnd + 2);
+          const afterDisclaimer = greeting.slice(firstSentenceEnd + 2);
+          setGreeting(beforeDisclaimer + disclaimerText + afterDisclaimer);
+        } else {
+          setGreeting(greeting + " " + disclaimerText);
+        }
+      }
+    } else {
+      // Remove disclaimer if present
+      setGreeting(greeting.replace(disclaimerText, ""));
+    }
+  }, [includeLegalDisclaimer]);
 
   const handleBack = () => {
     navigate("/onboarding/business");
