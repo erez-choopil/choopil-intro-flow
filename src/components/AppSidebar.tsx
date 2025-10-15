@@ -11,7 +11,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import choopilLogo from "@/assets/choopil-logo.png";
+import choopilLogo from "@/assets/choopil-logo.svg";
 
 const items = [
   { title: "Calls", url: "/dashboard/calls", icon: Phone },
@@ -37,15 +37,15 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <NavLink
-                    to={item.url}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                        isActive
-                          ? "bg-orange-200 dark:bg-orange-900/50 text-foreground font-medium"
-                          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                      }`
-                    }
+                    <NavLink
+                      to={item.url}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                        }`
+                      }
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
@@ -59,7 +59,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t p-4 space-y-2">
         <div className="flex items-center gap-2 px-2 py-1.5 text-sm">
-          <Sparkles className="h-4 w-4 text-purple-500" />
+          <Sparkles className="h-4 w-4 text-secondary" />
           <div className="flex-1">
             <span className="font-medium text-foreground">Trial</span>
             <span className="text-muted-foreground ml-2">14 days left</span>
