@@ -41,17 +41,80 @@ export default function VoiceSelection() {
   const location = useLocation();
   const businessType = location.state?.businessType;
   const defaultVoice = voices[0];
-  const [voice, setVoice] = useState(defaultVoice.value);
-  const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
-  const [greeting, setGreeting] = useState(
-    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`
-  );
-  const [collectInfo, setCollectInfo] = useState({
-    fullName: true,
-    phoneNumber: true,
-    emailAddress: false,
+  
+  // Load from localStorage on mount
+  const [voice, setVoice] = useState(() => {
+    const saved = localStorage.getItem("onboarding_voice");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.voice || defaultVoice.value;
+      } catch (e) {
+        console.error("Failed to parse saved voice data", e);
+      }
+    }
+    return defaultVoice.value;
   });
-  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(true);
+  
+  const [assistantName, setAssistantName] = useState(() => {
+    const saved = localStorage.getItem("onboarding_voice");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.assistantName || getDefaultAssistantName(defaultVoice.gender);
+      } catch (e) {
+        console.error("Failed to parse saved voice data", e);
+      }
+    }
+    return getDefaultAssistantName(defaultVoice.gender);
+  });
+  
+  const [greeting, setGreeting] = useState(() => {
+    const saved = localStorage.getItem("onboarding_voice");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.greeting || `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`;
+      } catch (e) {
+        console.error("Failed to parse saved voice data", e);
+      }
+    }
+    return `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`;
+  });
+  
+  const [collectInfo, setCollectInfo] = useState(() => {
+    const saved = localStorage.getItem("onboarding_voice");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.collectInfo || {
+          fullName: true,
+          phoneNumber: true,
+          emailAddress: false,
+        };
+      } catch (e) {
+        console.error("Failed to parse saved voice data", e);
+      }
+    }
+    return {
+      fullName: true,
+      phoneNumber: true,
+      emailAddress: false,
+    };
+  });
+  
+  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(() => {
+    const saved = localStorage.getItem("onboarding_voice");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.includeLegalDisclaimer !== undefined ? data.includeLegalDisclaimer : true;
+      } catch (e) {
+        console.error("Failed to parse saved voice data", e);
+      }
+    }
+    return true;
+  });
 
   const disclaimerText = "This call may be recorded for quality assurance. ";
 
@@ -95,12 +158,21 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice && assistantName) {
-      navigate("/onboarding/faq", { state: { businessType } });
+      // Save to localStorage before navigating
+      const voiceData = {
+        voice,
+        assistantName,
+        greeting,
+        collectInfo,
+        includeLegalDisclaimer,
+      };
+      localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
+      navigate("/onboarding/customize", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/faq", { state: { businessType } });
+    navigate("/onboarding/customize", { state: { businessType } });
   };
 
   const getVoiceLabel = (voiceValue: string) => {
@@ -140,7 +212,18 @@ export default function VoiceSelection() {
             <Input
               id="assistantName"
               value={assistantName}
-              onChange={(e) => setAssistantName(e.target.value)}
+              onChange={(e) => {
+                setAssistantName(e.target.value);
+                // Save to localStorage
+                const voiceData = {
+                  voice,
+                  assistantName: e.target.value,
+                  greeting,
+                  collectInfo,
+                  includeLegalDisclaimer,
+                };
+                localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
+              }}
               placeholder="Assistant name"
             />
           </div>
@@ -151,7 +234,18 @@ export default function VoiceSelection() {
               Assistant voice
             </Label>
             <div className="flex gap-2">
-              <Select value={voice} onValueChange={setVoice}>
+              <Select value={voice} onValueChange={(value) => {
+                setVoice(value);
+                // Save to localStorage
+                const voiceData = {
+                  voice: value,
+                  assistantName,
+                  greeting,
+                  collectInfo,
+                  includeLegalDisclaimer,
+                };
+                localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
+              }}>
                 <SelectTrigger id="voice" className="flex-1">
                   <SelectValue placeholder="Select a voice">
                     {voice && getVoiceLabel(voice)}
@@ -193,6 +287,15 @@ export default function VoiceSelection() {
               onChange={(e) => {
                 if (e.target.value.length <= 280) {
                   setGreeting(e.target.value);
+                  // Save to localStorage
+                  const voiceData = {
+                    voice,
+                    assistantName,
+                    greeting: e.target.value,
+                    collectInfo,
+                    includeLegalDisclaimer,
+                  };
+                  localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
                 }
               }}
               className="min-h-[80px] resize-none"

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
+import { SignupModal } from "@/components/SignupModal";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -60,39 +61,99 @@ const getBusinessSpecificFAQs = (businessType: string) => {
   return faqMap[businessType] || faqMap["Other"];
 };
 
-export default function FAQ() {
+export default function Customize() {
   const navigate = useNavigate();
   const location = useLocation();
   const businessType = location.state?.businessType || "Other";
   const preFillFAQs = getBusinessSpecificFAQs(businessType);
-  const [collectInfo, setCollectInfo] = useState({
-    fullName: true,
-    phoneNumber: true,
-    emailAddress: false
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  
+  // Load from localStorage on mount
+  const [collectInfo, setCollectInfo] = useState(() => {
+    const saved = localStorage.getItem("onboarding_customize");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.collectInfo || {
+          fullName: true,
+          phoneNumber: true,
+          emailAddress: false
+        };
+      } catch (e) {
+        console.error("Failed to parse saved customize data", e);
+      }
+    }
+    return {
+      fullName: true,
+      phoneNumber: true,
+      emailAddress: false
+    };
   });
+  
   const [selectedFAQs, setSelectedFAQs] = useState<Record<number, {
     selected: boolean;
     answer: string;
-  }>>({
-    0: {
-      selected: false,
-      answer: preFillFAQs[0].defaultAnswer
-    },
-    1: {
-      selected: false,
-      answer: preFillFAQs[1].defaultAnswer
+  }>>(() => {
+    const saved = localStorage.getItem("onboarding_customize");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.selectedFAQs || {
+          0: {
+            selected: false,
+            answer: preFillFAQs[0].defaultAnswer
+          },
+          1: {
+            selected: false,
+            answer: preFillFAQs[1].defaultAnswer
+          }
+        };
+      } catch (e) {
+        console.error("Failed to parse saved customize data", e);
+      }
     }
+    return {
+      0: {
+        selected: false,
+        answer: preFillFAQs[0].defaultAnswer
+      },
+      1: {
+        selected: false,
+        answer: preFillFAQs[1].defaultAnswer
+      }
+    };
   });
-  const [customFAQs, setCustomFAQs] = useState<string[]>([]);
+  
+  const [customFAQs, setCustomFAQs] = useState<string[]>(() => {
+    const saved = localStorage.getItem("onboarding_customize");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data.customFAQs || [];
+      } catch (e) {
+        console.error("Failed to parse saved customize data", e);
+      }
+    }
+    return [];
+  });
+  
   const [newFAQ, setNewFAQ] = useState("");
+  
+  // Save to localStorage whenever data changes
+  useEffect(() => {
+    const customizeData = {
+      collectInfo,
+      selectedFAQs,
+      customFAQs,
+    };
+    localStorage.setItem("onboarding_customize", JSON.stringify(customizeData));
+  }, [collectInfo, selectedFAQs, customFAQs]);
   const handleBack = () => {
     navigate("/onboarding/voice");
   };
   const handleNext = () => {
-    navigate("/onboarding/success");
-  };
-  const handleSkip = () => {
-    navigate("/onboarding/success");
+    // Show signup modal instead of navigating
+    setShowSignupModal(true);
   };
   const toggleFAQ = (index: number) => {
     setSelectedFAQs(prev => ({
@@ -127,8 +188,10 @@ export default function FAQ() {
       addCustomFAQ();
     }
   };
-  return <OnboardingLayout currentStep={2} onBack={handleBack} onNext={handleNext} nextLabel="Next" showSkip={false}>
-      <div className="space-y-8">
+  return (
+    <>
+      <OnboardingLayout currentStep={2} onBack={handleBack} onNext={handleNext} nextLabel="Next" showSkip={false}>
+        <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Customize Assistant
@@ -221,5 +284,9 @@ export default function FAQ() {
           </div>
         </div>
       </div>
-    </OnboardingLayout>;
+      </OnboardingLayout>
+      
+      <SignupModal open={showSignupModal} onOpenChange={setShowSignupModal} />
+    </>
+  );
 }

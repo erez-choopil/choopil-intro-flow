@@ -6,13 +6,27 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Sparkles, Loader2 } from "lucide-react";
+import { AlertCircle, Sparkles, Loader2, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const professionals = [
   "Lawyer",
@@ -66,14 +80,27 @@ export default function BusinessDetails() {
   const navigate = useNavigate();
   const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
   const [autoFillSource, setAutoFillSource] = useState<"website" | "google">("website");
-  const [formData, setFormData] = useState({
-    website: "",
-    businessName: "",
-    professional: "",
-    otherProfessional: "",
-    countryCode: "+1",
-    phoneNumber: "",
-    description: "",
+  const [openProfessionalSelect, setOpenProfessionalSelect] = useState(false);
+  
+  // Load from localStorage on mount
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem("onboarding_business");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse saved business data", e);
+      }
+    }
+    return {
+      website: "",
+      businessName: "",
+      professional: "",
+      otherProfessional: "",
+      countryCode: "+1",
+      phoneNumber: "",
+      description: "",
+    };
   });
 
   const [errors, setErrors] = useState({
@@ -118,7 +145,10 @@ export default function BusinessDetails() {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    const newFormData = { ...formData, [field]: value };
+    setFormData(newFormData);
+    // Save to localStorage
+    localStorage.setItem("onboarding_business", JSON.stringify(newFormData));
     if (touched[field as keyof typeof touched]) {
       setErrors({ ...errors, [field]: validateField(field, value) });
     }
@@ -149,13 +179,15 @@ export default function BusinessDetails() {
       const businessName = domain.split('.')[0]
         .split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       
-      setFormData(prev => ({
-        ...prev,
+      const newFormData = {
+        ...formData,
         businessName: businessName || "Example Business",
         professional: "Consultant",
         phoneNumber: "(555) 123-4567",
         description: "We provide professional services to help businesses grow and succeed in their industry.",
-      }));
+      };
+      setFormData(newFormData);
+      localStorage.setItem("onboarding_business", JSON.stringify(newFormData));
       
     } catch (error) {
       console.error('Error fetching business info:', error);
@@ -320,29 +352,56 @@ export default function BusinessDetails() {
             )}
           </div>
 
-          {/* Professional */}
+          {/* Professional - Searchable Dropdown */}
           <div className="space-y-2">
             <Label htmlFor="professional" className="text-foreground">
               Business Type
             </Label>
-            <Select
-              value={formData.professional}
-              onValueChange={(value) => handleChange("professional", value)}
-            >
-              <SelectTrigger
-                id="professional"
-                className={errors.professional && touched.professional ? "border-destructive" : ""}
-              >
-                <SelectValue placeholder="Select your profession" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                {professionals.map((professional) => (
-                  <SelectItem key={professional} value={professional}>
-                    {professional}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={openProfessionalSelect} onOpenChange={setOpenProfessionalSelect}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openProfessionalSelect}
+                  className={cn(
+                    "w-full justify-between",
+                    !formData.professional && "text-muted-foreground",
+                    errors.professional && touched.professional && "border-destructive"
+                  )}
+                >
+                  {formData.professional || "Select your profession"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Search business type..." />
+                  <CommandList>
+                    <CommandEmpty>No business type found.</CommandEmpty>
+                    <CommandGroup>
+                      {professionals.map((professional) => (
+                        <CommandItem
+                          key={professional}
+                          value={professional}
+                          onSelect={(currentValue) => {
+                            handleChange("professional", currentValue === formData.professional.toLowerCase() ? "" : professional);
+                            setOpenProfessionalSelect(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              formData.professional === professional ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {professional}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             {formData.professional === "Other" && (
               <Input
                 placeholder="Please specify"
