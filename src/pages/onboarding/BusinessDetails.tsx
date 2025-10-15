@@ -358,9 +358,12 @@ export default function BusinessDetails() {
 
           {/* Business Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-foreground">
-              What does your business do?
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="description" className="text-foreground">
+                What does your business do?
+              </Label>
+              <p className="text-xs text-muted-foreground">{charCount}/300</p>
+            </div>
             <Textarea
               id="description"
               placeholder="We sell premium office furniture..."
@@ -376,17 +379,12 @@ export default function BusinessDetails() {
               }`}
               maxLength={300}
             />
-            <div className="flex justify-between items-center">
-              <div>
-                {errors.description && touched.description && (
-                  <p className="text-sm text-destructive flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {errors.description}
-                  </p>
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground">{charCount}/300</p>
-            </div>
+            {errors.description && touched.description && (
+              <p className="text-sm text-destructive flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" />
+                {errors.description}
+              </p>
+            )}
           </div>
         </div>
       </div>
