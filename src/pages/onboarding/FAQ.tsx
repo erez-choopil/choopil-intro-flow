@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 
 const callerInfoOptions = [
-  { id: "fullName", label: "Full name" },
-  { id: "phoneNumber", label: "Phone number" },
+  { id: "fullName", label: "Full name (Recommended)" },
+  { id: "phoneNumber", label: "Phone number (Recommended)" },
   { id: "emailAddress", label: "Email address" },
 ];
 
