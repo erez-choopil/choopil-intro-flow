@@ -13,15 +13,17 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle } from "lucide-react";
 
-const industries = [
-  "Legal",
-  "Real Estate",
-  "Home Services",
-  "Medical",
-  "Fitness",
-  "Auto",
-  "Professional Services",
-  "Finance",
+const professionals = [
+  "Lawyer",
+  "Real Estate Agent",
+  "Contractor",
+  "Doctor",
+  "Dentist",
+  "Therapist",
+  "Personal Trainer",
+  "Accountant",
+  "Financial Advisor",
+  "Consultant",
   "Other",
 ];
 
@@ -36,8 +38,8 @@ export default function BusinessDetails() {
   const [formData, setFormData] = useState({
     website: "",
     businessName: "",
-    industry: "",
-    otherIndustry: "",
+    professional: "",
+    otherProfessional: "",
     countryCode: "+1",
     phoneNumber: "",
     description: "",
@@ -45,14 +47,14 @@ export default function BusinessDetails() {
 
   const [errors, setErrors] = useState({
     businessName: "",
-    industry: "",
+    professional: "",
     phoneNumber: "",
     description: "",
   });
 
   const [touched, setTouched] = useState({
     businessName: false,
-    industry: false,
+    professional: false,
     phoneNumber: false,
     description: false,
   });
@@ -61,8 +63,8 @@ export default function BusinessDetails() {
     switch (name) {
       case "businessName":
         return value.trim() ? "" : "Business name is required";
-      case "industry":
-        return value ? "" : "Industry is required";
+      case "professional":
+        return value ? "" : "Professional type is required";
       case "phoneNumber":
         return value.replace(/\D/g, "").length === 10
           ? ""
@@ -178,41 +180,41 @@ export default function BusinessDetails() {
             )}
           </div>
 
-          {/* Industry */}
+          {/* Professional */}
           <div className="space-y-2">
-            <Label htmlFor="industry" className="text-foreground">
-              Industry
+            <Label htmlFor="professional" className="text-foreground">
+              Professional
             </Label>
             <Select
-              value={formData.industry}
-              onValueChange={(value) => handleChange("industry", value)}
+              value={formData.professional}
+              onValueChange={(value) => handleChange("professional", value)}
             >
               <SelectTrigger
-                id="industry"
-                className={errors.industry && touched.industry ? "border-destructive" : ""}
+                id="professional"
+                className={errors.professional && touched.professional ? "border-destructive" : ""}
               >
-                <SelectValue placeholder="Select an industry" />
+                <SelectValue placeholder="Select your profession" />
               </SelectTrigger>
               <SelectContent className="bg-popover">
-                {industries.map((industry) => (
-                  <SelectItem key={industry} value={industry}>
-                    {industry}
+                {professionals.map((professional) => (
+                  <SelectItem key={professional} value={professional}>
+                    {professional}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {formData.industry === "Other" && (
+            {formData.professional === "Other" && (
               <Input
                 placeholder="Please specify"
-                value={formData.otherIndustry}
-                onChange={(e) => handleChange("otherIndustry", e.target.value)}
+                value={formData.otherProfessional}
+                onChange={(e) => handleChange("otherProfessional", e.target.value)}
                 className="mt-2"
               />
             )}
-            {errors.industry && touched.industry && (
+            {errors.professional && touched.professional && (
               <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
-                {errors.industry}
+                {errors.professional}
               </p>
             )}
           </div>
