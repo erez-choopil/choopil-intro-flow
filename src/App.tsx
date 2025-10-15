@@ -29,8 +29,8 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/onboarding/business" element={<BusinessDetails />} />
           <Route path="/onboarding/voice" element={<VoiceSelection />} />
-          <Route path="/onboarding/settings" element={<AgentSettings />} />
-          <Route path="/onboarding/phone" element={<PhoneNumber />} />
+          <Route path="/onboarding/agent-settings" element={<AgentSettings />} />
+          <Route path="/onboarding/phone-number" element={<PhoneNumber />} />
           <Route path="/onboarding/success" element={<Success />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
