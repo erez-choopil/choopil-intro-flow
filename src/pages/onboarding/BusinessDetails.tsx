@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Sparkles } from "lucide-react";
+import { AlertCircle, Sparkles, Globe, MapPin } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const professionals = [
   "Lawyer",
@@ -224,27 +225,28 @@ export default function BusinessDetails() {
 
         <div className="space-y-6">
           {/* Website/Google Auto-fill Section */}
-          <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border">
-            <div className="flex gap-2 p-1 bg-background rounded-md w-fit">
-              <Button
-                type="button"
-                variant={autoFillSource === "website" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setAutoFillSource("website")}
-                className="text-sm"
+          <div className="space-y-4 p-6 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border border-primary/20">
+            <ToggleGroup 
+              type="single" 
+              value={autoFillSource}
+              onValueChange={(value) => value && setAutoFillSource(value as "website" | "google")}
+              className="justify-start bg-background/50 backdrop-blur-sm p-1.5 rounded-lg border border-border/50 w-fit"
+            >
+              <ToggleGroupItem 
+                value="website" 
+                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-4 py-2 rounded-md transition-all"
               >
+                <Globe className="h-4 w-4 mr-2" />
                 Website
-              </Button>
-              <Button
-                type="button"
-                variant={autoFillSource === "google" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setAutoFillSource("google")}
-                className="text-sm"
+              </ToggleGroupItem>
+              <ToggleGroupItem 
+                value="google"
+                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-4 py-2 rounded-md transition-all"
               >
-                Google Business Profile
-              </Button>
-            </div>
+                <MapPin className="h-4 w-4 mr-2" />
+                Google Business
+              </ToggleGroupItem>
+            </ToggleGroup>
             
             <Label htmlFor="website" className="text-foreground">
               {autoFillSource === "website" 
