@@ -174,6 +174,10 @@ export default function VoiceSelection() {
                 Include a legal disclaimer
               </Label>
             </div>
+          </div>
+
+          {/* Preview Button */}
+          <div>
             <Button 
               variant="outline" 
               className="w-full"
