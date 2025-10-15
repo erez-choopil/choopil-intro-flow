@@ -229,10 +229,10 @@ export default function BusinessDetails() {
         </div>
 
         <div className="space-y-6">
-          {/* Website Link */}
-          <div className="space-y-2">
+          {/* Website Auto-fill Section */}
+          <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-border">
             <Label htmlFor="website" className="text-foreground">
-              Website link <span className="text-muted-foreground">(optional)</span>
+              Have a website? Let us fill this out for you
             </Label>
             <p className="text-sm text-muted-foreground">
               We'll grab your business details to save you time
@@ -251,6 +251,18 @@ export default function BusinessDetails() {
                 Grabbing your business details...
               </p>
             )}
+          </div>
+
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or fill manually
+              </span>
+            </div>
           </div>
 
           {/* Business Name */}
