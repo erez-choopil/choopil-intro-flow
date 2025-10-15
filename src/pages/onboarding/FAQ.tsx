@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
-import { SignupModal } from "@/components/SignupModal";
 const callerInfoOptions = [{
   id: "fullName",
   label: "Full name (Recommended)"
@@ -66,7 +65,6 @@ export default function FAQ() {
   const location = useLocation();
   const businessType = location.state?.businessType || "Other";
   const preFillFAQs = getBusinessSpecificFAQs(businessType);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [collectInfo, setCollectInfo] = useState({
     fullName: true,
     phoneNumber: true,
@@ -91,7 +89,10 @@ export default function FAQ() {
     navigate("/onboarding/voice");
   };
   const handleNext = () => {
-    setShowSignupModal(true);
+    navigate("/onboarding/success");
+  };
+  const handleSkip = () => {
+    navigate("/onboarding/success");
   };
   const toggleFAQ = (index: number) => {
     setSelectedFAQs(prev => ({
@@ -126,11 +127,8 @@ export default function FAQ() {
       addCustomFAQ();
     }
   };
-  return (
-    <>
-      <SignupModal open={showSignupModal} onOpenChange={setShowSignupModal} />
-      <OnboardingLayout currentStep={2} onBack={handleBack} onNext={handleNext} nextLabel="Next" showSkip={false}>
-        <div className="space-y-8">
+  return <OnboardingLayout currentStep={2} onBack={handleBack} onNext={handleNext} nextLabel="Next" showSkip={false}>
+      <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Customize Assistant
@@ -223,7 +221,5 @@ export default function FAQ() {
           </div>
         </div>
       </div>
-    </OnboardingLayout>
-    </>
-  );
+    </OnboardingLayout>;
 }
