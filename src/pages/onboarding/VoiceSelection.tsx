@@ -53,8 +53,12 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice) {
-      navigate("/onboarding/settings");
+      navigate("/onboarding/agent-settings");
     }
+  };
+
+  const handleSkip = () => {
+    navigate("/onboarding/agent-settings");
   };
 
   const getVoiceLabel = (voiceValue: string) => {
@@ -71,6 +75,7 @@ export default function VoiceSelection() {
       currentStep={1}
       onBack={handleBack}
       onNext={handleNext}
+      onSkip={handleSkip}
       nextDisabled={!voice}
     >
       <div className="space-y-8">

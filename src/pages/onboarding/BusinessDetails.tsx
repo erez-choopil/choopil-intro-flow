@@ -116,12 +116,17 @@ export default function BusinessDetails() {
     }
   };
 
+  const handleSkip = () => {
+    navigate("/onboarding/voice");
+  };
+
   const charCount = formData.description.length;
 
   return (
     <OnboardingLayout
       currentStep={0}
       onNext={handleNext}
+      onSkip={handleSkip}
       nextDisabled={!isFormValid()}
     >
       <div className="space-y-8">

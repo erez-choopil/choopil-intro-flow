@@ -93,9 +93,14 @@ export default function AgentSettings() {
   const handleNext = () => {
     if (currentPage === 1) {
       setCurrentPage(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      navigate("/onboarding/phone");
+      navigate("/onboarding/phone-number");
     }
+  };
+
+  const handleSkip = () => {
+    navigate("/onboarding/phone-number");
   };
 
   const addQuestion = () => {
@@ -157,6 +162,7 @@ export default function AgentSettings() {
       currentStep={2}
       onBack={handleBack}
       onNext={handleNext}
+      onSkip={handleSkip}
       nextLabel={currentPage === 1 ? "Next" : "Continue"}
     >
       <div className="space-y-8">

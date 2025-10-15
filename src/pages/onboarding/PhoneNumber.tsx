@@ -43,6 +43,10 @@ export default function PhoneNumber() {
     }
   };
 
+  const handleSkip = () => {
+    navigate("/onboarding/success");
+  };
+
   const handleAreaCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 3);
     setAreaCode(value);
@@ -53,6 +57,7 @@ export default function PhoneNumber() {
       currentStep={3}
       onBack={handleBack}
       onNext={handleFinish}
+      onSkip={handleSkip}
       nextLabel="Finish"
       nextDisabled={!selectedNumber}
     >
