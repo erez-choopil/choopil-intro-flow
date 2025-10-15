@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
+import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -186,7 +187,8 @@ export default function VoiceSelection() {
   const charCount = greeting.length;
 
   return (
-    <OnboardingLayout
+    <OnboardingWithDashboard>
+      <OnboardingLayout
       currentStep={1}
       onBack={handleBack}
       onNext={handleNext}
@@ -331,5 +333,6 @@ export default function VoiceSelection() {
         </div>
       </div>
     </OnboardingLayout>
+    </OnboardingWithDashboard>
   );
 }

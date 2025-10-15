@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
+import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -241,7 +242,8 @@ export default function BusinessDetails() {
   const charCount = formData.description.length;
 
   return (
-    <OnboardingLayout
+    <OnboardingWithDashboard>
+      <OnboardingLayout
       currentStep={0}
       onNext={handleNext}
       onSkip={handleSkip}
@@ -490,5 +492,6 @@ export default function BusinessDetails() {
         </div>
       </div>
     </OnboardingLayout>
+    </OnboardingWithDashboard>
   );
 }

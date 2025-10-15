@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
-import { SignupModal } from "@/components/SignupModal";
+import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,6 @@ export default function Customize() {
   const location = useLocation();
   const businessType = location.state?.businessType || "Other";
   const preFillFAQs = getBusinessSpecificFAQs(businessType);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   
   // Load from localStorage on mount
   const [collectInfo, setCollectInfo] = useState(() => {
@@ -152,8 +151,7 @@ export default function Customize() {
     navigate("/onboarding/voice");
   };
   const handleNext = () => {
-    // Show signup modal instead of navigating
-    setShowSignupModal(true);
+    navigate("/onboarding/signup");
   };
   const toggleFAQ = (index: number) => {
     setSelectedFAQs(prev => ({
@@ -189,7 +187,7 @@ export default function Customize() {
     }
   };
   return (
-    <>
+    <OnboardingWithDashboard>
       <OnboardingLayout currentStep={2} onBack={handleBack} onNext={handleNext} nextLabel="Next" showSkip={false}>
         <div className="space-y-8">
         <div>
@@ -285,8 +283,6 @@ export default function Customize() {
         </div>
       </div>
       </OnboardingLayout>
-      
-      <SignupModal open={showSignupModal} onOpenChange={setShowSignupModal} />
-    </>
+    </OnboardingWithDashboard>
   );
 }

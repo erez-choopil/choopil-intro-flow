@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MessageSquare, Calendar, HelpCircle, PhoneForwarded, MessageCircle, ShieldOff, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
 
 const capabilities = [
   {
@@ -57,7 +58,8 @@ export default function Success() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+    <OnboardingWithDashboard>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-4xl mx-4 bg-background rounded-2xl shadow-2xl p-6 md:p-12 max-h-[90vh] overflow-y-auto">
         <div className="w-full max-w-4xl space-y-8">
           <div className="text-center space-y-4">
@@ -100,5 +102,6 @@ export default function Success() {
         </div>
       </div>
     </div>
+    </OnboardingWithDashboard>
   );
 }
