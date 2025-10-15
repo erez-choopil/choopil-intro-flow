@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -14,9 +15,14 @@ const callerInfoOptions = [
 ];
 
 const preFillFAQs = [
-  "What are your business hours?",
-  "How can I schedule an appointment?",
-  "What payment methods do you accept?",
+  { 
+    question: "What are your business hours?",
+    defaultAnswer: "We're open Monday to Friday, 9 AM to 5 PM."
+  },
+  { 
+    question: "How can clients reach you?",
+    defaultAnswer: "You can reach us by phone, email, or through our website contact form."
+  },
 ];
 
 export default function FAQ() {
@@ -26,7 +32,10 @@ export default function FAQ() {
     phoneNumber: true,
     emailAddress: false,
   });
-  const [selectedPreFilled, setSelectedPreFilled] = useState<string[]>([]);
+  const [selectedFAQs, setSelectedFAQs] = useState<Record<number, { selected: boolean; answer: string }>>({
+    0: { selected: false, answer: preFillFAQs[0].defaultAnswer },
+    1: { selected: false, answer: preFillFAQs[1].defaultAnswer },
+  });
   const [customFAQs, setCustomFAQs] = useState<string[]>([]);
   const [newFAQ, setNewFAQ] = useState("");
 
@@ -42,12 +51,24 @@ export default function FAQ() {
     navigate("/onboarding/success");
   };
 
-  const togglePreFilled = (faq: string) => {
-    setSelectedPreFilled(prev =>
-      prev.includes(faq)
-        ? prev.filter(f => f !== faq)
-        : [...prev, faq]
-    );
+  const toggleFAQ = (index: number) => {
+    setSelectedFAQs(prev => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        selected: !prev[index].selected
+      }
+    }));
+  };
+
+  const updateAnswer = (index: number, answer: string) => {
+    setSelectedFAQs(prev => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        answer
+      }
+    }));
   };
 
   const addCustomFAQ = () => {
@@ -120,26 +141,43 @@ export default function FAQ() {
               ))}
             </div>
           </div>
-          {/* Pre-filled FAQs */}
+
+          {/* Common FAQs with answers */}
           <div className="space-y-4">
             <Label className="text-foreground text-base font-medium">
-              Select common questions
+              Common questions clients ask
             </Label>
-            <div className="space-y-3">
-              {preFillFAQs.map((faq) => (
-                <div key={faq} className="flex items-start space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-                  <Checkbox
-                    id={faq}
-                    checked={selectedPreFilled.includes(faq)}
-                    onCheckedChange={() => togglePreFilled(faq)}
-                    className="mt-0.5"
-                  />
-                  <label
-                    htmlFor={faq}
-                    className="text-sm text-foreground cursor-pointer flex-1"
-                  >
-                    {faq}
-                  </label>
+            <div className="space-y-4">
+              {preFillFAQs.map((faq, index) => (
+                <div key={index} className="space-y-3 p-4 rounded-lg border border-border">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id={`faq-${index}`}
+                      checked={selectedFAQs[index]?.selected}
+                      onCheckedChange={() => toggleFAQ(index)}
+                      className="mt-0.5"
+                    />
+                    <label
+                      htmlFor={`faq-${index}`}
+                      className="text-sm font-medium text-foreground cursor-pointer flex-1"
+                    >
+                      {faq.question}
+                    </label>
+                  </div>
+                  {selectedFAQs[index]?.selected && (
+                    <div className="ml-7 space-y-2">
+                      <Label htmlFor={`answer-${index}`} className="text-xs text-muted-foreground">
+                        Answer
+                      </Label>
+                      <Textarea
+                        id={`answer-${index}`}
+                        value={selectedFAQs[index]?.answer || ""}
+                        onChange={(e) => updateAnswer(index, e.target.value)}
+                        placeholder="Enter your answer..."
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
