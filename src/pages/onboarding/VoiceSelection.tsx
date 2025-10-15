@@ -53,12 +53,12 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice) {
-      navigate("/onboarding/phone-number");
+      navigate("/onboarding/agent-settings");
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/phone-number");
+    navigate("/onboarding/agent-settings");
   };
 
   const getVoiceLabel = (voiceValue: string) => {
