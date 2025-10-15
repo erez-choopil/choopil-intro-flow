@@ -17,7 +17,7 @@ interface OnboardingLayoutProps {
 const steps = [
   { label: "Business Information", path: "/onboarding/business" },
   { label: "AI Assistant Settings", path: "/onboarding/voice" },
-  { label: "Phone Number", path: "/onboarding/phone-number" },
+  { label: "FAQ", path: "/onboarding/faq" },
   { label: "Test & launch", path: "/onboarding/success" },
 ];
 
