@@ -65,6 +65,7 @@ const countryCodes = [
 export default function BusinessDetails() {
   const navigate = useNavigate();
   const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
+  const [autoFillSource, setAutoFillSource] = useState<"website" | "google">("website");
   const [formData, setFormData] = useState({
     website: "",
     businessName: "",
@@ -222,10 +223,33 @@ export default function BusinessDetails() {
         </div>
 
         <div className="space-y-6">
-          {/* Website Auto-fill Section */}
-          <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-border">
+          {/* Website/Google Auto-fill Section */}
+          <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border">
+            <div className="flex gap-2 p-1 bg-background rounded-md w-fit">
+              <Button
+                type="button"
+                variant={autoFillSource === "website" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setAutoFillSource("website")}
+                className="text-sm"
+              >
+                Website
+              </Button>
+              <Button
+                type="button"
+                variant={autoFillSource === "google" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setAutoFillSource("google")}
+                className="text-sm"
+              >
+                Google Business Profile
+              </Button>
+            </div>
+            
             <Label htmlFor="website" className="text-foreground">
-              Have a website? Let us fill this out for you
+              {autoFillSource === "website" 
+                ? "Have a website? Let us fill this out for you"
+                : "Have a Google Business Profile? Let us fill this out for you"}
             </Label>
             <p className="text-sm text-muted-foreground">
               We'll grab your business details to save you time
@@ -233,8 +257,10 @@ export default function BusinessDetails() {
             <div className="flex gap-2">
               <Input
                 id="website"
-                type="url"
-                placeholder="https://yourwebsite.com"
+                type={autoFillSource === "website" ? "url" : "text"}
+                placeholder={autoFillSource === "website" 
+                  ? "https://yourwebsite.com"
+                  : "Your Business Name"}
                 value={formData.website}
                 onChange={(e) => handleWebsiteChange(e.target.value)}
                 disabled={isLoadingWebsite}
