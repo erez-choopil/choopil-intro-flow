@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const countries = [
   { value: "us", label: "United States", flag: "🇺🇸" },
@@ -117,48 +116,22 @@ export default function PhoneNumber() {
           </div>
 
           {/* Pick a Number */}
-          <div className="space-y-4">
-            <Label className="text-foreground text-base font-medium">
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber" className="text-foreground">
               Pick a number
             </Label>
-
-            <RadioGroup value={selectedNumber} onValueChange={setSelectedNumber}>
-              {availableNumbers.map((number) => (
-                <div key={number} className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value={number}
-                    id={number}
-                    className="h-5 w-5 data-[state=checked]:border-primary data-[state=checked]:text-primary"
-                  />
-                  <Label
-                    htmlFor={number}
-                    className="text-sm font-normal text-foreground cursor-pointer"
-                  >
+            <Select value={selectedNumber} onValueChange={setSelectedNumber}>
+              <SelectTrigger id="phoneNumber">
+                <SelectValue placeholder="Select a phone number" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover">
+                {availableNumbers.map((number) => (
+                  <SelectItem key={number} value={number}>
                     {number}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-
-            {/* Pagination */}
-            <div className="flex items-center justify-center gap-4 pt-4">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="text-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:cursor-not-allowed flex items-center gap-1"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Prev
-              </button>
-              <span className="text-foreground font-medium">{currentPage}</span>
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="text-primary hover:underline flex items-center gap-1"
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
