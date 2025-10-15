@@ -154,7 +154,7 @@ export default function FAQ() {
           <div className="space-y-4">
             <div>
               <h3 className="text-base font-medium text-foreground mb-1">
-                Custom questions
+                Custom questions <span className="text-muted-foreground">(optional)</span>
               </h3>
               <p className="text-sm text-muted-foreground">
                 Add any additional questions specific to your business
