@@ -148,9 +148,6 @@ export default function VoiceSelection() {
               </Label>
               <p className="text-xs text-muted-foreground">{charCount}/280</p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Must include: "This call may be recorded for quality assurance."
-            </p>
             <Textarea
               id="greeting"
               value={greeting}
@@ -162,6 +159,9 @@ export default function VoiceSelection() {
               className="min-h-[80px] resize-none"
               maxLength={280}
             />
+            <p className="text-xs text-muted-foreground">
+              This call may be recorded for quality assurance.
+            </p>
             <Button 
               variant="outline" 
               className="w-full"
