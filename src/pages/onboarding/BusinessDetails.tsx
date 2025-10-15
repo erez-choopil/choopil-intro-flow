@@ -328,7 +328,7 @@ export default function BusinessDetails() {
             >
               <SelectTrigger
                 id="professional"
-                className={`[&>span]:data-[placeholder]:text-secondary/80 ${errors.professional && touched.professional ? "border-destructive" : ""}`}
+                className={errors.professional && touched.professional ? "border-destructive" : ""}
               >
                 <SelectValue placeholder="Select your profession" />
               </SelectTrigger>
