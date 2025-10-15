@@ -108,7 +108,7 @@ export function OnboardingLayout({
               <Button
                 variant="ghost"
                 onClick={onBack}
-                className="text-secondary hover:text-foreground justify-start"
+                className="text-secondary hover:text-foreground justify-start pl-0"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Back
@@ -118,7 +118,7 @@ export function OnboardingLayout({
               <Button
                 variant="ghost"
                 onClick={onSkip}
-                className="text-secondary hover:text-foreground justify-start"
+                className="text-secondary hover:text-foreground justify-start pl-0"
               >
                 Skip
               </Button>
