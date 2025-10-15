@@ -6,6 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Play } from "lucide-react";
 
 const assistantNames = [
@@ -30,6 +37,19 @@ const getRandomAssistantName = () => {
   return assistantNames[Math.floor(Math.random() * assistantNames.length)];
 };
 
+const countries = [
+  { value: "us", label: "United States", flag: "🇺🇸" },
+  { value: "uk", label: "United Kingdom", flag: "🇬🇧" },
+  { value: "au", label: "Australia", flag: "🇦🇺" },
+];
+
+const availableNumbers = [
+  "(415) 413-5501",
+  "(415) 890-2324",
+  "(415) 234-5678",
+  "(415) 567-8901",
+];
+
 export default function AgentSettings() {
   const navigate = useNavigate();
   
@@ -45,17 +65,27 @@ export default function AgentSettings() {
     phoneNumber: true,
     emailAddress: false,
   });
+  
+  // Phone number fields
+  const [country, setCountry] = useState("us");
+  const [areaCode, setAreaCode] = useState("415");
+  const [selectedNumber, setSelectedNumber] = useState(availableNumbers[0]);
 
   const handleBack = () => {
     navigate("/onboarding/voice");
   };
 
   const handleNext = () => {
-    navigate("/onboarding/phone-number");
+    navigate("/onboarding/success");
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/phone-number");
+    navigate("/onboarding/success");
+  };
+
+  const handleAreaCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 3);
+    setAreaCode(value);
   };
 
   const charCount = greeting.length;
@@ -66,6 +96,7 @@ export default function AgentSettings() {
       onBack={handleBack}
       onNext={handleNext}
       onSkip={handleSkip}
+      nextLabel="Finish"
     >
       <div className="space-y-8">
         <div>
@@ -180,10 +211,83 @@ export default function AgentSettings() {
                   Email address
                 </Label>
               </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Phone Number Selection */}
+          <div className="space-y-6 pt-6 border-t border-border">
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                Pick a Choopil number
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                You can forward calls to this number later.{" "}
+                <a href="#" className="text-primary hover:underline">
+                  Learn how
+                </a>
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Label className="text-foreground">
+                Select a country and area code
+              </Label>
+
+              <div className="flex gap-3">
+                <div className="flex-[3] space-y-2">
+                  <Label htmlFor="country" className="text-foreground text-sm">
+                    Country
+                  </Label>
+                  <Select value={country} onValueChange={setCountry}>
+                    <SelectTrigger id="country">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover">
+                      {countries.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.flag} {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex-[2] space-y-2">
+                  <Label htmlFor="areaCode" className="text-foreground text-sm">
+                    Area code
+                  </Label>
+                  <Input
+                    id="areaCode"
+                    type="text"
+                    placeholder="415"
+                    value={areaCode}
+                    onChange={handleAreaCodeChange}
+                    maxLength={3}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber" className="text-foreground text-sm">
+                  Pick a number
+                </Label>
+                <Select value={selectedNumber} onValueChange={setSelectedNumber}>
+                  <SelectTrigger id="phoneNumber">
+                    <SelectValue placeholder="Select a phone number" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    {availableNumbers.map((number) => (
+                      <SelectItem key={number} value={number}>
+                        {number}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </OnboardingLayout>
   );
 }

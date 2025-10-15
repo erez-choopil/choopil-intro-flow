@@ -18,7 +18,6 @@ const steps = [
   { label: "Business Information", path: "/onboarding/business" },
   { label: "AI Assistant Settings", path: "/onboarding/voice" },
   { label: "Customize Assistant", path: "/onboarding/agent-settings" },
-  { label: "Choopil Number", path: "/onboarding/phone-number" },
   { label: "Test & launch", path: "/onboarding/success" },
 ];
 
