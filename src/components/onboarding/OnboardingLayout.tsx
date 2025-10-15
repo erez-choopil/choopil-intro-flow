@@ -124,7 +124,6 @@ export function OnboardingLayout({
 
           {onNext && (
             <Button
-              variant="success"
               onClick={onNext}
               disabled={nextDisabled}
               className="min-w-[100px]"

@@ -111,7 +111,6 @@ const Login = () => {
 
             <Button
               type="submit"
-              variant="success"
               className="w-full h-12 text-base font-medium mt-4"
             >
               Sign in

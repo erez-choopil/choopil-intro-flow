@@ -44,7 +44,7 @@ const ForgotPassword = () => {
               We've sent a password reset link to <strong>{email}</strong>
             </p>
             <Link to="/login">
-              <Button variant="success" className="w-full h-12 text-base font-medium">
+              <Button className="w-full h-12 text-base font-medium">
                 Back to login
               </Button>
             </Link>
@@ -83,7 +83,6 @@ const ForgotPassword = () => {
 
             <Button
               type="submit"
-              variant="success"
               className="w-full h-12 text-base font-medium mt-4"
             >
               Send reset link
