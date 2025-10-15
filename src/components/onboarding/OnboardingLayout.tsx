@@ -85,11 +85,7 @@ export function OnboardingLayout({
                 <ChevronLeft className="h-4 w-4" />
                 Back
               </Button>}
-            {showSkip && onSkip && (
-              <Button variant="ghost" onClick={onSkip} className="text-muted-foreground hover:text-foreground">
-                Skip
-              </Button>
-            )}
+            {showSkip && onSkip}
           </div>
 
           {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
