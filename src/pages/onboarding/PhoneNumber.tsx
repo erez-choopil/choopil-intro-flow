@@ -33,7 +33,7 @@ export default function PhoneNumber() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleBack = () => {
-    navigate("/onboarding/agent-settings");
+    navigate("/onboarding/voice");
   };
 
   const handleFinish = () => {
@@ -53,7 +53,7 @@ export default function PhoneNumber() {
 
   return (
     <OnboardingLayout
-      currentStep={3}
+      currentStep={2}
       onBack={handleBack}
       onNext={handleFinish}
       onSkip={handleSkip}
@@ -63,7 +63,7 @@ export default function PhoneNumber() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Pick a number
+            Pick a Choopil number
           </h1>
           <p className="text-muted-foreground">
             You can forward calls to this number later.{" "}
