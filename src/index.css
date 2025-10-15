@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 217 33% 17%;
 
-    --primary: 217 83% 63%;
+    --primary: 216 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 215 16% 47%;
@@ -68,7 +68,7 @@ All colors MUST be HSL.
     --popover: 217 33% 17%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 217 83% 63%;
+    --primary: 216 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 215 16% 47%;
@@ -107,5 +107,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
