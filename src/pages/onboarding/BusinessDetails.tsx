@@ -12,7 +12,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Sparkles, Loader2 } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { AlertCircle, Sparkles, Loader2, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const professionals = [
   "Lawyer",
@@ -66,6 +80,7 @@ export default function BusinessDetails() {
   const navigate = useNavigate();
   const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
   const [autoFillSource, setAutoFillSource] = useState<"website" | "google">("website");
+  const [openBusinessType, setOpenBusinessType] = useState(false);
   const [formData, setFormData] = useState({
     website: "",
     businessName: "",
@@ -325,24 +340,51 @@ export default function BusinessDetails() {
             <Label htmlFor="professional" className="text-foreground">
               Business Type
             </Label>
-            <Select
-              value={formData.professional}
-              onValueChange={(value) => handleChange("professional", value)}
-            >
-              <SelectTrigger
-                id="professional"
-                className={errors.professional && touched.professional ? "border-destructive" : ""}
-              >
-                <SelectValue placeholder="Select your profession" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                {professionals.map((professional) => (
-                  <SelectItem key={professional} value={professional}>
-                    {professional}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={openBusinessType} onOpenChange={setOpenBusinessType}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openBusinessType}
+                  className={cn(
+                    "w-full justify-between font-normal",
+                    !formData.professional && "text-muted-foreground",
+                    errors.professional && touched.professional && "border-destructive"
+                  )}
+                >
+                  {formData.professional || "Select your profession"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Search business type..." />
+                  <CommandList>
+                    <CommandEmpty>No business type found.</CommandEmpty>
+                    <CommandGroup>
+                      {professionals.map((professional) => (
+                        <CommandItem
+                          key={professional}
+                          value={professional}
+                          onSelect={(currentValue) => {
+                            handleChange("professional", currentValue === formData.professional.toLowerCase() ? "" : professional);
+                            setOpenBusinessType(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              formData.professional === professional ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {professional}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             {formData.professional === "Other" && (
               <Input
                 placeholder="Please specify"
