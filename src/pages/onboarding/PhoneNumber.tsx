@@ -34,7 +34,7 @@ export default function PhoneNumber() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleBack = () => {
-    navigate("/onboarding/settings");
+    navigate("/onboarding/agent-settings");
   };
 
   const handleFinish = () => {
@@ -74,21 +74,16 @@ export default function PhoneNumber() {
           </p>
         </div>
 
-        <div className="space-y-8">
-          {/* Step 1: Country & Area Code */}
+        <div className="space-y-6">
+          {/* Country & Area Code */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-secondary text-sm font-medium">
-                1
-              </div>
-              <Label className="text-foreground font-medium">
-                Select a country and area code
-              </Label>
-            </div>
+            <Label className="text-foreground text-base font-medium">
+              Select a country and area code
+            </Label>
 
-            <div className="flex gap-3 ml-11">
-              <div className="flex-[3]">
-                <Label htmlFor="country" className="text-sm text-muted-foreground mb-2 block">
+            <div className="flex gap-3">
+              <div className="flex-[3] space-y-2">
+                <Label htmlFor="country" className="text-foreground">
                   Country
                 </Label>
                 <Select value={country} onValueChange={setCountry}>
@@ -105,8 +100,8 @@ export default function PhoneNumber() {
                 </Select>
               </div>
 
-              <div className="flex-[2]">
-                <Label htmlFor="areaCode" className="text-sm text-muted-foreground mb-2 block">
+              <div className="flex-[2] space-y-2">
+                <Label htmlFor="areaCode" className="text-foreground">
                   Area code
                 </Label>
                 <Input
@@ -121,55 +116,48 @@ export default function PhoneNumber() {
             </div>
           </div>
 
-          {/* Step 2: Pick a Number */}
+          {/* Pick a Number */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-secondary text-sm font-medium">
-                2
-              </div>
-              <Label className="text-foreground font-medium">
-                Pick a number
-              </Label>
-            </div>
+            <Label className="text-foreground text-base font-medium">
+              Pick a number
+            </Label>
 
-            <div className="ml-11 space-y-4">
-              <RadioGroup value={selectedNumber} onValueChange={setSelectedNumber}>
-                {availableNumbers.map((number) => (
-                  <div key={number} className="flex items-center space-x-3">
-                    <RadioGroupItem
-                      value={number}
-                      id={number}
-                      className="h-5 w-5 data-[state=checked]:border-success data-[state=checked]:text-success"
-                    />
-                    <Label
-                      htmlFor={number}
-                      className="text-sm font-normal text-foreground cursor-pointer"
-                    >
-                      {number}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+            <RadioGroup value={selectedNumber} onValueChange={setSelectedNumber}>
+              {availableNumbers.map((number) => (
+                <div key={number} className="flex items-center space-x-3">
+                  <RadioGroupItem
+                    value={number}
+                    id={number}
+                    className="h-5 w-5 data-[state=checked]:border-primary data-[state=checked]:text-primary"
+                  />
+                  <Label
+                    htmlFor={number}
+                    className="text-sm font-normal text-foreground cursor-pointer"
+                  >
+                    {number}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-center gap-4 pt-4">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="text-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:cursor-not-allowed flex items-center gap-1"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Prev
-                </button>
-                <span className="text-foreground font-medium">{currentPage}</span>
-                <button
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className="text-primary hover:underline flex items-center gap-1"
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+            {/* Pagination */}
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="text-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Prev
+              </button>
+              <span className="text-foreground font-medium">{currentPage}</span>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="text-primary hover:underline flex items-center gap-1"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
