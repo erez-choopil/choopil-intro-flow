@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
@@ -19,29 +19,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Play, Plus, Trash2, ChevronDown, Phone, MessageSquare, Bell, Shield } from "lucide-react";
+import { Volume2, Plus, Trash2, ChevronDown, Phone, MessageSquare, Bell, Shield } from "lucide-react";
+
+const assistantNames = [
+  "Emma from Canada",
+  "James from London",
+  "Sofia from Spain",
+  "Alex from New York",
+  "Maya from India",
+  "Lucas from Brazil",
+  "Olivia from Sydney",
+  "Noah from California",
+  "Isabella from Italy",
+  "Ethan from Texas",
+];
+
+const getRandomAssistantName = () => {
+  return assistantNames[Math.floor(Math.random() * assistantNames.length)];
+};
 
 export default function AgentSettings() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   
+  // Generate random name once on component mount
+  const randomAssistantName = useMemo(() => getRandomAssistantName(), []);
+  
   // Page 1 states
-  const [assistantName, setAssistantName] = useState("Kate from Australia");
+  const [assistantName, setAssistantName] = useState(randomAssistantName);
   const [greeting, setGreeting] = useState(
-    "You've reached [Business Name]. How can I help you today?"
+    "You've reached [Business Name]. This call may be recorded for quality assurance. How can I help you today?"
   );
   const [collectInfo, setCollectInfo] = useState({
     fullName: true,
     phoneNumber: true,
     emailAddress: false,
   });
-  
-  const [questions, setQuestions] = useState([
-    "What type of event are you planning (wedding, party, corporate, private, etc.)?",
-    "What date and time is your event scheduled for?"
-  ]);
-  const [showAddQuestion, setShowAddQuestion] = useState(false);
-  const [newQuestion, setNewQuestion] = useState("");
 
   // Page 2 states
   const [spamDetection, setSpamDetection] = useState(true);
@@ -101,18 +114,6 @@ export default function AgentSettings() {
 
   const handleSkip = () => {
     navigate("/onboarding/phone-number");
-  };
-
-  const addQuestion = () => {
-    if (newQuestion.trim()) {
-      setQuestions([...questions, newQuestion]);
-      setNewQuestion("");
-      setShowAddQuestion(false);
-    }
-  };
-
-  const deleteQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
   };
 
   const saveTransfer = () => {
@@ -199,9 +200,12 @@ export default function AgentSettings() {
 
               {/* Greeting */}
               <div className="space-y-2">
-                <Label htmlFor="greeting" className="text-foreground">
-                  Greeting
-                </Label>
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="greeting" className="text-foreground">
+                    Greeting
+                  </Label>
+                  <p className="text-xs text-muted-foreground">{charCount}/280</p>
+                </div>
                 <Textarea
                   id="greeting"
                   value={greeting}
@@ -213,16 +217,13 @@ export default function AgentSettings() {
                   className="min-h-[80px] resize-none"
                   maxLength={280}
                 />
-                <div className="flex justify-end">
-                  <p className="text-sm text-muted-foreground">{charCount}/280</p>
-                </div>
                 <Button 
                   variant="outline" 
                   className="w-full"
                   type="button"
                 >
-                  <Play className="h-4 w-4 mr-2" />
-                  Hear Assistant greeting
+                  <Volume2 className="h-4 w-4 mr-2" />
+                  Preview greeting
                 </Button>
               </div>
 
@@ -288,70 +289,6 @@ export default function AgentSettings() {
                       Email address
                     </Label>
                   </div>
-                </div>
-              </div>
-
-              {/* What questions should be asked */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-base font-medium text-foreground mb-1">
-                    What questions should the AI assistant ask? <span className="text-destructive">*</span>
-                  </h3>
-                </div>
-
-                <div className="space-y-3">
-                  {questions.map((question, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg border border-border"
-                    >
-                      <p className="flex-1 text-sm text-foreground">{question}</p>
-                      <button
-                        onClick={() => deleteQuestion(index)}
-                        className="text-destructive hover:text-destructive/80 transition-colors p-1"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  ))}
-
-                  {showAddQuestion ? (
-                    <div className="space-y-2 p-4 border-2 border-dashed border-orange rounded-lg">
-                      <Textarea
-                        value={newQuestion}
-                        onChange={(e) => setNewQuestion(e.target.value)}
-                        placeholder="Enter your question..."
-                        className="min-h-[80px]"
-                      />
-                      <div className="flex gap-2">
-                        <Button 
-                          onClick={addQuestion}
-                          className="flex-1"
-                          variant="default"
-                        >
-                          Save
-                        </Button>
-                        <Button 
-                          onClick={() => {
-                            setShowAddQuestion(false);
-                            setNewQuestion("");
-                          }}
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setShowAddQuestion(true)}
-                      className="w-full p-4 border-2 border-dashed border-orange rounded-lg text-orange hover:bg-orange/5 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span className="font-medium">Add Question</span>
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
