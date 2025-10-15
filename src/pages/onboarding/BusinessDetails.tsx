@@ -361,9 +361,6 @@ export default function BusinessDetails() {
                 className={`flex-1 ${errors.phoneNumber && touched.phoneNumber ? "border-destructive" : ""}`}
               />
             </div>
-            <p className="text-sm text-muted-foreground">
-              Calls from this number are free
-            </p>
             {errors.phoneNumber && touched.phoneNumber && (
               <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
