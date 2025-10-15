@@ -131,7 +131,7 @@ export default function FAQ() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Configure Your Assistant
+            Customize Assistant
           </h1>
           <p className="text-muted-foreground">
             Set up what information to collect and common questions to answer.
