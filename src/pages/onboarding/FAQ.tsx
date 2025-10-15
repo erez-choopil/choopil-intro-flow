@@ -16,12 +16,12 @@ const callerInfoOptions = [
 
 const preFillFAQs = [
   { 
-    question: "What are your business hours?",
-    defaultAnswer: "We're open Monday to Friday, 9 AM to 5 PM."
+    question: "What is the nature of your inquiry?",
+    defaultAnswer: "I can help with appointments, general questions, or connect you with the right person."
   },
   { 
-    question: "How can clients reach you?",
-    defaultAnswer: "You can reach us by phone, email, or through our website contact form."
+    question: "How did you hear about us?",
+    defaultAnswer: "This helps us understand how clients find us and improve our outreach."
   },
 ];
 
@@ -145,7 +145,7 @@ export default function FAQ() {
           {/* Common FAQs with answers */}
           <div className="space-y-4">
             <Label className="text-foreground text-base font-medium">
-              Common questions clients ask
+              Questions to ask callers
             </Label>
             <div className="space-y-4">
               {preFillFAQs.map((faq, index) => (
