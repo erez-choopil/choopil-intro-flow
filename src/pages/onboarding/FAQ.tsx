@@ -144,9 +144,14 @@ export default function FAQ() {
 
           {/* Common FAQs with answers */}
           <div className="space-y-4">
-            <Label className="text-foreground text-base font-medium">
-              Questions to ask callers
-            </Label>
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                Questions your assistant will ask
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Select questions you'd like your assistant to ask callers
+              </p>
+            </div>
             <div className="space-y-4">
               {preFillFAQs.map((faq, index) => (
                 <div key={index} className="space-y-3 p-4 rounded-lg border border-border">
@@ -185,9 +190,14 @@ export default function FAQ() {
 
           {/* Custom FAQs */}
           <div className="space-y-4">
-            <Label className="text-foreground text-base font-medium">
-              Add your own questions
-            </Label>
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                Custom questions
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Add any additional questions specific to your business
+              </p>
+            </div>
             
             <div className="flex gap-2">
               <Input
