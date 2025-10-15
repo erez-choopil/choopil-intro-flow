@@ -320,7 +320,7 @@ export default function BusinessDetails() {
           {/* Professional */}
           <div className="space-y-2">
             <Label htmlFor="professional" className="text-foreground">
-              Professional
+              Business Type
             </Label>
             <Select
               value={formData.professional}
