@@ -19,19 +19,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Volume2, Plus, Trash2, ChevronDown, Phone, MessageSquare, Bell, Shield } from "lucide-react";
+import { Play, Plus, Trash2, ChevronDown, Phone, MessageSquare, Bell, Shield } from "lucide-react";
 
 const assistantNames = [
-  "Emma from Canada",
-  "James from London",
-  "Sofia from Spain",
-  "Alex from New York",
-  "Maya from India",
-  "Lucas from Brazil",
-  "Olivia from Sydney",
-  "Noah from California",
-  "Isabella from Italy",
-  "Ethan from Texas",
+  "Emma",
+  "James",
+  "Sofia",
+  "Alex",
+  "Maya",
+  "Lucas",
+  "Olivia",
+  "Noah",
+  "Isabella",
+  "Ethan",
+  "Kate",
+  "Michael",
+  "Sarah",
+  "Daniel",
+  "Jessica",
 ];
 
 const getRandomAssistantName = () => {
@@ -222,8 +227,8 @@ export default function AgentSettings() {
                   className="w-full"
                   type="button"
                 >
-                  <Volume2 className="h-4 w-4 mr-2" />
-                  Preview greeting
+                  <Play className="h-4 w-4 mr-2" />
+                  Hear Assistant greeting
                 </Button>
               </div>
 
