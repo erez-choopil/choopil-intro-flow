@@ -303,7 +303,7 @@ export default function BusinessDetails() {
             </Label>
             <Input
               id="businessName"
-              placeholder="Choopil"
+              placeholder="e.g. Choopil"
               value={formData.businessName}
               onChange={(e) => handleChange("businessName", e.target.value)}
               onBlur={() => handleBlur("businessName")}
