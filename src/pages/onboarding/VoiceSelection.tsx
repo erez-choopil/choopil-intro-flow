@@ -28,36 +28,19 @@ const voices = [
   { value: "adam", label: "Adam", gender: "Male" },
 ];
 
-const assistantNames = [
-  "Emma",
-  "James",
-  "Sofia",
-  "Alex",
-  "Maya",
-  "Lucas",
-  "Olivia",
-  "Noah",
-  "Isabella",
-  "Ethan",
-  "Kate",
-  "Michael",
-  "Sarah",
-  "Daniel",
-  "Jessica",
-];
+const femaleNames = ["Emma", "Sofia", "Maya", "Olivia", "Isabella", "Kate", "Sarah", "Jessica"];
+const maleNames = ["James", "Alex", "Lucas", "Noah", "Ethan", "Michael", "Daniel"];
 
-const getRandomAssistantName = () => {
-  return assistantNames[Math.floor(Math.random() * assistantNames.length)];
+const getDefaultAssistantName = (voiceGender: string) => {
+  const names = voiceGender === "Female" ? femaleNames : maleNames;
+  return names[0];
 };
 
 export default function VoiceSelection() {
   const navigate = useNavigate();
-  const [voice, setVoice] = useState("cassidy");
-  
-  // Generate random name once on component mount
-  const randomAssistantName = useMemo(() => getRandomAssistantName(), []);
-  
-  const [assistantName, setAssistantName] = useState(randomAssistantName);
+  const defaultVoice = voices[0];
+  const [voice, setVoice] = useState(defaultVoice.value);
+  const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
   const [greeting, setGreeting] = useState(
     "You've reached [Business Name]. This call may be recorded for quality assurance. How can I help you today?"
   );
