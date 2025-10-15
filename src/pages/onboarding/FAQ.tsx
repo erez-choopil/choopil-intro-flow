@@ -155,7 +155,7 @@ export default function FAQ() {
                       id={`faq-${index}`}
                       checked={selectedFAQs[index]?.selected}
                       onCheckedChange={() => toggleFAQ(index)}
-                      className="mt-0.5"
+                      className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-0.5"
                     />
                     <label
                       htmlFor={`faq-${index}`}
