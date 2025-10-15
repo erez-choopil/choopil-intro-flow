@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Sparkles } from "lucide-react";
+import { AlertCircle, Sparkles, Loader2 } from "lucide-react";
 
 const professionals = [
   "Lawyer",
@@ -278,7 +278,7 @@ export default function BusinessDetails() {
             </div>
             {isLoadingWebsite && (
               <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <span className="animate-spin">⏳</span>
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Grabbing your business details...
               </p>
             )}
