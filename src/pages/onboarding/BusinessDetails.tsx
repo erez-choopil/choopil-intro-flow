@@ -224,7 +224,7 @@ export default function BusinessDetails() {
             Tell us about your business
           </h1>
           <p className="text-muted-foreground">
-            Add your website link and we'll automatically fill in your details
+            We'll use this to train your AI receptionist
           </p>
         </div>
 
@@ -242,10 +242,14 @@ export default function BusinessDetails() {
               onChange={(e) => handleWebsiteChange(e.target.value)}
               disabled={isLoadingWebsite}
             />
-            {isLoadingWebsite && (
+            {isLoadingWebsite ? (
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="animate-spin">⏳</span>
                 Fetching your business information...
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                We'll fetch your business info automatically
               </p>
             )}
           </div>
