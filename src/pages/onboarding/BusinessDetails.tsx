@@ -63,6 +63,7 @@ const countryCodes = [
 
 export default function BusinessDetails() {
   const navigate = useNavigate();
+  const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
   const [formData, setFormData] = useState({
     website: "",
     businessName: "",
@@ -121,6 +122,64 @@ export default function BusinessDetails() {
     }
   };
 
+  const fetchBusinessInfo = async (url: string) => {
+    // Validate URL format
+    try {
+      new URL(url);
+    } catch {
+      return;
+    }
+
+    setIsLoadingWebsite(true);
+    
+    try {
+      // TODO: Implement backend API call to fetch business information
+      // This would require a backend service that can:
+      // 1. Scrape the website or use a business data API (Clearbit, FullContact, etc.)
+      // 2. Extract business name, description, contact info
+      // 3. Return structured data
+      
+      // Mock implementation - replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Example of what the API response might look like:
+      // const response = await fetch('/api/fetch-business-info', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ url })
+      // });
+      // const data = await response.json();
+      
+      // For now, we'll just show the loading state
+      // When you have a backend, populate the fields like this:
+      // setFormData(prev => ({
+      //   ...prev,
+      //   businessName: data.name || prev.businessName,
+      //   professional: data.industry || prev.professional,
+      //   phoneNumber: data.phone || prev.phoneNumber,
+      //   description: data.description || prev.description,
+      // }));
+      
+    } catch (error) {
+      console.error('Error fetching business info:', error);
+    } finally {
+      setIsLoadingWebsite(false);
+    }
+  };
+
+  const handleWebsiteChange = (value: string) => {
+    handleChange("website", value);
+    
+    // Debounce the fetch to avoid too many requests
+    const timeoutId = setTimeout(() => {
+      if (value.trim()) {
+        fetchBusinessInfo(value);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  };
+
   const formatPhoneNumber = (value: string) => {
     const digits = value.replace(/\D/g, "");
     if (digits.length <= 3) return digits;
@@ -165,26 +224,30 @@ export default function BusinessDetails() {
             Tell us about your business
           </h1>
           <p className="text-muted-foreground">
-            We'll use this to train your AI receptionist
+            Add your website link and we'll automatically fill in your details
           </p>
         </div>
 
         <div className="space-y-6">
-          {/* Website URL */}
+          {/* Website Link */}
           <div className="space-y-2">
             <Label htmlFor="website" className="text-foreground">
-              Website URL <span className="text-muted-foreground">(optional)</span>
+              Website link <span className="text-muted-foreground">(optional)</span>
             </Label>
             <Input
               id="website"
               type="url"
               placeholder="https://yourwebsite.com"
               value={formData.website}
-              onChange={(e) => handleChange("website", e.target.value)}
+              onChange={(e) => handleWebsiteChange(e.target.value)}
+              disabled={isLoadingWebsite}
             />
-            <p className="text-sm text-muted-foreground">
-              We'll fetch your business info automatically
-            </p>
+            {isLoadingWebsite && (
+              <p className="text-sm text-muted-foreground flex items-center gap-2">
+                <span className="animate-spin">⏳</span>
+                Fetching your business information...
+              </p>
+            )}
           </div>
 
           {/* Business Name */}
