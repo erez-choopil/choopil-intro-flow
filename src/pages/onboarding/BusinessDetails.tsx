@@ -234,6 +234,9 @@ export default function BusinessDetails() {
             <Label htmlFor="website" className="text-foreground">
               Website link <span className="text-muted-foreground">(optional)</span>
             </Label>
+            <p className="text-sm text-muted-foreground">
+              We'll grab your business details to save you time
+            </p>
             <Input
               id="website"
               type="url"
@@ -242,14 +245,10 @@ export default function BusinessDetails() {
               onChange={(e) => handleWebsiteChange(e.target.value)}
               disabled={isLoadingWebsite}
             />
-            {isLoadingWebsite ? (
+            {isLoadingWebsite && (
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="animate-spin">⏳</span>
                 Grabbing your business details...
-              </p>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                We'll grab your business details to save you time
               </p>
             )}
           </div>
