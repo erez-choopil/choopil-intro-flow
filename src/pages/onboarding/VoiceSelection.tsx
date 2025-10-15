@@ -14,37 +14,19 @@ import {
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const languages = [
-  { value: "english", label: "English" },
-  { value: "portuguese", label: "Portuguese" },
-  { value: "spanish", label: "Spanish" },
-];
-
-const recommendedVoices = [
+const voices = [
   { value: "cassidy", label: "Cassidy", gender: "Female" },
   { value: "matilda", label: "Matilda", gender: "Female" },
   { value: "jessica", label: "Jessica", gender: "Female" },
   { value: "adeline", label: "Adeline", gender: "Female" },
-  { value: "ana", label: "Ana", gender: "Female" },
   { value: "jeff", label: "Jeff", gender: "Male" },
-  { value: "jamahal", label: "Jamahal", gender: "Male" },
   { value: "eric", label: "Eric", gender: "Male" },
   { value: "chris", label: "Chris", gender: "Male" },
   { value: "adam", label: "Adam", gender: "Male" },
 ];
 
-const moreVoices = [
-  { value: "tiffany", label: "Tiffany", gender: "Female" },
-  { value: "lilly-wolf", label: "Lilly Wolf", gender: "Female" },
-  { value: "hope", label: "Hope", gender: "Female" },
-  { value: "arabella", label: "Arabella", gender: "Female" },
-  { value: "alexandra", label: "Alexandra", gender: "Female" },
-  { value: "allison", label: "Allison", gender: "Female" },
-];
-
 export default function VoiceSelection() {
   const navigate = useNavigate();
-  const [language, setLanguage] = useState("english");
   const [voice, setVoice] = useState("cassidy");
 
   const handleBack = () => {
@@ -62,10 +44,9 @@ export default function VoiceSelection() {
   };
 
   const getVoiceLabel = (voiceValue: string) => {
-    const allVoices = [...recommendedVoices, ...moreVoices];
-    const selectedVoice = allVoices.find((v) => v.value === voiceValue);
+    const selectedVoice = voices.find((v) => v.value === voiceValue);
     if (selectedVoice) {
-      return `${selectedVoice.label} from Australia (${selectedVoice.gender})`;
+      return `${selectedVoice.label} (${selectedVoice.gender})`;
     }
     return "";
   };
@@ -84,33 +65,11 @@ export default function VoiceSelection() {
             Select a voice for your agent
           </h1>
           <p className="text-muted-foreground">
-            You can always change this later
+            English only • You can always change this later
           </p>
         </div>
 
         <div className="space-y-6">
-          {/* Language Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="language" className="text-foreground">
-              Agent's primary language
-            </Label>
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger id="language">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                {languages.map((lang) => (
-                  <SelectItem
-                    key={lang.value}
-                    value={lang.value}
-                  >
-                    {lang.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Voice Selection */}
           <div className="space-y-2">
             <Label htmlFor="voice" className="text-foreground">
@@ -124,7 +83,7 @@ export default function VoiceSelection() {
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="bg-popover max-h-[400px]">
-                  {[...recommendedVoices, ...moreVoices].map((v) => (
+                  {voices.map((v) => (
                     <SelectItem
                       key={v.value}
                       value={v.value}
