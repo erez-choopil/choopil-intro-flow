@@ -91,17 +91,17 @@ export default function BusinessDetails() {
   const validateField = (name: string, value: string) => {
     switch (name) {
       case "businessName":
-        return value.trim() ? "" : "Business name is required";
+        return value.trim() ? "" : "We'll need your business name to get started";
       case "professional":
         return value ? "" : "Professional type is required";
       case "phoneNumber":
         return value.replace(/\D/g, "").length === 10
           ? ""
-          : "Business phone number is required";
+          : "Your business phone helps us personalize your assistant";
       case "description":
         return value.trim()
           ? ""
-          : "You must describe what your business does";
+          : "Help us understand what you do so your assistant can answer questions";
       default:
         return "";
     }
@@ -221,10 +221,10 @@ export default function BusinessDetails() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Tell us about your business
+            Let's get to know your business
           </h1>
           <p className="text-muted-foreground">
-            We'll use this to train your AI receptionist
+            This helps your AI assistant sound like part of your team
           </p>
         </div>
 
@@ -245,11 +245,11 @@ export default function BusinessDetails() {
             {isLoadingWebsite ? (
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="animate-spin">⏳</span>
-                Fetching your business information...
+                Grabbing your business details...
               </p>
             ) : (
               <p className="text-sm text-muted-foreground">
-                We'll fetch your business info automatically
+                We'll grab your business details to save you time
               </p>
             )}
           </div>

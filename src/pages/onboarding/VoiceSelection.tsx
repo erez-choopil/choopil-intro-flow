@@ -102,10 +102,10 @@ export default function VoiceSelection() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Core Personalization
+            Personalize your assistant
           </h1>
           <p className="text-muted-foreground">
-            English only • You can always change this later
+            English only for now • Don't worry, you can tweak this anytime
           </p>
         </div>
 
@@ -190,10 +190,10 @@ export default function VoiceSelection() {
           <div className="space-y-4">
             <div>
               <h3 className="text-base font-medium text-foreground mb-1">
-                Information gathering from caller
+                What should your assistant ask callers?
               </h3>
               <p className="text-sm text-muted-foreground">
-                You can add or remove questions later
+                You can change these anytime
               </p>
             </div>
 

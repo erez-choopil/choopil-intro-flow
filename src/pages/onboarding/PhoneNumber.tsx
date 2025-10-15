@@ -63,7 +63,7 @@ export default function PhoneNumber() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Pick a Choopil number
+            Pick your phone number
           </h1>
           <p className="text-muted-foreground">
             You can forward calls to this number later.{" "}
