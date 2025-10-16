@@ -16,6 +16,12 @@ import {
 } from "@/components/ui/select";
 import { Play, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const voices = [
   { value: "cassidy", label: "Cassidy", gender: "Female" },
@@ -210,7 +216,16 @@ export default function VoiceSelection() {
                 className="text-sm font-normal text-foreground cursor-pointer flex items-center gap-1.5"
               >
                 Include a legal disclaimer
-                <Info className="h-4 w-4" />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>Informs callers that the conversation may be recorded for quality assurance and legal compliance purposes.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </Label>
             </div>
           </div>
