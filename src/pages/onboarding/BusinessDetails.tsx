@@ -250,7 +250,7 @@ export default function BusinessDetails() {
       nextDisabled={!isFormValid()}
     >
       <div className="space-y-8">
-        <div>
+        <div className="text-center">
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Let's get to know your business
           </h1>

@@ -168,12 +168,12 @@ export default function VoiceSelection() {
         includeLegalDisclaimer,
       };
       localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
-      navigate("/onboarding/customize", { state: { businessType } });
+      navigate("/onboarding/signup", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/customize", { state: { businessType } });
+    navigate("/onboarding/signup", { state: { businessType } });
   };
 
   const getVoiceLabel = (voiceValue: string) => {
@@ -196,9 +196,9 @@ export default function VoiceSelection() {
       nextDisabled={!voice || !assistantName}
     >
       <div className="space-y-8">
-        <div>
+        <div className="text-center">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Personalize your assistant
+            Customize your AI assistant
           </h1>
           <p className="text-muted-foreground">
             English only for now • Don't worry, you can tweak this anytime
@@ -329,6 +329,66 @@ export default function VoiceSelection() {
               <Play className="h-4 w-4 mr-2" />
               Hear Assistant greeting
             </Button>
+          </div>
+
+          {/* Information to collect from callers */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                What should your assistant ask callers?
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="fullName"
+                  checked={collectInfo.fullName}
+                  onCheckedChange={(checked) =>
+                    setCollectInfo({ ...collectInfo, fullName: checked === true })
+                  }
+                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                />
+                <Label
+                  htmlFor="fullName"
+                  className="text-sm font-normal text-foreground cursor-pointer"
+                >
+                  Full name
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="phoneNumber"
+                  checked={collectInfo.phoneNumber}
+                  onCheckedChange={(checked) =>
+                    setCollectInfo({ ...collectInfo, phoneNumber: checked === true })
+                  }
+                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                />
+                <Label
+                  htmlFor="phoneNumber"
+                  className="text-sm font-normal text-foreground cursor-pointer"
+                >
+                  Phone number
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="emailAddress"
+                  checked={collectInfo.emailAddress}
+                  onCheckedChange={(checked) =>
+                    setCollectInfo({ ...collectInfo, emailAddress: checked === true })
+                  }
+                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                />
+                <Label
+                  htmlFor="emailAddress"
+                  className="text-sm font-normal text-foreground cursor-pointer"
+                >
+                  Email address
+                </Label>
+              </div>
+            </div>
           </div>
         </div>
       </div>

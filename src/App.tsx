@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import BusinessDetails from "./pages/onboarding/BusinessDetails";
 import VoiceSelection from "./pages/onboarding/VoiceSelection";
-import Customize from "./pages/onboarding/Customize";
 import SignupPage from "./pages/onboarding/SignupPage";
 import Success from "./pages/onboarding/Success";
 import Dashboard from "./pages/Dashboard";
@@ -29,7 +28,6 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/onboarding/business" element={<BusinessDetails />} />
           <Route path="/onboarding/voice" element={<VoiceSelection />} />
-          <Route path="/onboarding/customize" element={<Customize />} />
           <Route path="/onboarding/signup" element={<SignupPage />} />
           <Route path="/onboarding/success" element={<Success />} />
           <Route path="/dashboard/*" element={<Dashboard />} />

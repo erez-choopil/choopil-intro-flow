@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
+import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronLeft } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -15,11 +14,10 @@ export default function SignupPage() {
   const [error, setError] = useState("");
 
   const handleBack = () => {
-    navigate("/onboarding/customize");
+    navigate("/onboarding/voice");
   };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = () => {
     setError("");
 
     if (!email || !password || !confirmPassword) {
@@ -53,19 +51,25 @@ export default function SignupPage() {
 
   return (
     <OnboardingWithDashboard>
-      <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-        <div className="w-full max-w-[520px] mx-4 bg-background rounded-2xl shadow-2xl p-10">
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">
-                🎉 Almost there!
-              </h1>
-              <p className="text-muted-foreground">
-                Create your account to save your<br />AI receptionist settings
-              </p>
-            </div>
+      <OnboardingLayout
+        currentStep={2}
+        onBack={handleBack}
+        onNext={handleNext}
+        nextLabel="Create account"
+        nextDisabled={!email || !password || !confirmPassword}
+        showSkip={false}
+      >
+        <div className="space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">
+              Sign-up, Test & Launch
+            </h1>
+            <p className="text-muted-foreground">
+              Create your account to save your<br />AI receptionist settings
+            </p>
+          </div>
 
-            <form onSubmit={handleSignup} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -105,14 +109,7 @@ export default function SignupPage() {
               {error && (
                 <p className="text-sm text-destructive">{error}</p>
               )}
-
-              <Button
-                type="submit"
-                className="w-full bg-[#10b981] hover:bg-[#10b981]/90 text-white"
-              >
-                Create an account
-              </Button>
-            </form>
+            </div>
 
             {/* OAuth Options */}
             <div className="space-y-3">
@@ -155,22 +152,8 @@ export default function SignupPage() {
                 </button>
               </p>
             </div>
-
-            {/* Back Button */}
-            <div className="flex justify-start pt-2">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleBack}
-                className="text-muted-foreground hover:text-foreground -ml-3"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
-              </Button>
-            </div>
           </div>
-        </div>
-      </div>
+        </OnboardingLayout>
     </OnboardingWithDashboard>
   );
 }
