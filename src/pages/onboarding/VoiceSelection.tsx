@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Play } from "lucide-react";
+import { Play, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const voices = [
@@ -207,9 +207,10 @@ export default function VoiceSelection() {
               />
               <Label
                 htmlFor="legalDisclaimer"
-                className="text-sm font-normal text-foreground cursor-pointer"
+                className="text-sm font-normal text-foreground cursor-pointer flex items-center gap-1.5"
               >
                 Include a legal disclaimer
+                <Info className="h-4 w-4" />
               </Label>
             </div>
           </div>
