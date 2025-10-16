@@ -201,7 +201,7 @@ export default function VoiceSelection() {
             Customize your AI assistant
           </h1>
           <p className="text-muted-foreground">
-            English only for now • Don't worry, you can tweak this anytime
+            Choose how your AI assistant will greet and interact with callers
           </p>
         </div>
 

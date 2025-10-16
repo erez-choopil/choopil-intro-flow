@@ -65,7 +65,7 @@ export default function SignupPage() {
               You're almost there...
             </h1>
             <p className="text-muted-foreground">
-              Choose how your AI assistant will greet and interact with callers
+              Create your account to save your AI receptionist settings
             </p>
           </div>
 
