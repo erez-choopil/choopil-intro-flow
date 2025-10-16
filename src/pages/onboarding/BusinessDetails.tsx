@@ -255,7 +255,7 @@ export default function BusinessDetails() {
             Let's get to know your business
           </h1>
           <p className="text-muted-foreground">
-            This helps your AI assistant sound like part of your team
+            Share your business details to train your AI receptionist
           </p>
         </div>
 

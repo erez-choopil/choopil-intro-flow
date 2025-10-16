@@ -62,10 +62,10 @@ export default function SignupPage() {
         <div className="space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-foreground">
-              Sign-up, Test & Launch
+              You're almost there...
             </h1>
             <p className="text-muted-foreground">
-              Create your account to save your<br />AI receptionist settings
+              Choose how your AI assistant will greet and interact with callers
             </p>
           </div>
 

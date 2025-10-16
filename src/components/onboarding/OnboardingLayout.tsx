@@ -19,7 +19,7 @@ const steps = [{
   label: "AI Assistant Settings",
   path: "/onboarding/voice"
 }, {
-  label: "Sign-up, Test & Launch",
+  label: "Sign up & Launch",
   path: "/onboarding/signup"
 }];
 export function OnboardingLayout({
