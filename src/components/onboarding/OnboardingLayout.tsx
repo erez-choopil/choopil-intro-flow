@@ -11,6 +11,7 @@ interface OnboardingLayoutProps {
   nextDisabled?: boolean;
   showSkip?: boolean;
   onSkip?: () => void;
+  hideNavigation?: boolean;
 }
 const steps = [{
   label: "Business Information",
@@ -19,8 +20,8 @@ const steps = [{
   label: "AI Assistant Settings",
   path: "/onboarding/voice"
 }, {
-  label: "Customize Assistant",
-  path: "/onboarding/faq"
+  label: "Sign up & Launch",
+  path: "/onboarding/success"
 }];
 export function OnboardingLayout({
   children,
@@ -30,7 +31,8 @@ export function OnboardingLayout({
   nextLabel = "Next",
   nextDisabled = false,
   showSkip = false,
-  onSkip
+  onSkip,
+  hideNavigation = false
 }: OnboardingLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,21 +81,23 @@ export function OnboardingLayout({
         {children}
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 gap-4">
-          <div className="flex gap-3">
-            {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground justify-start pl-0">
-                <ChevronLeft className="h-4 w-4" />
-                Back
-              </Button>}
-            {showSkip && onSkip && <Button variant="ghost" onClick={onSkip} className="text-muted-foreground hover:text-foreground">
-                Skip
+        {!hideNavigation && (
+          <div className="flex items-center justify-between mt-8 gap-4">
+            <div className="flex gap-3">
+              {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground justify-start pl-0">
+                  <ChevronLeft className="h-4 w-4" />
+                  Back
+                </Button>}
+              {showSkip && onSkip && <Button variant="ghost" onClick={onSkip} className="text-muted-foreground hover:text-foreground">
+                  Skip
+                </Button>}
+            </div>
+
+            {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
+                {nextLabel}
               </Button>}
           </div>
-
-          {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
-              {nextLabel}
-            </Button>}
-        </div>
+        )}
       </div>
     </div>;
 }
