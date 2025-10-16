@@ -241,6 +241,43 @@ export default function VoiceSelection() {
               Hear Assistant greeting
             </Button>
           </div>
+
+          {/* Information to collect from callers */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-base font-medium text-foreground mb-1">
+                What should your assistant ask callers?
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { id: "fullName", label: "Full name (Recommended)" },
+                { id: "phoneNumber", label: "Phone number (Recommended)" },
+                { id: "emailAddress", label: "Email address" }
+              ].map(option => (
+                <div key={option.id} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={option.id}
+                    checked={collectInfo[option.id as keyof typeof collectInfo]}
+                    onCheckedChange={(checked) =>
+                      setCollectInfo({
+                        ...collectInfo,
+                        [option.id]: checked === true
+                      })
+                    }
+                    className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <Label
+                    htmlFor={option.id}
+                    className="text-sm font-normal text-foreground cursor-pointer"
+                  >
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </OnboardingLayout>

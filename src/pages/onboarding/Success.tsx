@@ -1,7 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { MessageSquare, Calendar, HelpCircle, PhoneForwarded, MessageCircle, ShieldOff, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { SignupForm } from "@/components/auth/SignupForm";
 
 const capabilities = [
   {
@@ -42,48 +41,47 @@ const capabilities = [
 ];
 
 export default function Success() {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="w-full max-w-4xl space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-primary">
-            You're all set!
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Here's what your assistant can do for you
-          </p>
-        </div>
+    <div className="min-h-screen bg-background flex">
+      {/* Left Side - Success Content */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-2xl space-y-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold text-primary">
+              You're all set!
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Here's what your assistant can do for you
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {capabilities.map((capability, index) => (
-            <Card key={index} className="border-border hover:border-primary/50 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-lg shrink-0">
-                    <capability.icon className="h-6 w-6 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {capabilities.map((capability, index) => (
+              <Card key={index} className="border-border hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-lg shrink-0">
+                      <capability.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-2">
+                        {capability.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {capability.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      {capability.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {capability.description}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
+      </div>
 
-        <Button
-          onClick={() => navigate("/dashboard")}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium"
-        >
-          ✨ Let's go!
-        </Button>
+      {/* Right Side - Signup Form */}
+      <div className="flex-1 flex items-center justify-center bg-muted/30 p-8">
+        <SignupForm />
       </div>
     </div>
   );
