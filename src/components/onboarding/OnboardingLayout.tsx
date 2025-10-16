@@ -21,7 +21,7 @@ const steps = [{
   path: "/onboarding/voice"
 }, {
   label: "Sign up & Launch",
-  path: "/onboarding/success"
+  path: "/onboarding/faq"
 }];
 export function OnboardingLayout({
   children,
