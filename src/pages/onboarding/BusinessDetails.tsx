@@ -402,7 +402,7 @@ export default function BusinessDetails() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="description" className="text-foreground">
-                What does your business do?
+                What does your business do? <span className="text-muted-foreground font-normal">(optional)</span>
               </Label>
               <p className="text-xs text-muted-foreground">{charCount}/300</p>
             </div>
