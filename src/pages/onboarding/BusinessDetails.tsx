@@ -323,7 +323,7 @@ export default function BusinessDetails() {
           {/* Professional */}
           <div className="space-y-2">
             <Label htmlFor="professional" className="text-foreground">
-              Business Type
+              Business Type <span className="text-destructive">*</span>
             </Label>
             <Select
               value={formData.professional}
