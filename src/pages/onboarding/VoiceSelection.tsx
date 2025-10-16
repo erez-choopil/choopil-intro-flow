@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
-import { OnboardingWithDashboard } from "@/components/onboarding/OnboardingWithDashboard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,80 +41,17 @@ export default function VoiceSelection() {
   const location = useLocation();
   const businessType = location.state?.businessType;
   const defaultVoice = voices[0];
-  
-  // Load from localStorage on mount
-  const [voice, setVoice] = useState(() => {
-    const saved = localStorage.getItem("onboarding_voice");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        return data.voice || defaultVoice.value;
-      } catch (e) {
-        console.error("Failed to parse saved voice data", e);
-      }
-    }
-    return defaultVoice.value;
+  const [voice, setVoice] = useState(defaultVoice.value);
+  const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
+  const [greeting, setGreeting] = useState(
+    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`
+  );
+  const [collectInfo, setCollectInfo] = useState({
+    fullName: true,
+    phoneNumber: true,
+    emailAddress: false,
   });
-  
-  const [assistantName, setAssistantName] = useState(() => {
-    const saved = localStorage.getItem("onboarding_voice");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        return data.assistantName || getDefaultAssistantName(defaultVoice.gender);
-      } catch (e) {
-        console.error("Failed to parse saved voice data", e);
-      }
-    }
-    return getDefaultAssistantName(defaultVoice.gender);
-  });
-  
-  const [greeting, setGreeting] = useState(() => {
-    const saved = localStorage.getItem("onboarding_voice");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        return data.greeting || `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`;
-      } catch (e) {
-        console.error("Failed to parse saved voice data", e);
-      }
-    }
-    return `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`;
-  });
-  
-  const [collectInfo, setCollectInfo] = useState(() => {
-    const saved = localStorage.getItem("onboarding_voice");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        return data.collectInfo || {
-          fullName: true,
-          phoneNumber: true,
-          emailAddress: false,
-        };
-      } catch (e) {
-        console.error("Failed to parse saved voice data", e);
-      }
-    }
-    return {
-      fullName: true,
-      phoneNumber: true,
-      emailAddress: false,
-    };
-  });
-  
-  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(() => {
-    const saved = localStorage.getItem("onboarding_voice");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        return data.includeLegalDisclaimer !== undefined ? data.includeLegalDisclaimer : true;
-      } catch (e) {
-        console.error("Failed to parse saved voice data", e);
-      }
-    }
-    return true;
-  });
+  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(true);
 
   const disclaimerText = "This call may be recorded for quality assurance. ";
 
@@ -159,21 +95,12 @@ export default function VoiceSelection() {
 
   const handleNext = () => {
     if (voice && assistantName) {
-      // Save to localStorage before navigating
-      const voiceData = {
-        voice,
-        assistantName,
-        greeting,
-        collectInfo,
-        includeLegalDisclaimer,
-      };
-      localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
-      navigate("/onboarding/signup", { state: { businessType } });
+      navigate("/onboarding/faq", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/signup", { state: { businessType } });
+    navigate("/onboarding/faq", { state: { businessType } });
   };
 
   const getVoiceLabel = (voiceValue: string) => {
@@ -187,8 +114,7 @@ export default function VoiceSelection() {
   const charCount = greeting.length;
 
   return (
-    <OnboardingWithDashboard>
-      <OnboardingLayout
+    <OnboardingLayout
       currentStep={1}
       onBack={handleBack}
       onNext={handleNext}
@@ -196,12 +122,12 @@ export default function VoiceSelection() {
       nextDisabled={!voice || !assistantName}
     >
       <div className="space-y-8">
-        <div className="text-center">
+        <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Customize your AI assistant
+            Personalize your assistant
           </h1>
           <p className="text-muted-foreground">
-            Choose how your AI assistant will greet and interact with callers
+            English only for now • Don't worry, you can tweak this anytime
           </p>
         </div>
 
@@ -214,18 +140,7 @@ export default function VoiceSelection() {
             <Input
               id="assistantName"
               value={assistantName}
-              onChange={(e) => {
-                setAssistantName(e.target.value);
-                // Save to localStorage
-                const voiceData = {
-                  voice,
-                  assistantName: e.target.value,
-                  greeting,
-                  collectInfo,
-                  includeLegalDisclaimer,
-                };
-                localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
-              }}
+              onChange={(e) => setAssistantName(e.target.value)}
               placeholder="Assistant name"
             />
           </div>
@@ -236,18 +151,7 @@ export default function VoiceSelection() {
               Assistant voice
             </Label>
             <div className="flex gap-2">
-              <Select value={voice} onValueChange={(value) => {
-                setVoice(value);
-                // Save to localStorage
-                const voiceData = {
-                  voice: value,
-                  assistantName,
-                  greeting,
-                  collectInfo,
-                  includeLegalDisclaimer,
-                };
-                localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
-              }}>
+              <Select value={voice} onValueChange={setVoice}>
                 <SelectTrigger id="voice" className="flex-1">
                   <SelectValue placeholder="Select a voice">
                     {voice && getVoiceLabel(voice)}
@@ -289,15 +193,6 @@ export default function VoiceSelection() {
               onChange={(e) => {
                 if (e.target.value.length <= 280) {
                   setGreeting(e.target.value);
-                  // Save to localStorage
-                  const voiceData = {
-                    voice,
-                    assistantName,
-                    greeting: e.target.value,
-                    collectInfo,
-                    includeLegalDisclaimer,
-                  };
-                  localStorage.setItem("onboarding_voice", JSON.stringify(voiceData));
                 }
               }}
               className="min-h-[80px] resize-none"
@@ -330,69 +225,8 @@ export default function VoiceSelection() {
               Hear Assistant greeting
             </Button>
           </div>
-
-          {/* Information to collect from callers */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-medium text-foreground mb-1">
-                What should your assistant ask callers?
-              </h3>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="fullName"
-                  checked={collectInfo.fullName}
-                  onCheckedChange={(checked) =>
-                    setCollectInfo({ ...collectInfo, fullName: checked === true })
-                  }
-                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                />
-                <Label
-                  htmlFor="fullName"
-                  className="text-sm font-normal text-foreground cursor-pointer"
-                >
-                  Full name
-                </Label>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="phoneNumber"
-                  checked={collectInfo.phoneNumber}
-                  onCheckedChange={(checked) =>
-                    setCollectInfo({ ...collectInfo, phoneNumber: checked === true })
-                  }
-                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                />
-                <Label
-                  htmlFor="phoneNumber"
-                  className="text-sm font-normal text-foreground cursor-pointer"
-                >
-                  Phone number
-                </Label>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="emailAddress"
-                  checked={collectInfo.emailAddress}
-                  onCheckedChange={(checked) =>
-                    setCollectInfo({ ...collectInfo, emailAddress: checked === true })
-                  }
-                  className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                />
-                <Label
-                  htmlFor="emailAddress"
-                  className="text-sm font-normal text-foreground cursor-pointer"
-                >
-                  Email address
-                </Label>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </OnboardingLayout>
-    </OnboardingWithDashboard>
   );
 }
