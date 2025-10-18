@@ -79,7 +79,9 @@ export function OnboardingLayout({
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto py-8 px-6 md:py-[48px]" style={{ maxWidth }}>
+      <div style={{
+      maxWidth
+    }} className="mx-auto py-8 md:py-[48px] px-[96px]">
         {children}
 
         {/* Navigation */}
