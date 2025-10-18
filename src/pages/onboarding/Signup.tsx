@@ -8,6 +8,11 @@ export default function Signup() {
         {/* Left Side - Benefits Checklist */}
         <div className="space-y-8">
           <div className="space-y-4">
+            <div className="inline-block">
+              <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                7 Days Free Trial
+              </span>
+            </div>
             <h1 className="text-4xl font-bold text-foreground leading-tight">
               You&apos;re almost there!
             </h1>
