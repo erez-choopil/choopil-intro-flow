@@ -81,25 +81,31 @@ export function OnboardingLayout({
       {/* Main Content */}
       <div style={{
       maxWidth
-    }} className="mx-auto py-8 md:py-[48px] px-[96px]">
+    }} className="mx-auto py-8 md:py-[48px] px-6 md:px-[96px] pb-32">
         {children}
+      </div>
 
-        {/* Navigation */}
-        {!hideNavigation && <div className="flex items-center justify-between mt-8 gap-4">
-            <div className="flex gap-3">
-              {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground hover:bg-transparent justify-start pl-0">
-                  <ChevronLeft className="h-4 w-4" />
-                  Back
-                </Button>}
-              {showSkip && onSkip && <Button variant="ghost" onClick={onSkip} className="text-muted-foreground hover:text-foreground">
-                  Skip
+      {/* Sticky Navigation */}
+      {!hideNavigation && <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40">
+          <div style={{
+          maxWidth
+        }} className="mx-auto px-6 md:px-[96px] py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex gap-3">
+                {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground hover:bg-transparent justify-start pl-0">
+                    <ChevronLeft className="h-4 w-4" />
+                    Back
+                  </Button>}
+                {showSkip && onSkip && <Button variant="ghost" onClick={onSkip} className="text-muted-foreground hover:text-foreground">
+                    Skip
+                  </Button>}
+              </div>
+
+              {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
+                  {nextLabel}
                 </Button>}
             </div>
-
-            {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
-                {nextLabel}
-              </Button>}
-          </div>}
-      </div>
+          </div>
+        </div>}
     </div>;
 }
