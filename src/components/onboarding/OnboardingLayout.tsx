@@ -12,6 +12,7 @@ interface OnboardingLayoutProps {
   showSkip?: boolean;
   onSkip?: () => void;
   hideNavigation?: boolean;
+  maxWidth?: string;
 }
 const steps = [{
   label: "Business Information",
@@ -32,7 +33,8 @@ export function OnboardingLayout({
   nextDisabled = false,
   showSkip = false,
   onSkip,
-  hideNavigation = false
+  hideNavigation = false,
+  maxWidth = "680px"
 }: OnboardingLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +79,7 @@ export function OnboardingLayout({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto py-8 px-6 md:py-[48px]">
+      <div className="mx-auto py-8 px-6 md:py-[48px]" style={{ maxWidth }}>
         {children}
 
         {/* Navigation */}
