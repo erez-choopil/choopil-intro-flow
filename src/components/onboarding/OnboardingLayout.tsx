@@ -77,7 +77,7 @@ export function OnboardingLayout({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[680px] mx-auto py-8 px-0 md:py-[48px]">
+      <div className="max-w-5xl mx-auto py-8 px-6 md:py-[48px]">
         {children}
 
         {/* Navigation */}
