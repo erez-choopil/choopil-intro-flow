@@ -425,7 +425,7 @@ export default function BusinessDetails() {
             </div>
             <Textarea
               id="description"
-              placeholder="We sell premium office furniture..."
+              placeholder="e.g. We sell premium office furniture..."
               value={formData.description}
               onChange={(e) => {
                 if (e.target.value.length <= 300) {
