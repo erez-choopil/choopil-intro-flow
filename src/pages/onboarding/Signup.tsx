@@ -13,7 +13,7 @@ const benefits = [
 export default function Signup() {
   return (
     <OnboardingLayout currentStep={2} hideNavigation>
-      <div className="grid lg:grid-cols-2 gap-12 items-start">
+      <div className="grid lg:grid-cols-2 gap-12 items-start px-6">
         {/* Left Side - Benefits Checklist */}
         <div className="space-y-8">
           <div className="space-y-4">
