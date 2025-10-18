@@ -5,65 +5,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AlertCircle, Sparkles, Loader2 } from "lucide-react";
-
-const professionals = [
-  "Lawyer",
-  "Real Estate Agent",
-  "Contractor",
-  "Doctor",
-  "Dentist",
-  "Therapist",
-  "Psychologist",
-  "Chiropractor",
-  "Physical Therapist",
-  "Personal Trainer",
-  "Nutritionist",
-  "Accountant",
-  "Financial Advisor",
-  "Insurance Agent",
-  "Mortgage Broker",
-  "Consultant",
-  "Marketing Specialist",
-  "Architect",
-  "Interior Designer",
-  "Photographer",
-  "Videographer",
-  "Wedding Planner",
-  "Tutor",
-  "Teacher",
-  "Career Coach",
-  "Life Coach",
-  "Business Coach",
-  "Veterinarian",
-  "Groomer",
-  "Plumber",
-  "Electrician",
-  "HVAC Technician",
-  "Landscaper",
-  "Auto Mechanic",
-  "Salon Owner",
-  "Barber",
-  "Massage Therapist",
-  "Esthetician",
-  "Other",
-];
-
-const countryCodes = [
-  { code: "+1", country: "United States", flag: "🇺🇸" },
-  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+61", country: "Australia", flag: "🇦🇺" },
-];
-
+const professionals = ["Lawyer", "Real Estate Agent", "Contractor", "Doctor", "Dentist", "Therapist", "Psychologist", "Chiropractor", "Physical Therapist", "Personal Trainer", "Nutritionist", "Accountant", "Financial Advisor", "Insurance Agent", "Mortgage Broker", "Consultant", "Marketing Specialist", "Architect", "Interior Designer", "Photographer", "Videographer", "Wedding Planner", "Tutor", "Teacher", "Career Coach", "Life Coach", "Business Coach", "Veterinarian", "Groomer", "Plumber", "Electrician", "HVAC Technician", "Landscaper", "Auto Mechanic", "Salon Owner", "Barber", "Massage Therapist", "Esthetician", "Other"];
+const countryCodes = [{
+  code: "+1",
+  country: "United States",
+  flag: "🇺🇸"
+}, {
+  code: "+44",
+  country: "United Kingdom",
+  flag: "🇬🇧"
+}, {
+  code: "+61",
+  country: "Australia",
+  flag: "🇦🇺"
+}];
 export default function BusinessDetails() {
   const navigate = useNavigate();
   const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
@@ -76,23 +35,20 @@ export default function BusinessDetails() {
     otherProfessional: "",
     countryCode: "+1",
     phoneNumber: "",
-    description: "",
+    description: ""
   });
-
   const [errors, setErrors] = useState({
     businessName: "",
     professional: "",
     phoneNumber: "",
-    description: "",
+    description: ""
   });
-
   const [touched, setTouched] = useState({
     businessName: false,
     professional: false,
     phoneNumber: false,
-    description: false,
+    description: false
   });
-
   const validateField = (name: string, value: string) => {
     switch (name) {
       case "businessName":
@@ -100,120 +56,103 @@ export default function BusinessDetails() {
       case "professional":
         return value ? "" : "Professional type is required";
       case "phoneNumber":
-        return value.replace(/\D/g, "").length === 10
-          ? ""
-          : "Your business phone helps us personalize your assistant";
+        return value.replace(/\D/g, "").length === 10 ? "" : "Your business phone helps us personalize your assistant";
       default:
         return "";
     }
   };
-
   const handleBlur = (field: string) => {
-    setTouched({ ...touched, [field]: true });
+    setTouched({
+      ...touched,
+      [field]: true
+    });
     setErrors({
       ...errors,
-      [field]: validateField(field, formData[field as keyof typeof formData]),
+      [field]: validateField(field, formData[field as keyof typeof formData])
     });
   };
-
   const handleChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData({
+      ...formData,
+      [field]: value
+    });
     if (touched[field as keyof typeof touched]) {
-      setErrors({ ...errors, [field]: validateField(field, value) });
+      setErrors({
+        ...errors,
+        [field]: validateField(field, value)
+      });
     }
   };
-
   const fetchBusinessInfo = async (url: string) => {
     // Add protocol if missing
     let validUrl = url;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       validUrl = 'https://' + url;
     }
-    
+
     // Validate URL format
     try {
       new URL(validUrl);
     } catch {
       return;
     }
-
     setIsLoadingWebsite(true);
-    
     try {
       // Mock implementation - simulating API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Mock data based on the URL domain
       const domain = new URL(validUrl).hostname.replace('www.', '');
-      const businessName = domain.split('.')[0]
-        .split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      
+      const businessName = domain.split('.')[0].split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       setFormData(prev => ({
         ...prev,
         businessName: businessName || "Example Business",
         professional: "Consultant",
         phoneNumber: "(555) 123-4567",
-        description: "We provide professional services to help businesses grow and succeed in their industry.",
+        description: "We provide professional services to help businesses grow and succeed in their industry."
       }));
-      
     } catch (error) {
       console.error('Error fetching business info:', error);
     } finally {
       setIsLoadingWebsite(false);
     }
   };
-
   const handleWebsiteChange = (value: string) => {
     handleChange("website", value);
   };
-
   const handleFetchBusinessInfo = () => {
     if (formData.website.trim()) {
       fetchBusinessInfo(formData.website);
     }
   };
-
   const formatPhoneNumber = (value: string) => {
     const digits = value.replace(/\D/g, "");
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
-
   const handlePhoneChange = (value: string) => {
     const formatted = formatPhoneNumber(value);
     handleChange("phoneNumber", formatted);
   };
-
   const isFormValid = () => {
-    return (
-      formData.businessName.trim() &&
-      formData.phoneNumber.replace(/\D/g, "").length === 10
-    );
+    return formData.businessName.trim() && formData.phoneNumber.replace(/\D/g, "").length === 10;
   };
-
   const handleNext = () => {
     if (isFormValid()) {
-      const businessType = formData.professional === "Other" 
-        ? formData.otherProfessional || "Other" 
-        : formData.professional;
-      navigate("/onboarding/assistant_settings", { state: { businessType } });
+      const businessType = formData.professional === "Other" ? formData.otherProfessional || "Other" : formData.professional;
+      navigate("/onboarding/assistant_settings", {
+        state: {
+          businessType
+        }
+      });
     }
   };
-
   const handleSkip = () => {
     navigate("/onboarding/assistant_settings");
   };
-
   const charCount = formData.description.length;
-
-  return (
-    <OnboardingLayout
-      currentStep={0}
-      onNext={handleNext}
-      onSkip={handleSkip}
-      nextDisabled={!isFormValid()}
-    >
+  return <OnboardingLayout currentStep={0} onNext={handleNext} onSkip={handleSkip} nextDisabled={!isFormValid()}>
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -228,62 +167,31 @@ export default function BusinessDetails() {
           {/* Website/Google Auto-fill Section */}
           <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border">
             <div className="flex gap-2 p-1 bg-background rounded-md w-fit">
-              <Button
-                type="button"
-                variant={autoFillSource === "website" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setAutoFillSource("website")}
-                className="text-sm"
-              >
+              <Button type="button" variant={autoFillSource === "website" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("website")} className="text-sm">
                 Website
               </Button>
-              <Button
-                type="button"
-                variant={autoFillSource === "google" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setAutoFillSource("google")}
-                className="text-sm"
-              >
+              <Button type="button" variant={autoFillSource === "google" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("google")} className="text-sm">
                 Google Business Profile
               </Button>
             </div>
             
             <Label htmlFor="website" className="text-foreground">
-              {autoFillSource === "website" 
-                ? "Have a website? Let us fill this out for you"
-                : "Have a Google Business Profile? Let us fill this out for you"}
+              {autoFillSource === "website" ? "Have a website? Let us fill this out for you" : "Have a Google Business Profile? Let us fill this out for you"}
             </Label>
             <p className="text-sm text-muted-foreground">
               We'll grab your business details to save you time
             </p>
             <div className="flex gap-2">
-              <Input
-                id="website"
-                type={autoFillSource === "website" ? "url" : "text"}
-                placeholder={autoFillSource === "website" 
-                  ? "https://yourwebsite.com"
-                  : "Your Business Name"}
-                value={formData.website}
-                onChange={(e) => handleWebsiteChange(e.target.value)}
-                disabled={isLoadingWebsite}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                onClick={handleFetchBusinessInfo}
-                disabled={!formData.website.trim() || isLoadingWebsite}
-                className="shrink-0"
-              >
+              <Input id="website" type={autoFillSource === "website" ? "url" : "text"} placeholder={autoFillSource === "website" ? "https://yourwebsite.com" : "Your Business Name"} value={formData.website} onChange={e => handleWebsiteChange(e.target.value)} disabled={isLoadingWebsite} className="flex-1" />
+              <Button type="button" onClick={handleFetchBusinessInfo} disabled={!formData.website.trim() || isLoadingWebsite} className="shrink-0">
                 <Sparkles className="h-4 w-4 mr-1" />
                 Auto-fill
               </Button>
             </div>
-            {isLoadingWebsite && (
-              <p className="text-sm text-muted-foreground flex items-center gap-2">
+            {isLoadingWebsite && <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Grabbing your business details...
-              </p>
-            )}
+              </p>}
           </div>
 
           {/* Divider */}
@@ -292,9 +200,7 @@ export default function BusinessDetails() {
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-background px-2 text-muted-foreground">
-                or fill manually
-              </span>
+              <span className="bg-background px-2 text-muted-foreground text-sm">Or fill manually</span>
             </div>
           </div>
 
@@ -303,20 +209,11 @@ export default function BusinessDetails() {
             <Label htmlFor="businessName" className="text-foreground">
               Business name <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="businessName"
-              placeholder="Enter your business name"
-              value={formData.businessName}
-              onChange={(e) => handleChange("businessName", e.target.value)}
-              onBlur={() => handleBlur("businessName")}
-              className={errors.businessName && touched.businessName ? "border-destructive" : ""}
-            />
-            {errors.businessName && touched.businessName && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+            <Input id="businessName" placeholder="Enter your business name" value={formData.businessName} onChange={e => handleChange("businessName", e.target.value)} onBlur={() => handleBlur("businessName")} className={errors.businessName && touched.businessName ? "border-destructive" : ""} />
+            {errors.businessName && touched.businessName && <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.businessName}
-              </p>
-            )}
+              </p>}
           </div>
 
           {/* Professional */}
@@ -326,12 +223,7 @@ export default function BusinessDetails() {
             </Label>
             <Popover open={openProfessional} onOpenChange={setOpenProfessional}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openProfessional}
-                  className="w-full justify-between font-normal hover:bg-background data-[state=open]:bg-background"
-                >
+                <Button variant="outline" role="combobox" aria-expanded={openProfessional} className="w-full justify-between font-normal hover:bg-background data-[state=open]:bg-background">
                   <span className={!formData.professional ? "text-muted-foreground" : ""}>
                     {formData.professional || "Select your profession"}
                   </span>
@@ -343,37 +235,22 @@ export default function BusinessDetails() {
                   <CommandList>
                     <CommandEmpty>No business type found.</CommandEmpty>
                     <CommandGroup>
-                      {professionals.map((professional) => (
-                        <CommandItem
-                          key={professional}
-                          value={professional}
-                          onSelect={() => {
-                            handleChange("professional", professional);
-                            setOpenProfessional(false);
-                          }}
-                        >
+                      {professionals.map(professional => <CommandItem key={professional} value={professional} onSelect={() => {
+                      handleChange("professional", professional);
+                      setOpenProfessional(false);
+                    }}>
                           {professional}
-                        </CommandItem>
-                      ))}
+                        </CommandItem>)}
                     </CommandGroup>
                   </CommandList>
                 </Command>
               </PopoverContent>
             </Popover>
-            {formData.professional === "Other" && (
-              <Input
-                placeholder="Please specify"
-                value={formData.otherProfessional}
-                onChange={(e) => handleChange("otherProfessional", e.target.value)}
-                className="mt-2"
-              />
-            )}
-            {errors.professional && touched.professional && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+            {formData.professional === "Other" && <Input placeholder="Please specify" value={formData.otherProfessional} onChange={e => handleChange("otherProfessional", e.target.value)} className="mt-2" />}
+            {errors.professional && touched.professional && <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.professional}
-              </p>
-            )}
+              </p>}
           </div>
 
           {/* Business Phone */}
@@ -382,62 +259,39 @@ export default function BusinessDetails() {
               Business phone <span className="text-destructive">*</span>
             </Label>
             <div className="flex gap-3">
-              <Select
-                value={formData.countryCode}
-                onValueChange={(value) => handleChange("countryCode", value)}
-              >
+              <Select value={formData.countryCode} onValueChange={value => handleChange("countryCode", value)}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover">
-                  {countryCodes.map((item) => (
-                    <SelectItem key={item.code} value={item.code}>
+                  {countryCodes.map(item => <SelectItem key={item.code} value={item.code}>
                       {item.flag} {item.code}
-                    </SelectItem>
-                  ))}
+                    </SelectItem>)}
                 </SelectContent>
               </Select>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                placeholder="(919) 555-2171"
-                value={formData.phoneNumber}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                onBlur={() => handleBlur("phoneNumber")}
-                className={`flex-1 ${errors.phoneNumber && touched.phoneNumber ? "border-destructive" : ""}`}
-              />
+              <Input id="phoneNumber" type="tel" placeholder="(919) 555-2171" value={formData.phoneNumber} onChange={e => handlePhoneChange(e.target.value)} onBlur={() => handleBlur("phoneNumber")} className={`flex-1 ${errors.phoneNumber && touched.phoneNumber ? "border-destructive" : ""}`} />
             </div>
-            {errors.phoneNumber && touched.phoneNumber && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+            {errors.phoneNumber && touched.phoneNumber && <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.phoneNumber}
-              </p>
-            )}
+              </p>}
           </div>
 
           {/* Business Description */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="description" className="text-foreground">
-                What does your business do? <span className="text-muted-foreground font-normal">(optional)</span>
+                What does your business do? 
               </Label>
               <p className="text-xs text-muted-foreground">{charCount}/300</p>
             </div>
-            <Textarea
-              id="description"
-              placeholder="e.g. We sell premium office furniture..."
-              value={formData.description}
-              onChange={(e) => {
-                if (e.target.value.length <= 300) {
-                  handleChange("description", e.target.value);
-                }
-              }}
-              className="min-h-[100px] resize-none"
-              maxLength={300}
-            />
+            <Textarea id="description" placeholder="e.g. We sell premium office furniture..." value={formData.description} onChange={e => {
+            if (e.target.value.length <= 300) {
+              handleChange("description", e.target.value);
+            }
+          }} className="min-h-[100px] resize-none" maxLength={300} />
           </div>
         </div>
       </div>
-    </OnboardingLayout>
-  );
+    </OnboardingLayout>;
 }
