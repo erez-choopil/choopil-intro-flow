@@ -99,7 +99,7 @@ export function SignupForm() {
 
           <Button
             type="submit"
-            className="w-full h-14 text-base bg-primary hover:bg-primary/90"
+            className="w-full h-12 text-base bg-primary hover:bg-primary/90"
           >
             Create Account
           </Button>
