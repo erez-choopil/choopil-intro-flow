@@ -15,13 +15,13 @@ interface OnboardingLayoutProps {
   maxWidth?: string;
 }
 const steps = [{
-  label: "Business Information",
+  label: "Business Profile",
   path: "/onboarding/business"
 }, {
-  label: "AI Assistant Settings",
+  label: "Customize Your Assistant",
   path: "/onboarding/assistant_settings"
 }, {
-  label: "Customize Your Assistant",
+  label: "Bring It to Life",
   path: "/onboarding/signup"
 }];
 export function OnboardingLayout({
