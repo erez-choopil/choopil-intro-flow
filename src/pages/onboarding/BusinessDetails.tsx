@@ -158,9 +158,7 @@ export default function BusinessDetails() {
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Let's get to know your business
           </h1>
-          <p className="text-muted-foreground">
-            This helps your AI assistant sound like part of your team
-          </p>
+          
         </div>
 
         <div className="space-y-6">
