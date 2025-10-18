@@ -330,9 +330,11 @@ export default function BusinessDetails() {
                   variant="outline"
                   role="combobox"
                   aria-expanded={openProfessional}
-                  className="w-full justify-between"
+                  className="w-full justify-between font-normal hover:bg-background data-[state=open]:bg-background"
                 >
-                  {formData.professional || "Select your profession"}
+                  <span className={!formData.professional ? "text-muted-foreground" : ""}>
+                    {formData.professional || "Select your profession"}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-full p-0" align="start">
