@@ -17,69 +17,22 @@ export function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8 p-8">
+    <div className="w-full max-w-md space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold text-foreground">
-          Sign-up, Test & Launch
+          Create Your Account
         </h2>
-        <p className="text-muted-foreground">
-          Create your account to save your
-          <br />
-          AI receptionist settings
+        <p className="text-muted-foreground text-lg">
+          Free for 7 days
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-foreground font-medium">
-            Email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="h-12"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password" className="text-foreground font-medium">
-            Password
-          </Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Create a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="h-12"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword" className="text-foreground font-medium">
-            Confirm Password
-          </Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="h-12"
-          />
-        </div>
-
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-3">
           <Button
             type="button"
             variant="outline"
-            className="w-full h-12 text-base"
+            className="w-full h-14 text-base"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -87,39 +40,74 @@ export function SignupForm() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Sign up with Google
+            Continue with Google
           </Button>
 
           <Button
             type="button"
             variant="outline"
-            className="w-full h-12 text-base"
+            className="w-full h-14 text-base"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
               <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
             </svg>
-            Sign up with Apple
+            Continue with Apple
           </Button>
         </div>
 
-        <div className="text-center">
-          <span className="text-muted-foreground">Already have an account? </span>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-background px-2 text-muted-foreground">
+              or
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-foreground font-medium">
+              Email address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="h-12"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-foreground font-medium">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="h-12"
+            />
+          </div>
+
           <Button
-            type="button"
-            variant="link"
-            className="p-0 h-auto font-normal text-primary hover:text-primary/80"
-            onClick={() => navigate("/login")}
+            type="submit"
+            className="w-full h-14 text-base bg-primary hover:bg-primary/90"
           >
-            Sign In
+            Create Account
           </Button>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full h-12 text-base bg-primary hover:bg-primary/90"
-        >
-          Create account
-        </Button>
+        <p className="text-xs text-center text-muted-foreground">
+          By creating an account, you agree with our Privacy Policy and Terms of Service.
+        </p>
       </form>
     </div>
   );

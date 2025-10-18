@@ -18,10 +18,10 @@ const steps = [{
   path: "/onboarding/business"
 }, {
   label: "AI Assistant Settings",
-  path: "/onboarding/voice"
+  path: "/onboarding/assistant_settings"
 }, {
   label: "Sign up & Launch",
-  path: "/onboarding/faq"
+  path: "/onboarding/signup"
 }];
 export function OnboardingLayout({
   children,

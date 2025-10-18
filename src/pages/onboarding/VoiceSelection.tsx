@@ -4,7 +4,6 @@ import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -14,14 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Play, Info } from "lucide-react";
+import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const voices = [
   { value: "cassidy", label: "Cassidy", gender: "Female" },
@@ -37,9 +30,12 @@ const voices = [
 const femaleNames = ["Emma", "Sofia", "Maya", "Olivia", "Isabella", "Kate", "Sarah", "Jessica"];
 const maleNames = ["James", "Alex", "Lucas", "Noah", "Ethan", "Michael", "Daniel"];
 
-const getDefaultAssistantName = (voiceGender: string) => {
-  const names = voiceGender === "Female" ? femaleNames : maleNames;
-  return names[0];
+const getDefaultAssistantName = (voiceValue: string) => {
+  const selectedVoice = voices.find((v) => v.value === voiceValue);
+  if (selectedVoice) {
+    return selectedVoice.label;
+  }
+  return voices[0].label;
 };
 
 export default function VoiceSelection() {
@@ -48,65 +44,30 @@ export default function VoiceSelection() {
   const businessType = location.state?.businessType;
   const defaultVoice = voices[0];
   const [voice, setVoice] = useState(defaultVoice.value);
-  const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.gender));
+  const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.value));
   const [greeting, setGreeting] = useState(
-    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.gender)} speaking. This call may be recorded for quality assurance. How can I help you today?`
+    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.value)} speaking. How can I help you today?`
   );
-  const [collectInfo, setCollectInfo] = useState({
-    fullName: true,
-    phoneNumber: true,
-    emailAddress: false,
-  });
-  const [includeLegalDisclaimer, setIncludeLegalDisclaimer] = useState(true);
 
-  const disclaimerText = "This call may be recorded for quality assurance. ";
-
-  // Update greeting when assistant name changes
+  // Update greeting and assistant name when voice changes
   useEffect(() => {
-    const baseGreeting = `You've reached [Business Name]. This is ${assistantName} speaking. `;
-    const hasDisclaimer = includeLegalDisclaimer;
-    const endingText = "How can I help you today?";
-    
-    setGreeting(
-      hasDisclaimer 
-        ? baseGreeting + disclaimerText + endingText
-        : baseGreeting + endingText
-    );
-  }, [assistantName]);
-
-  // Update greeting when disclaimer checkbox changes
-  useEffect(() => {
-    if (includeLegalDisclaimer) {
-      // Add disclaimer if not already present
-      if (!greeting.includes(disclaimerText.trim())) {
-        // Find a good position to insert (after assistant introduction)
-        const speakingIndex = greeting.indexOf('speaking. ');
-        if (speakingIndex !== -1) {
-          const beforeDisclaimer = greeting.slice(0, speakingIndex + 10);
-          const afterDisclaimer = greeting.slice(speakingIndex + 10);
-          setGreeting(beforeDisclaimer + disclaimerText + afterDisclaimer);
-        } else {
-          setGreeting(greeting + " " + disclaimerText);
-        }
-      }
-    } else {
-      // Remove disclaimer if present
-      setGreeting(greeting.replace(disclaimerText, ""));
-    }
-  }, [includeLegalDisclaimer]);
+    const newName = getDefaultAssistantName(voice);
+    setAssistantName(newName);
+    setGreeting(`You've reached [Business Name]. This is ${newName} speaking. How can I help you today?`);
+  }, [voice]);
 
   const handleBack = () => {
     navigate("/onboarding/business");
   };
 
   const handleNext = () => {
-    if (voice && assistantName) {
-      navigate("/onboarding/faq", { state: { businessType } });
+    if (voice && assistantName && greeting) {
+      navigate("/onboarding/signup", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/faq", { state: { businessType } });
+    navigate("/onboarding/signup", { state: { businessType } });
   };
 
   const getVoiceLabel = (voiceValue: string) => {
@@ -125,7 +86,7 @@ export default function VoiceSelection() {
       onBack={handleBack}
       onNext={handleNext}
       onSkip={handleSkip}
-      nextDisabled={!voice || !assistantName}
+      nextDisabled={!voice || !assistantName || !greeting}
     >
       <div className="space-y-8">
         <div>
@@ -138,23 +99,10 @@ export default function VoiceSelection() {
         </div>
 
         <div className="space-y-8">
-          {/* Assistant Name */}
-          <div className="space-y-2">
-            <Label htmlFor="assistantName" className="text-foreground">
-              Assistant name
-            </Label>
-            <Input
-              id="assistantName"
-              value={assistantName}
-              onChange={(e) => setAssistantName(e.target.value)}
-              placeholder="Assistant name"
-            />
-          </div>
-
           {/* Voice Selection */}
           <div className="space-y-2">
             <Label htmlFor="voice" className="text-foreground">
-              Assistant voice
+              Assistant voice <span className="text-destructive">*</span>
             </Label>
             <div className="flex gap-2">
               <Select value={voice} onValueChange={setVoice}>
@@ -185,11 +133,24 @@ export default function VoiceSelection() {
             </div>
           </div>
 
+          {/* Assistant Name */}
+          <div className="space-y-2">
+            <Label htmlFor="assistantName" className="text-foreground">
+              Assistant name
+            </Label>
+            <Input
+              id="assistantName"
+              value={assistantName}
+              onChange={(e) => setAssistantName(e.target.value)}
+              placeholder="Assistant name"
+            />
+          </div>
+
           {/* Greeting */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="greeting" className="text-foreground">
-                Greeting
+                Greeting <span className="text-destructive">*</span>
               </Label>
               <p className="text-xs text-muted-foreground">{charCount}/280</p>
             </div>
@@ -204,30 +165,6 @@ export default function VoiceSelection() {
               className="min-h-[80px] resize-none"
               maxLength={280}
             />
-            <div className="flex items-center space-x-3">
-              <Checkbox
-                id="legalDisclaimer"
-                checked={includeLegalDisclaimer}
-                onCheckedChange={(checked) => setIncludeLegalDisclaimer(checked === true)}
-                className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-              />
-              <Label
-                htmlFor="legalDisclaimer"
-                className="text-sm font-normal text-foreground cursor-pointer flex items-center gap-1.5"
-              >
-                Include a legal disclaimer
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      <p>Informs callers that the conversation may be recorded for quality assurance and legal compliance purposes.</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </Label>
-            </div>
           </div>
 
           {/* Preview Button */}
@@ -240,43 +177,6 @@ export default function VoiceSelection() {
               <Play className="h-4 w-4 mr-2" />
               Hear Assistant greeting
             </Button>
-          </div>
-
-          {/* Information to collect from callers */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-medium text-foreground mb-1">
-                What should your assistant ask callers?
-              </h3>
-            </div>
-
-            <div className="space-y-4">
-              {[
-                { id: "fullName", label: "Full name (Recommended)" },
-                { id: "phoneNumber", label: "Phone number (Recommended)" },
-                { id: "emailAddress", label: "Email address" }
-              ].map(option => (
-                <div key={option.id} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={option.id}
-                    checked={collectInfo[option.id as keyof typeof collectInfo]}
-                    onCheckedChange={(checked) =>
-                      setCollectInfo({
-                        ...collectInfo,
-                        [option.id]: checked === true
-                      })
-                    }
-                    className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <Label
-                    htmlFor={option.id}
-                    className="text-sm font-normal text-foreground cursor-pointer"
-                  >
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

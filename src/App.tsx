@@ -8,6 +8,7 @@ import BusinessDetails from "./pages/onboarding/BusinessDetails";
 import VoiceSelection from "./pages/onboarding/VoiceSelection";
 import FAQ from "./pages/onboarding/FAQ";
 import Success from "./pages/onboarding/Success";
+import OnboardingSignup from "./pages/onboarding/Signup";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
@@ -27,8 +28,10 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/onboarding/business" element={<BusinessDetails />} />
-          <Route path="/onboarding/voice" element={<VoiceSelection />} />
+          <Route path="/onboarding/assistant_settings" element={<VoiceSelection />} />
+          <Route path="/onboarding/voice" element={<Navigate to="/onboarding/assistant_settings" replace />} />
           <Route path="/onboarding/faq" element={<FAQ />} />
+          <Route path="/onboarding/signup" element={<OnboardingSignup />} />
           <Route path="/onboarding/success" element={<Success />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

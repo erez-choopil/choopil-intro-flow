@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AlertCircle, Sparkles, Loader2 } from "lucide-react";
 
 const professionals = [
@@ -66,6 +68,7 @@ export default function BusinessDetails() {
   const navigate = useNavigate();
   const [isLoadingWebsite, setIsLoadingWebsite] = useState(false);
   const [autoFillSource, setAutoFillSource] = useState<"website" | "google">("website");
+  const [openProfessional, setOpenProfessional] = useState(false);
   const [formData, setFormData] = useState({
     website: "",
     businessName: "",
@@ -198,12 +201,12 @@ export default function BusinessDetails() {
       const businessType = formData.professional === "Other" 
         ? formData.otherProfessional || "Other" 
         : formData.professional;
-      navigate("/onboarding/voice", { state: { businessType } });
+      navigate("/onboarding/assistant_settings", { state: { businessType } });
     }
   };
 
   const handleSkip = () => {
-    navigate("/onboarding/voice");
+    navigate("/onboarding/assistant_settings");
   };
 
   const charCount = formData.description.length;
@@ -325,24 +328,40 @@ export default function BusinessDetails() {
             <Label htmlFor="professional" className="text-foreground">
               Business Type <span className="text-destructive">*</span>
             </Label>
-            <Select
-              value={formData.professional}
-              onValueChange={(value) => handleChange("professional", value)}
-            >
-              <SelectTrigger
-                id="professional"
-                className={errors.professional && touched.professional ? "border-destructive" : ""}
-              >
-                <SelectValue placeholder="Select your profession" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                {professionals.map((professional) => (
-                  <SelectItem key={professional} value={professional}>
-                    {professional}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={openProfessional} onOpenChange={setOpenProfessional}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openProfessional}
+                  className="w-full justify-between"
+                >
+                  {formData.professional || "Select your profession"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Search business type..." />
+                  <CommandList>
+                    <CommandEmpty>No business type found.</CommandEmpty>
+                    <CommandGroup>
+                      {professionals.map((professional) => (
+                        <CommandItem
+                          key={professional}
+                          value={professional}
+                          onSelect={() => {
+                            handleChange("professional", professional);
+                            setOpenProfessional(false);
+                          }}
+                        >
+                          {professional}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             {formData.professional === "Other" && (
               <Input
                 placeholder="Please specify"
