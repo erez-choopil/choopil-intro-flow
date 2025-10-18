@@ -46,14 +46,13 @@ export default function VoiceSelection() {
   const [voice, setVoice] = useState(defaultVoice.value);
   const [assistantName, setAssistantName] = useState(getDefaultAssistantName(defaultVoice.value));
   const [greeting, setGreeting] = useState(
-    `You've reached [Business Name]. This is ${getDefaultAssistantName(defaultVoice.value)} speaking. How can I help you today?`
+    "HI, You've reached [Business Name]. How can I help you today?"
   );
 
-  // Update greeting and assistant name when voice changes
+  // Update assistant name when voice changes
   useEffect(() => {
     const newName = getDefaultAssistantName(voice);
     setAssistantName(newName);
-    setGreeting(`You've reached [Business Name]. This is ${newName} speaking. How can I help you today?`);
   }, [voice]);
 
   const handleBack = () => {
