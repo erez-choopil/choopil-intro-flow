@@ -77,12 +77,11 @@ export function OnboardingLayout({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[680px] mx-auto px-6 py-8 md:py-12">
+      <div className="max-w-[680px] mx-auto py-8 px-0 md:py-[48px]">
         {children}
 
         {/* Navigation */}
-        {!hideNavigation && (
-          <div className="flex items-center justify-between mt-8 gap-4">
+        {!hideNavigation && <div className="flex items-center justify-between mt-8 gap-4">
             <div className="flex gap-3">
               {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground hover:bg-transparent justify-start pl-0">
                   <ChevronLeft className="h-4 w-4" />
@@ -96,8 +95,7 @@ export function OnboardingLayout({
             {onNext && <Button onClick={onNext} disabled={nextDisabled} className="min-w-[100px]">
                 {nextLabel}
               </Button>}
-          </div>
-        )}
+          </div>}
       </div>
     </div>;
 }
