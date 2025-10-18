@@ -84,7 +84,7 @@ export function OnboardingLayout({
         {!hideNavigation && (
           <div className="flex items-center justify-between mt-8 gap-4">
             <div className="flex gap-3">
-              {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground justify-start pl-0">
+              {onBack && <Button variant="ghost" onClick={onBack} className="text-secondary hover:text-foreground hover:bg-transparent justify-start pl-0">
                   <ChevronLeft className="h-4 w-4" />
                   Back
                 </Button>}
