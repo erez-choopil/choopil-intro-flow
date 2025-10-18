@@ -103,10 +103,6 @@ export default function BusinessDetails() {
         return value.replace(/\D/g, "").length === 10
           ? ""
           : "Your business phone helps us personalize your assistant";
-      case "description":
-        return value.trim()
-          ? ""
-          : "Help us understand what you do so your assistant can answer questions";
       default:
         return "";
     }
@@ -434,18 +430,9 @@ export default function BusinessDetails() {
                   handleChange("description", e.target.value);
                 }
               }}
-              onBlur={() => handleBlur("description")}
-              className={`min-h-[100px] resize-none ${
-                errors.description && touched.description ? "border-destructive" : ""
-              }`}
+              className="min-h-[100px] resize-none"
               maxLength={300}
             />
-            {errors.description && touched.description && (
-              <p className="text-sm text-destructive flex items-center gap-1">
-                <AlertCircle className="h-3 w-3" />
-                {errors.description}
-              </p>
-            )}
           </div>
         </div>
       </div>
