@@ -15,7 +15,7 @@ interface OnboardingLayoutProps {
   maxWidth?: string;
 }
 const steps = [{
-  label: "Your Business Profile",
+  label: "Business Profile",
   path: "/onboarding/business"
 }, {
   label: "Customize Your Assistant",
