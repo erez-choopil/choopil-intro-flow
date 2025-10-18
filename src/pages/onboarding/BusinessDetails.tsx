@@ -164,11 +164,11 @@ export default function BusinessDetails() {
         <div className="space-y-6">
           {/* Website/Google Auto-fill Section */}
           <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border">
-            <div className="flex gap-2 p-1 bg-background rounded-md w-fit">
-              <Button type="button" variant={autoFillSource === "website" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("website")} className="text-sm">
+            <div className="flex gap-2 p-1 bg-background rounded-md w-fit border border-border">
+              <Button type="button" variant={autoFillSource === "website" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("website")} className={`text-sm ${autoFillSource !== "website" ? "border border-border hover:bg-accent" : ""}`}>
                 Website
               </Button>
-              <Button type="button" variant={autoFillSource === "google" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("google")} className="text-sm">
+              <Button type="button" variant={autoFillSource === "google" ? "default" : "ghost"} size="sm" onClick={() => setAutoFillSource("google")} className={`text-sm ${autoFillSource !== "google" ? "border border-border hover:bg-accent" : ""}`}>
                 Google Business Profile
               </Button>
             </div>
