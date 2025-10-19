@@ -3,15 +3,54 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { AlertCircle } from "lucide-react";
+
+const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" });
 
 export function SignupForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [touched, setTouched] = useState(false);
+
+  const validateEmail = (value: string) => {
+    try {
+      emailSchema.parse(value);
+      setEmailError("");
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setEmailError(error.errors[0].message);
+      }
+      return false;
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setTouched(true);
+    if (email) {
+      validateEmail(email);
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (touched) {
+      validateEmail(value);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched(true);
+    
+    if (!validateEmail(email)) {
+      return;
+    }
+    
     // Handle signup logic here
     navigate("/dashboard");
   };
@@ -74,10 +113,17 @@ export function SignupForm() {
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                onBlur={handleEmailBlur}
                 required
-                className="h-12"
+                className={`h-12 ${emailError && touched ? "border-destructive" : ""}`}
               />
+              {emailError && touched && (
+                <p className="text-sm text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
