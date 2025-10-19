@@ -217,7 +217,7 @@ export default function BusinessDetails() {
           {/* Professional */}
           <div className="space-y-2">
             <Label htmlFor="professional" className="text-foreground">
-              Business Type <span className="text-destructive">*</span>
+              Business type <span className="text-destructive">*</span>
             </Label>
             <Popover open={openProfessional} onOpenChange={setOpenProfessional}>
               <PopoverTrigger asChild>
