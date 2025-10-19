@@ -23,9 +23,6 @@ export function SignupForm() {
           <h2 className="text-2xl font-bold text-foreground">
             Create Your Account
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Free for 7 days
-          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

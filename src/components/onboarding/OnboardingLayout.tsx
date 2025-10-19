@@ -81,7 +81,7 @@ export function OnboardingLayout({
       {/* Main Content */}
       <div style={{
       maxWidth
-    }} className="mx-auto py-8 md:py-[48px] px-6 md:px-[96px] pb-32">
+    }} className="mx-auto py-8 md:py-[48px] px-6 md:px-[96px] pb-40">
         {children}
       </div>
 
