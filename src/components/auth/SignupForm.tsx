@@ -18,7 +18,7 @@ export function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="border border-border rounded-lg p-8 bg-card shadow-sm space-y-6">
+      <div className="space-y-6 p-8 bg-muted/30 rounded-lg border border-border">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
             Create Your Account
