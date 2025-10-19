@@ -7,6 +7,7 @@ import { z } from "zod";
 import { AlertCircle } from "lucide-react";
 
 const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" });
+const passwordSchema = z.string().min(8, { message: "Password must be at least 8 characters" });
 
 export function SignupForm() {
   const navigate = useNavigate();
@@ -14,7 +15,9 @@ export function SignupForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [touched, setTouched] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [touchedEmail, setTouchedEmail] = useState(false);
+  const [touchedPassword, setTouchedPassword] = useState(false);
 
   const validateEmail = (value: string) => {
     try {
@@ -29,8 +32,21 @@ export function SignupForm() {
     }
   };
 
+  const validatePassword = (value: string) => {
+    try {
+      passwordSchema.parse(value);
+      setPasswordError("");
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setPasswordError(error.errors[0].message);
+      }
+      return false;
+    }
+  };
+
   const handleEmailBlur = () => {
-    setTouched(true);
+    setTouchedEmail(true);
     if (email) {
       validateEmail(email);
     }
@@ -38,16 +54,34 @@ export function SignupForm() {
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    if (touched) {
+    if (touchedEmail) {
       validateEmail(value);
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    setTouchedPassword(true);
+    if (password) {
+      validatePassword(password);
+    }
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (touchedPassword) {
+      validatePassword(value);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched(true);
+    setTouchedEmail(true);
+    setTouchedPassword(true);
     
-    if (!validateEmail(email)) {
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    
+    if (!isEmailValid || !isPasswordValid) {
       return;
     }
     
@@ -116,9 +150,9 @@ export function SignupForm() {
                 onChange={(e) => handleEmailChange(e.target.value)}
                 onBlur={handleEmailBlur}
                 required
-                className={`h-12 ${emailError && touched ? "border-destructive" : ""}`}
+                className={`h-12 ${emailError && touchedEmail ? "border-destructive" : ""}`}
               />
-              {emailError && touched && (
+              {emailError && touchedEmail && (
                 <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {emailError}
@@ -135,10 +169,17 @@ export function SignupForm() {
                 type="password"
                 placeholder="Create a password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                onBlur={handlePasswordBlur}
                 required
-                className="h-12"
+                className={`h-12 ${passwordError && touchedPassword ? "border-destructive" : ""}`}
               />
+              {passwordError && touchedPassword && (
+                <p className="text-sm text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             <Button
