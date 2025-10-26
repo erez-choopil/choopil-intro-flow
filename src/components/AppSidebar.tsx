@@ -1,4 +1,4 @@
-import { Phone, Bot, Settings, Puzzle, Sparkles, HelpCircle, MessageSquare, FileText, ChevronDown, ChevronRight } from "lucide-react";
+import { Phone, Bot, Settings, Puzzle, Sparkles, HelpCircle, MessageSquare, FileText } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -17,12 +17,13 @@ import choopilLogo from "@/assets/choopil-logo.svg";
 
 const agentSubItems = [
   { title: "Agent settings", url: "/dashboard/agent/settings" },
-  { title: "Knowledge", url: "/dashboard/agent/knowledge" },
+  { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
   { title: "Ask questions", url: "/dashboard/agent/questions" },
   { title: "Transfer calls", url: "/dashboard/agent/transfer" },
   { title: "Send texts", url: "/dashboard/agent/texts" },
   { title: "Scheduling", url: "/dashboard/agent/scheduling" },
   { title: "Notifications", url: "/dashboard/agent/notifications" },
+  { title: "Call filtering", url: "/dashboard/agent/filtering" },
 ];
 
 const accountSubItems = [
@@ -36,6 +37,20 @@ export function AppSidebar() {
   
   const isAgentActive = location.pathname.startsWith("/dashboard/agent");
   const isAccountActive = location.pathname.startsWith("/dashboard/account");
+  
+  const handleAgentToggle = () => {
+    if (!agentOpen) {
+      setAgentOpen(true);
+      setAccountOpen(false);
+    }
+  };
+  
+  const handleAccountToggle = () => {
+    if (!accountOpen) {
+      setAccountOpen(true);
+      setAgentOpen(false);
+    }
+  };
   
   return (
     <Sidebar className="border-r">
@@ -69,7 +84,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
 
               {/* Agent - Collapsible */}
-              <Collapsible open={agentOpen} onOpenChange={setAgentOpen}>
+              <Collapsible open={agentOpen} onOpenChange={handleAgentToggle}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
                     isAgentActive
@@ -78,7 +93,6 @@ export function AppSidebar() {
                   }`}>
                     <Bot className="h-4 w-4" />
                     <span className="flex-1 text-left">Agent</span>
-                    {agentOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent className="ml-4 mt-1 space-y-1">
@@ -101,7 +115,7 @@ export function AppSidebar() {
               </Collapsible>
 
               {/* Account - Collapsible */}
-              <Collapsible open={accountOpen} onOpenChange={setAccountOpen}>
+              <Collapsible open={accountOpen} onOpenChange={handleAccountToggle}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
                     isAccountActive
@@ -110,7 +124,6 @@ export function AppSidebar() {
                   }`}>
                     <Settings className="h-4 w-4" />
                     <span className="flex-1 text-left">Account</span>
-                    {accountOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent className="ml-4 mt-1 space-y-1">

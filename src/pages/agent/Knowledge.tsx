@@ -7,7 +7,7 @@ export default function Knowledge() {
     <div className="p-8 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Knowledge</h1>
+          <h1 className="text-2xl font-bold text-foreground">Business knowledge</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Add information about your business or custom instructions
           </p>
