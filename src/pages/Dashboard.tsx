@@ -72,24 +72,24 @@ export default function Dashboard() {
           <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-6 z-10">
           </header>
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard/calls" replace />} />
-            <Route path="/calls" element={<CallsPage />} />
-            <Route path="/calls/table" element={<CallsTable />} />
+            <Route path="/" element={<Navigate to="calls" replace />} />
+            <Route path="calls" element={<CallsPage />} />
+            <Route path="calls/table" element={<CallsTable />} />
             
             {/* Agent routes */}
-            <Route path="/agent/settings" element={<AgentSettings />} />
-            <Route path="/agent/knowledge" element={<Knowledge />} />
-            <Route path="/agent/questions" element={<AskQuestions />} />
-            <Route path="/agent/transfer" element={<TransferCalls />} />
-            <Route path="/agent/texts" element={<SendTexts />} />
-            <Route path="/agent/scheduling" element={<Scheduling />} />
-            <Route path="/agent/notifications" element={<Notifications />} />
-            <Route path="/agent/filtering" element={<CallFiltering />} />
+            <Route path="agent/settings" element={<AgentSettings />} />
+            <Route path="agent/knowledge" element={<Knowledge />} />
+            <Route path="agent/questions" element={<AskQuestions />} />
+            <Route path="agent/transfer" element={<TransferCalls />} />
+            <Route path="agent/texts" element={<SendTexts />} />
+            <Route path="agent/scheduling" element={<Scheduling />} />
+            <Route path="agent/notifications" element={<Notifications />} />
+            <Route path="agent/filtering" element={<CallFiltering />} />
             
             {/* Account routes */}
-            <Route path="/account/billing" element={<Billing />} />
+            <Route path="account/billing" element={<Billing />} />
             
-            <Route path="/integrations" element={<IntegrationsPage />} />
+            <Route path="integrations" element={<IntegrationsPage />} />
           </Routes>
         </main>
       </div>
