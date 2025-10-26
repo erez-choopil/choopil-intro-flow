@@ -51,6 +51,9 @@ import CallFiltering from "./agent/CallFiltering";
 // Account pages
 import Billing from "./account/Billing";
 
+// Calls pages
+import CallsTable from "./calls/CallsTable";
+
 function IntegrationsPage() {
   return (
     <div className="p-8">
@@ -71,6 +74,7 @@ export default function Dashboard() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard/calls" replace />} />
             <Route path="/calls" element={<CallsPage />} />
+            <Route path="/calls/table" element={<CallsTable />} />
             
             {/* Agent routes */}
             <Route path="/agent/settings" element={<AgentSettings />} />
