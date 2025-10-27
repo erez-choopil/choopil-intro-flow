@@ -1,5 +1,5 @@
 import { Phone, Bot, Settings, Puzzle, Sparkles, HelpCircle, MessageSquare, FileText } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
   Sidebar,
@@ -32,6 +32,7 @@ const accountSubItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [agentOpen, setAgentOpen] = useState(true);
   const [accountOpen, setAccountOpen] = useState(false);
   
@@ -42,6 +43,7 @@ export function AppSidebar() {
     if (!agentOpen) {
       setAgentOpen(true);
       setAccountOpen(false);
+      navigate("/dashboard/agent/settings");
     }
   };
   
@@ -49,6 +51,7 @@ export function AppSidebar() {
     if (!accountOpen) {
       setAccountOpen(true);
       setAgentOpen(false);
+      navigate("/dashboard/account/billing");
     }
   };
   
@@ -73,8 +76,8 @@ export function AppSidebar() {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
                     }`
                   }
                 >
@@ -88,8 +91,8 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
                     isAgentActive
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                      ? "text-primary font-bold"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}>
                     <Bot className="h-4 w-4" />
                     <span className="flex-1 text-left">Agent</span>
@@ -103,8 +106,8 @@ export function AppSidebar() {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
                           isActive
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            ? "text-primary font-bold"
+                            : "text-muted-foreground hover:text-foreground"
                         }`
                       }
                     >
@@ -119,8 +122,8 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
                     isAccountActive
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                      ? "text-primary font-bold"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}>
                     <Settings className="h-4 w-4" />
                     <span className="flex-1 text-left">Account</span>
@@ -134,8 +137,8 @@ export function AppSidebar() {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
                           isActive
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                            ? "text-primary font-bold"
+                            : "text-muted-foreground hover:text-foreground"
                         }`
                       }
                     >
@@ -152,8 +155,8 @@ export function AppSidebar() {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
                     }`
                   }
                 >

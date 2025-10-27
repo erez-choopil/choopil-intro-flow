@@ -51,24 +51,16 @@ export default function AgentSettings() {
           </p>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Agent's name</Label>
-                <Input 
-                  value={agentName} 
-                  onChange={(e) => setAgentName(e.target.value)}
-                  placeholder="Cassidy" 
-                />
-                <p className="text-xs text-muted-foreground">
-                  Choose what name your agent uses when greeting callers.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label>&nbsp;</Label>
-                <Button variant="outline" className="w-full">
-                  Randomize
-                </Button>
-              </div>
+            <div className="space-y-2">
+              <Label>Agent's name</Label>
+              <Input 
+                value={agentName} 
+                onChange={(e) => setAgentName(e.target.value)}
+                placeholder="Cassidy" 
+              />
+              <p className="text-xs text-muted-foreground">
+                Choose what name your agent uses when greeting callers.
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -90,19 +82,6 @@ export default function AgentSettings() {
                   <Play className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tone</Label>
-              <Select defaultValue="friendly">
-                <SelectTrigger className="max-w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="friendly">Friendly</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
         </div>
