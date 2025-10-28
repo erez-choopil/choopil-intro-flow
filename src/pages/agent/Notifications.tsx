@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Plus, User, Trash2 } from "lucide-react";
+import { Plus, User, Trash2, HelpCircle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
 
 interface NotificationPerson {
@@ -13,8 +14,8 @@ interface NotificationPerson {
   name: string;
   email?: string;
   phone?: string;
-  emailNotification: "off" | "on" | "conditional";
-  smsNotification: "off" | "on" | "conditional";
+  emailNotification: "off" | "on";
+  smsNotification: "off" | "on";
   customCondition: boolean;
   spamEmail: boolean;
   spamSMS: boolean;
@@ -47,8 +48,8 @@ export default function Notifications() {
     name: "",
     email: "",
     phone: "",
-    emailNotification: "off" as "off" | "on" | "conditional",
-    smsNotification: "off" as "off" | "on" | "conditional",
+    emailNotification: "off" as "off" | "on",
+    smsNotification: "off" as "off" | "on",
     spamEmail: false,
     spamSMS: false,
     blockedEmail: false,
@@ -56,6 +57,18 @@ export default function Notifications() {
     hungUpEmail: false,
     hungUpSMS: false,
   });
+
+  // Validation functions
+  const isValidEmail = (email: string) => {
+    return email.trim() !== "" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const isValidPhone = (phone: string) => {
+    return phone.trim() !== "";
+  };
+
+  const showEmailError = formData.emailNotification === "on" && !isValidEmail(formData.email);
+  const showPhoneError = formData.smsNotification === "on" && !isValidPhone(formData.phone);
 
   const handleAddPerson = () => {
     if (formData.name.trim()) {
@@ -66,7 +79,7 @@ export default function Notifications() {
         phone: formData.phone,
         emailNotification: formData.emailNotification,
         smsNotification: formData.smsNotification,
-        customCondition: formData.emailNotification === "conditional" || formData.smsNotification === "conditional",
+        customCondition: false,
         spamEmail: formData.spamEmail,
         spamSMS: formData.spamSMS,
         blockedEmail: formData.blockedEmail,
@@ -188,7 +201,14 @@ export default function Notifications() {
                   placeholder="name@company.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className={showEmailError ? "border-red-500" : ""}
                 />
+                {showEmailError && (
+                  <div className="flex items-center gap-1 text-red-500" style={{ fontSize: '12px' }}>
+                    <X className="h-3 w-3" />
+                    <span>Please provide a valid email</span>
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone number</Label>
@@ -206,8 +226,15 @@ export default function Notifications() {
                     placeholder="(919) 555-2171"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className={showPhoneError ? "border-red-500" : ""}
                   />
                 </div>
+                {showPhoneError && (
+                  <div className="flex items-center gap-1 text-red-500" style={{ fontSize: '12px' }}>
+                    <X className="h-3 w-3" />
+                    <span>Please enter a valid phone number in the international format</span>
+                  </div>
+                )}
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -234,14 +261,6 @@ export default function Notifications() {
                   >
                     On
                   </Button>
-                  <Button
-                    type="button"
-                    variant={formData.emailNotification === "conditional" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, emailNotification: "conditional" })}
-                  >
-                    Only if...
-                  </Button>
                 </div>
               </div>
 
@@ -264,14 +283,6 @@ export default function Notifications() {
                   >
                     On
                   </Button>
-                  <Button
-                    type="button"
-                    variant={formData.smsNotification === "conditional" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, smsNotification: "conditional" })}
-                  >
-                    Only if...
-                  </Button>
                 </div>
               </div>
             </div>
@@ -284,85 +295,117 @@ export default function Notifications() {
                 </p>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="font-normal">Spam</Label>
-                  <div className="flex items-center gap-8">
+              <TooltipProvider>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="spam-email"
-                        checked={formData.spamEmail}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, spamEmail: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="spam-email" className="text-sm">Email</label>
+                      <Label className="font-normal">Spam</Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="bg-gray-900 text-white">
+                          <p>Detected as spam based on the content of the call</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="spam-sms"
-                        checked={formData.spamSMS}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, spamSMS: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="spam-sms" className="text-sm">SMS</label>
+                    <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="spam-email"
+                          checked={formData.spamEmail}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, spamEmail: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="spam-email" className="text-sm">Email</label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="spam-sms"
+                          checked={formData.spamSMS}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, spamSMS: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="spam-sms" className="text-sm">SMS</label>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <Label className="font-normal">Blocked</Label>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="blocked-email"
-                        checked={formData.blockedEmail}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, blockedEmail: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="blocked-email" className="text-sm">Email</label>
+                      <Label className="font-normal">Blocked</Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="bg-gray-900 text-white">
+                          <p>Calls from numbers you've put on your block list</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="blocked-sms"
-                        checked={formData.blockedSMS}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, blockedSMS: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="blocked-sms" className="text-sm">SMS</label>
+                    <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="blocked-email"
+                          checked={formData.blockedEmail}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, blockedEmail: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="blocked-email" className="text-sm">Email</label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="blocked-sms"
+                          checked={formData.blockedSMS}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, blockedSMS: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="blocked-sms" className="text-sm">SMS</label>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <Label className="font-normal">Hung up</Label>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="hung-email"
-                        checked={formData.hungUpEmail}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, hungUpEmail: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="hung-email" className="text-sm">Email</label>
+                      <Label className="font-normal">Hung up</Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="bg-gray-900 text-white">
+                          <p>Caller didn't say anything or hung up in under 15 seconds</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="hung-sms"
-                        checked={formData.hungUpSMS}
-                        onCheckedChange={(checked) => 
-                          setFormData({ ...formData, hungUpSMS: checked as boolean })
-                        }
-                      />
-                      <label htmlFor="hung-sms" className="text-sm">SMS</label>
+                    <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="hung-email"
+                          checked={formData.hungUpEmail}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, hungUpEmail: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="hung-email" className="text-sm">Email</label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="hung-sms"
+                          checked={formData.hungUpSMS}
+                          onCheckedChange={(checked) => 
+                            setFormData({ ...formData, hungUpSMS: checked as boolean })
+                          }
+                        />
+                        <label htmlFor="hung-sms" className="text-sm">SMS</label>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </TooltipProvider>
             </div>
           </div>
 
