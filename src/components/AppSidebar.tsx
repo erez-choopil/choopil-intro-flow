@@ -40,19 +40,25 @@ export function AppSidebar() {
   const isAccountActive = location.pathname.startsWith("/dashboard/account");
   
   const handleAgentToggle = () => {
-    if (!agentOpen) {
-      setAgentOpen(true);
-      setAccountOpen(false);
-      navigate("/dashboard/agent/settings");
-    }
+    setAgentOpen(true);
+    setAccountOpen(false);
+    navigate("/dashboard/agent/settings");
   };
   
   const handleAccountToggle = () => {
-    if (!accountOpen) {
-      setAccountOpen(true);
-      setAgentOpen(false);
-      navigate("/dashboard/account/billing");
-    }
+    setAccountOpen(true);
+    setAgentOpen(false);
+    navigate("/dashboard/account/billing");
+  };
+
+  const handleCallsClick = () => {
+    setAgentOpen(false);
+    setAccountOpen(false);
+  };
+
+  const handleIntegrationsClick = () => {
+    setAgentOpen(false);
+    setAccountOpen(false);
   };
   
   return (
@@ -73,6 +79,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <NavLink
                   to="/dashboard/calls"
+                  onClick={handleCallsClick}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
@@ -152,6 +159,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <NavLink
                   to="/dashboard/integrations"
+                  onClick={handleIntegrationsClick}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
@@ -170,20 +178,23 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4 space-y-2">
-        <div className="flex items-center gap-2 px-2 py-1.5 text-sm">
-          <Sparkles className="h-4 w-4 text-secondary" />
-          <div className="flex-1">
-            <span className="font-medium text-foreground">Trial</span>
-            <span className="text-muted-foreground ml-2">14 days left</span>
+        <div className="bg-purple-50 dark:bg-purple-950/20 rounded-lg p-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 bg-purple-600 text-white px-2 py-1 rounded-md text-xs font-medium">
+              <Sparkles className="h-3 w-3" />
+              <span>Trial</span>
+            </div>
+            <span className="text-sm font-medium text-purple-600 dark:text-purple-400">14 days left</span>
           </div>
+          
+          <Button 
+            variant="outline" 
+            className="w-full justify-center text-sm font-medium bg-white dark:bg-background hover:bg-gray-50 dark:hover:bg-accent"
+            onClick={() => navigate("/dashboard/account/billing")}
+          >
+            Upgrade now
+          </Button>
         </div>
-        
-        <Button 
-          variant="outline" 
-          className="w-full justify-start text-sm font-normal"
-        >
-          Upgrade now
-        </Button>
 
         <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
           <HelpCircle className="h-4 w-4" />

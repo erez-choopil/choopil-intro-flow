@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Play } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const voices = [
   { value: "aria", label: "Aria", gender: "Female" },
@@ -16,9 +17,34 @@ const voices = [
 ];
 
 export default function AgentSettings() {
+  const { toast } = useToast();
   const [agentName, setAgentName] = useState("Cassidy");
   const [greetingMessage, setGreetingMessage] = useState("You've reached Goody. How can I help you today?");
   const [goodbyeMessage, setGoodbyeMessage] = useState("Thanks for calling. Have a great day.");
+
+  const handleSaveSettings = () => {
+    if (!greetingMessage.trim()) {
+      toast({
+        title: "Greeting Message is required",
+        description: "Please enter a greeting message before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!goodbyeMessage.trim()) {
+      toast({
+        title: "Goodbye Message is required",
+        description: "Please enter a goodbye message before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Settings saved",
+      description: "Your agent settings have been saved successfully.",
+    });
+  };
+
   return (
     <div className="p-8 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
@@ -56,7 +82,8 @@ export default function AgentSettings() {
               <Input 
                 value={agentName} 
                 onChange={(e) => setAgentName(e.target.value)}
-                placeholder="Cassidy" 
+                placeholder="Cassidy"
+                className="max-w-xs"
               />
               <p className="text-xs text-muted-foreground">
                 Choose what name your agent uses when greeting callers.
@@ -91,7 +118,9 @@ export default function AgentSettings() {
           <Label className="text-base font-semibold text-foreground">Start & Ending</Label>
 
           <div className="space-y-2">
-            <Label>Greeting Message</Label>
+            <Label>
+              Greeting Message <span className="text-destructive">*</span>
+            </Label>
             <Textarea
               value={greetingMessage}
               onChange={(e) => setGreetingMessage(e.target.value)}
@@ -101,7 +130,9 @@ export default function AgentSettings() {
           </div>
 
           <div className="space-y-2">
-            <Label>Goodbye Message</Label>
+            <Label>
+              Goodbye Message <span className="text-destructive">*</span>
+            </Label>
             <Textarea
               value={goodbyeMessage}
               onChange={(e) => setGoodbyeMessage(e.target.value)}
@@ -110,7 +141,7 @@ export default function AgentSettings() {
             />
           </div>
           
-          <Button className="bg-success hover:bg-success/90">Save settings</Button>
+          <Button onClick={handleSaveSettings} className="bg-success hover:bg-success/90">Save settings</Button>
         </div>
       </div>
     </div>
