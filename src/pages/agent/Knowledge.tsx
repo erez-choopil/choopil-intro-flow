@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2, Info } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate, useBlocker } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
@@ -44,10 +43,7 @@ type FAQ = {
 };
 
 export default function Knowledge() {
-  const navigate = useNavigate();
   const [hasChanges, setHasChanges] = useState(false);
-  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
-  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
   // General Business Information
   const [businessName, setBusinessName] = useState("");
@@ -78,17 +74,18 @@ export default function Knowledge() {
   const [newFaqCategory, setNewFaqCategory] = useState("General");
   const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
 
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      hasChanges && currentLocation.pathname !== nextLocation.pathname
-  );
-
+  // Warn user before leaving page with unsaved changes
   useEffect(() => {
-    if (blocker.state === "blocked") {
-      setShowUnsavedDialog(true);
-      setPendingNavigation(blocker.location.pathname);
-    }
-  }, [blocker]);
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasChanges]);
 
   const markAsChanged = () => {
     setHasChanges(true);
@@ -112,28 +109,16 @@ export default function Knowledge() {
   };
 
   const handleCancel = () => {
-    // Reset all fields
-    setBusinessName("");
-    setBusinessAddress("");
-    setWebsite("");
-    setGoogleProfile("");
-    setAdditionalInfo("");
-    setHasChanges(false);
-  };
-
-  const handleStayOnPage = () => {
-    setShowUnsavedDialog(false);
-    setPendingNavigation(null);
-    if (blocker.state === "blocked") {
-      blocker.reset();
-    }
-  };
-
-  const handleLeavePage = () => {
-    setShowUnsavedDialog(false);
-    setHasChanges(false);
-    if (blocker.state === "blocked" && pendingNavigation) {
-      blocker.proceed();
+    if (hasChanges) {
+      if (window.confirm("You have unsaved changes. Are you sure you want to discard them?")) {
+        // Reset all fields
+        setBusinessName("");
+        setBusinessAddress("");
+        setWebsite("");
+        setGoogleProfile("");
+        setAdditionalInfo("");
+        setHasChanges(false);
+      }
     }
   };
 
@@ -656,22 +641,6 @@ export default function Knowledge() {
           </div>
         </div>
       </Card>
-
-      {/* Unsaved Changes Dialog */}
-      <AlertDialog open={showUnsavedDialog} onOpenChange={setShowUnsavedDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
-            <AlertDialogDescription>
-              You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleStayOnPage}>Stay</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLeavePage}>Leave</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
