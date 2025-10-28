@@ -262,6 +262,48 @@ export default function AccountSettings() {
             Change password
           </Button>
         </div>
+
+        {/* Other */}
+        <div className="space-y-4">
+          <Label className="text-base font-semibold text-foreground">Other</Label>
+
+          <div className="space-y-2">
+            <Label>Time zone</Label>
+            <Select defaultValue="eastern">
+              <SelectTrigger className="max-w-md">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="eastern">Eastern Time — 07:52 PM</SelectItem>
+                <SelectItem value="central">Central Time — 06:52 PM</SelectItem>
+                <SelectItem value="mountain">Mountain Time — 05:52 PM</SelectItem>
+                <SelectItem value="pacific">Pacific Time — 04:52 PM</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">
+              Used to display time in the app
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Language</Label>
+            <Select defaultValue="english">
+              <SelectTrigger className="max-w-md">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="spanish">Spanish</SelectItem>
+                <SelectItem value="french">French</SelectItem>
+                <SelectItem value="german">German</SelectItem>
+                <SelectItem value="hebrew">Hebrew</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">
+              Language used to translate call information
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

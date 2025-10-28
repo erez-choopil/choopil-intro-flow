@@ -50,6 +50,7 @@ import CallFiltering from "./agent/CallFiltering";
 
 // Settings pages
 import AccountSettings from "./settings/AccountSettings";
+import Checkout from "./settings/Checkout";
 import Billing from "./account/Billing";
 
 // Calls pages
@@ -90,6 +91,7 @@ export default function Dashboard() {
             <Route path="settings/account" element={<AccountSettings />} />
             <Route path="settings/notifications" element={<Notifications />} />
             <Route path="settings/billing" element={<Billing />} />
+            <Route path="settings/checkout" element={<Checkout />} />
             
             {/* Legacy account route redirect */}
             <Route path="account/billing" element={<Billing />} />

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Phone, Inbox, Clock } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const plans = [
   {
@@ -56,6 +57,11 @@ const plans = [
 
 export default function Billing() {
   const [annualBilling, setAnnualBilling] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSelectPlan = (plan: { name: string; price: string }) => {
+    navigate("/dashboard/settings/checkout", { state: plan });
+  };
 
   return (
     <div className="p-8">
@@ -147,6 +153,7 @@ export default function Billing() {
                 <Button 
                   className={plan.popular ? "w-full bg-success hover:bg-success/90" : "w-full"} 
                   variant={plan.popular ? "default" : "outline"}
+                  onClick={() => handleSelectPlan(plan)}
                 >
                   Select plan
                 </Button>
