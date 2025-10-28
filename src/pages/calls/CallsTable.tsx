@@ -2,35 +2,20 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { 
   Filter, 
-  Globe, 
   Clock, 
-  Calendar, 
-  ChevronLeft, 
-  ChevronRight,
-  Play,
-  MessageSquare,
-  User,
   Phone,
+  Users,
+  PhoneMissed,
+  Play,
+  Volume2,
+  MessageSquare,
   Download,
-  X
+  PhoneOff
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Call {
   id: string;
@@ -50,284 +35,305 @@ interface Call {
 const mockCalls: Call[] = [
   {
     id: "1",
-    caller: "erezkim@post.bgu.ac.il",
-    duration: "0:01",
-    date: "Oct 20",
-    time: "5:03 PM",
-    status: "TEST",
-    summary: "Brief test call to verify system functionality.",
-    phone: "+14155552487",
+    caller: "Erez Sun",
+    duration: "0:59",
+    date: "Oct 27",
+    time: "5:52 PM",
+    status: "ENDED",
+    summary: "Customer called regarding a refund for a cancelled appointment.",
+    phone: "+18484209420",
     transcript: [
-      { role: "agent", message: "You've reached DJ Erez. How can I help you today?" },
-      { role: "caller", message: "Hi, How are you?" },
+      { role: "agent", message: "Thank you for calling. How may I assist you today?" },
+      { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
     ],
   },
   {
     id: "2",
-    caller: "erezkim@post.bgu.ac.il",
-    duration: "3:10",
-    date: "Oct 20",
-    time: "4:56 PM",
-    status: "TEST",
-    summary: "Test call to check greeting and response time.",
-    phone: "+14155552487",
+    caller: "Sarah Martinez",
+    duration: "2:15",
+    date: "Oct 27",
+    time: "3:20 PM",
+    status: "ENDED",
+    summary: "Customer called regarding a refund for a cancelled appointment. Agent confirmed the refund would be processed within 5-7 business days and provided the reference number. Customer satisfied with resolution.",
+    phone: "+15552341234",
     transcript: [
-      { role: "agent", message: "You've reached DJ Erez. How can I help you today?" },
-      { role: "caller", message: "Hi, How are you?" },
+      { role: "agent", message: "Thank you for calling. How may I assist you today?" },
+      { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
+      { role: "caller", message: "I haven't received it yet." },
+      { role: "agent", message: "I understand your concern. Let me look that up for you. Can you provide me with your appointment reference number?" },
+      { role: "caller", message: "Yes, it's APT-12847" },
+      { role: "agent", message: "Thank you. I see your cancellation here. The refund was initiated on October 25th and should appear in your account within 5-7 business days. Your refund reference number is REF-9847." },
+      { role: "caller", message: "Okay, that's helpful. Thank you." },
+      { role: "agent", message: "You're welcome! Is there anything else I can help you with today?" },
+      { role: "caller", message: "No, that's all. Thanks!" },
+      { role: "agent", message: "Have a wonderful day!" },
     ],
   },
   {
     id: "3",
-    caller: "(510) 717-6080",
-    duration: "0:34",
-    date: "Oct 12",
-    time: "2:16 AM",
+    caller: "Michael Johnson",
+    duration: "1:45",
+    date: "Oct 27",
+    time: "2:10 PM",
     status: "ENDED",
-    summary: "Customer inquiry about DJ services availability.",
-    phone: "+15107176080",
+    summary: "Customer inquiry about service availability.",
+    phone: "+15559876543",
     transcript: [
-      { role: "agent", message: "You've reached DJ Erez. How can I help you today?" },
-      { role: "caller", message: "Hi, How are you?" },
+      { role: "agent", message: "Thank you for calling. How may I assist you today?" },
+      { role: "caller", message: "I wanted to check if you have availability next week." },
     ],
   },
   {
     id: "4",
-    caller: "(510) 717-6080",
-    duration: "1:37",
-    date: "Oct 11",
-    time: "1:50 PM",
-    status: "ENDED",
-    summary: "Orin called to inquire about booking DJ Eris for his wife's birthday party and requested information on pricing and availability. He provided his phone number for follow-up. The agent confirmed that someone will contact him soon with more details, as they do not have the DJ's availability on hand. No further requests were made.",
-    phone: "+14155552487",
-    transcript: [
-      { role: "agent", message: "You've reached DJ Erez. How can I help you today?" },
-      { role: "caller", message: "Hi, How are you?" },
-      { role: "agent", message: "I'm doing great, thanks for asking! What can I help you with today?" },
-      { role: "caller", message: "I would like to schedule an appointment with," },
-      { role: "caller", message: "DJ Eris." },
-      { role: "agent", message: "Got it! Could you tell me a bit about the event you're planning? For example, the type of event and the date, if you have one in mind." },
-    ],
-  },
-  {
-    id: "5",
-    caller: "erezkim@post.bgu.ac.il",
-    duration: "1:27",
-    date: "Oct 11",
-    time: "1:34 PM",
+    caller: "Unknown",
+    duration: "0:00",
+    date: "Oct 27",
+    time: "1:05 PM",
     status: "TEST",
-    summary: "Final test call before going live.",
-    phone: "+14155552487",
-    transcript: [
-      { role: "agent", message: "You've reached DJ Erez. How can I help you today?" },
-      { role: "caller", message: "Hi, How are you?" },
-    ],
+    summary: "Missed call - no voicemail left.",
+    phone: "+15551234567",
+    transcript: [],
   },
 ];
 
 export default function CallsTable() {
-  const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+  const [selectedCall, setSelectedCall] = useState<Call | null>(mockCalls[1]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const stats = [
+    { label: "Total Calls", value: "4", icon: Phone, bgColor: "bg-emerald-100" },
+    { label: "Average Duration", value: "1m 39s", icon: Clock, bgColor: "bg-emerald-100" },
+    { label: "Unique Callers", value: "4", icon: Users, bgColor: "bg-emerald-100" },
+    { label: "Missed Calls", value: "1", icon: PhoneMissed, bgColor: "bg-emerald-100" },
+  ];
+
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Calls</h1>
-          <div className="text-sm text-muted-foreground mt-2">
-            Call your agent at{" "}
-            <span className="font-semibold text-foreground">(415) 413-5501</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2 w-40">
-            <Globe className="h-4 w-4" />
-            Web call
-          </Button>
-          <Button variant="outline" className="gap-2 w-40">
-            <Phone className="h-4 w-4" />
-            Call AI assistant
-          </Button>
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b bg-background p-6">
+        <h1 className="text-2xl font-bold text-foreground">Call History</h1>
+        <p className="text-sm text-muted-foreground mt-1">View and manage your call history</p>
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" className="gap-2">
-          <Filter className="h-4 w-4" />
-          Filter
-        </Button>
-        <Input
-          placeholder="Search by phone, email, or phrase"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-md"
-        />
-      </div>
+      {/* Tabs */}
+      <Tabs defaultValue="history" className="w-full">
+        <div className="border-b px-6">
+          <TabsList className="bg-transparent h-auto p-0">
+            <TabsTrigger 
+              value="history" 
+              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent"
+            >
+              <Phone className="h-4 w-4 mr-2" />
+              Call History
+            </TabsTrigger>
+            <TabsTrigger 
+              value="contacts" 
+              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Contacts
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-      {/* Calls Table */}
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Caller</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Date & Time</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockCalls.map((call) => (
-              <TableRow
-                key={call.id}
-                className="cursor-pointer"
-                onClick={() => setSelectedCall(call)}
-              >
-                <TableCell className="font-medium">{call.caller}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    {call.duration}
+        <TabsContent value="history" className="p-6 space-y-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {stats.map((stat, idx) => (
+              <Card key={idx}>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                      <stat.icon className="h-5 w-5 text-emerald-700" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
+                    </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    {call.date}, {call.time}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={call.status === "ENDED" ? "default" : "secondary"}
-                    className={call.status === "ENDED" ? "bg-success text-white" : ""}
-                  >
-                    {call.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </TableCell>
-              </TableRow>
+                </CardContent>
+              </Card>
             ))}
-          </TableBody>
-        </Table>
-      </div>
+          </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-4">
-        <Button variant="ghost" size="sm" className="gap-2">
-          <ChevronLeft className="h-4 w-4" />
-          Prev
-        </Button>
-        <span className="text-sm text-muted-foreground">1-5 of 5</span>
-        <Button variant="ghost" size="sm" className="gap-2">
-          Next
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+          {/* Main Content Area */}
+          <div>
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold text-foreground">Your Calls, All in One Place</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Track, review, and follow up on every customer interaction with precision.
+              </p>
+            </div>
 
-      {/* Call Details Sheet */}
-      <Sheet open={!!selectedCall} onOpenChange={() => setSelectedCall(null)}>
-        <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
-          {selectedCall && (
-            <>
-              <SheetHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <SheetTitle className="text-xl">{selectedCall.caller}</SheetTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {selectedCall.date}, {selectedCall.time}
-                    </p>
-                  </div>
-                  <Button variant="ghost" size="icon" onClick={() => setSelectedCall(null)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </SheetHeader>
+            {/* Filter and Search */}
+            <div className="flex items-center gap-3 mb-4">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
+              <Input
+                placeholder="Search by caller name or number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="max-w-md"
+              />
+            </div>
 
-              <div className="mt-6 space-y-6">
-                {/* Summary Card */}
-                <Card className="bg-amber-50 border-amber-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-4 w-4 text-amber-700" />
-                        <h3 className="font-semibold text-amber-900">Summary</h3>
+            {/* Split View */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left: Calls List */}
+              <div className="lg:col-span-1 space-y-2">
+                {mockCalls.map((call) => (
+                  <Card
+                    key={call.id}
+                    className={`cursor-pointer transition-colors ${
+                      selectedCall?.id === call.id ? "border-primary bg-accent" : "hover:bg-accent/50"
+                    }`}
+                    onClick={() => setSelectedCall(call)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="font-semibold text-foreground">{call.caller}</p>
+                          <p className="text-sm text-muted-foreground">{call.phone}</p>
+                        </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-amber-700 hover:text-amber-900">
-                        Leave feedback
-                      </Button>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-start gap-2">
-                        <span className="font-medium text-amber-900 min-w-[60px]">Name</span>
-                        <span className="text-amber-800">Orin</span>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <Badge
+                          variant={call.status === "ENDED" ? "default" : "secondary"}
+                          className={call.status === "ENDED" ? "bg-emerald-600" : call.status === "TEST" ? "bg-red-100 text-red-700" : ""}
+                        >
+                          {call.status === "ENDED" ? "Call Ended" : call.status === "TEST" ? "Missed Call" : call.status}
+                        </Badge>
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {call.duration}
+                          </span>
+                          <span>{call.date}, {call.time}</span>
+                        </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <span className="font-medium text-amber-900 min-w-[60px]">Phone</span>
-                        <span className="text-amber-800">{selectedCall.phone}</span>
-                      </div>
-                      <div className="mt-3">
-                        <p className="text-amber-900 leading-relaxed">
-                          {selectedCall.summary}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
 
-                {/* Audio Player */}
-                <div className="flex items-center gap-4 p-4 border rounded-lg bg-card">
-                  <Button size="icon" variant="ghost">
-                    <Play className="h-5 w-5" />
-                  </Button>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-1 h-8">
-                      {Array.from({ length: 80 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-1 rounded-full"
-                          style={{
-                            height: `${Math.random() * 100}%`,
-                            backgroundColor: i < 30 ? "hsl(var(--primary))" : "hsl(var(--muted))",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <span className="text-sm text-muted-foreground">01:27</span>
-                  <Button size="icon" variant="ghost">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
+              {/* Right: Call Details */}
+              <div className="lg:col-span-2">
+                {selectedCall ? (
+                  <Card>
+                    <CardContent className="p-6 space-y-6">
+                      {/* Header */}
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="text-xl font-bold text-foreground">{selectedCall.caller}</h3>
+                          <p className="text-sm text-muted-foreground">{selectedCall.phone}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {selectedCall.date}, 2025, {selectedCall.time}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="icon">
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
 
-                {/* Transcript */}
-                <div className="space-y-4">
-                  {selectedCall.transcript.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <div className={`p-2 rounded-full ${item.role === "agent" ? "bg-primary/10" : "bg-success/10"}`}>
-                        {item.role === "agent" ? (
-                          <MessageSquare className="h-4 w-4 text-primary" />
+                      {/* Summary */}
+                      <Card className="bg-amber-50 border-amber-200 dark:bg-amber-950/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <MessageSquare className="h-4 w-4 text-amber-700" />
+                            <h4 className="font-semibold text-amber-900 dark:text-amber-100">Call Summary</h4>
+                          </div>
+                          <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
+                            {selectedCall.summary}
+                          </p>
+                        </CardContent>
+                      </Card>
+
+                      {/* Audio Player */}
+                      <div className="flex items-center gap-4 p-4 border rounded-lg bg-card">
+                        <Button size="icon" variant="ghost" className="h-10 w-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white">
+                          <Play className="h-4 w-4" />
+                        </Button>
+                        <div className="flex-1 flex items-center gap-0.5 h-12">
+                          {Array.from({ length: 80 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-1 rounded-full bg-emerald-400"
+                              style={{
+                                height: `${20 + Math.random() * 80}%`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm text-muted-foreground">02:15</span>
+                        <Button size="icon" variant="ghost">
+                          <Volume2 className="h-4 w-4" />
+                        </Button>
+                        <select className="text-sm border rounded px-2 py-1">
+                          <option>1.2x</option>
+                          <option>1.0x</option>
+                          <option>1.5x</option>
+                          <option>2.0x</option>
+                        </select>
+                      </div>
+
+                      {/* Transcript */}
+                      <div className="space-y-4">
+                        <h4 className="font-semibold text-foreground">Transcript</h4>
+                        {selectedCall.transcript.length > 0 ? (
+                          <div className="space-y-4">
+                            {selectedCall.transcript.map((item, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <div className={`p-2 rounded-full ${item.role === "agent" ? "bg-blue-100" : "bg-emerald-100"}`}>
+                                  {item.role === "agent" ? (
+                                    <MessageSquare className="h-4 w-4 text-blue-600" />
+                                  ) : (
+                                    <Phone className="h-4 w-4 text-emerald-600" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm font-semibold text-foreground capitalize mb-1">
+                                    {item.role}
+                                  </p>
+                                  <p className="text-sm text-foreground">{item.message}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         ) : (
-                          <User className="h-4 w-4 text-success" />
+                          <p className="text-sm text-muted-foreground">No transcript available</p>
                         )}
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-semibold text-foreground capitalize">
-                            {item.role}
-                          </span>
-                        </div>
-                        <p className="text-sm text-foreground">{item.message}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card>
+                    <CardContent className="p-12 text-center">
+                      <Phone className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">Select a call to view details</p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="contacts" className="p-6">
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Contacts feature coming soon</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

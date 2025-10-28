@@ -1,4 +1,4 @@
-import { Phone, Bot, Settings, Puzzle, Sparkles, HelpCircle, MessageSquare, FileText } from "lucide-react";
+import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -46,6 +46,12 @@ export function AppSidebar() {
   };
   
   const handleAccountToggle = () => {
+    setAccountOpen(true);
+    setAgentOpen(false);
+    navigate("/dashboard/account/billing");
+  };
+
+  const handleUpgradeClick = () => {
     setAccountOpen(true);
     setAgentOpen(false);
     navigate("/dashboard/account/billing");
@@ -190,15 +196,20 @@ export function AppSidebar() {
           <Button 
             variant="outline" 
             className="w-full justify-center text-sm font-medium bg-white dark:bg-background hover:bg-gray-50 dark:hover:bg-accent"
-            onClick={() => navigate("/dashboard/account/billing")}
+            onClick={handleUpgradeClick}
           >
             Upgrade now
           </Button>
         </div>
 
+        <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
+          <User className="h-4 w-4" />
+          <span>erez@choopil.com</span>
+        </div>
+
         <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
-          <FileText className="h-4 w-4" />
-          <span>mcclum@post.bgu.ac.il</span>
+          <LogOut className="h-4 w-4" />
+          <span>Sign out</span>
         </button>
       </SidebarFooter>
     </Sidebar>
