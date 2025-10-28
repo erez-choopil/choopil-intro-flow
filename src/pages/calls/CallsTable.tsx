@@ -131,15 +131,21 @@ export default function CallsTable() {
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-foreground">Calls</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-muted-foreground">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Calls</h1>
+          <div className="text-sm text-muted-foreground mt-2">
             Call your agent at{" "}
             <span className="font-semibold text-foreground">(415) 413-5501</span>
           </div>
-          <Button variant="outline" className="gap-2">
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2 w-40">
             <Globe className="h-4 w-4" />
             Web call
+          </Button>
+          <Button variant="outline" className="gap-2 w-40">
+            <Phone className="h-4 w-4" />
+            Call AI assistant
           </Button>
         </div>
       </div>

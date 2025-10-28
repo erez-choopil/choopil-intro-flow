@@ -178,13 +178,13 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4 space-y-2">
-        <div className="bg-purple-50 dark:bg-purple-950/20 rounded-lg p-3 space-y-2">
+        <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-3 space-y-2">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-purple-600 text-white px-2 py-1 rounded-md text-xs font-medium">
+            <div className="flex items-center gap-1.5 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
               <Sparkles className="h-3 w-3" />
               <span>Trial</span>
             </div>
-            <span className="text-sm font-medium text-purple-600 dark:text-purple-400">14 days left</span>
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">14 days left</span>
           </div>
           
           <Button 
@@ -195,16 +195,6 @@ export function AppSidebar() {
             Upgrade now
           </Button>
         </div>
-
-        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
-          <HelpCircle className="h-4 w-4" />
-          <span>Talk to support</span>
-        </button>
-
-        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
-          <MessageSquare className="h-4 w-4" />
-          <span>What's new</span>
-        </button>
 
         <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
           <FileText className="h-4 w-4" />
