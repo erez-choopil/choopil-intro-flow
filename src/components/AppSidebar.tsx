@@ -22,49 +22,50 @@ const agentSubItems = [
   { title: "Transfer calls", url: "/dashboard/agent/transfer" },
   { title: "Send texts", url: "/dashboard/agent/texts" },
   { title: "Scheduling", url: "/dashboard/agent/scheduling" },
-  { title: "Notifications", url: "/dashboard/agent/notifications" },
   { title: "Call filtering", url: "/dashboard/agent/filtering" },
 ];
 
-const accountSubItems = [
-  { title: "Billing", url: "/dashboard/account/billing" },
+const settingsSubItems = [
+  { title: "Account settings", url: "/dashboard/settings/account" },
+  { title: "Call notifications", url: "/dashboard/settings/notifications" },
+  { title: "Billing", url: "/dashboard/settings/billing" },
 ];
 
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [agentOpen, setAgentOpen] = useState(true);
-  const [accountOpen, setAccountOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   
   const isAgentActive = location.pathname.startsWith("/dashboard/agent");
-  const isAccountActive = location.pathname.startsWith("/dashboard/account");
+  const isSettingsActive = location.pathname.startsWith("/dashboard/settings");
   
   const handleAgentToggle = () => {
     setAgentOpen(true);
-    setAccountOpen(false);
+    setSettingsOpen(false);
     navigate("/dashboard/agent/settings");
   };
   
-  const handleAccountToggle = () => {
-    setAccountOpen(true);
+  const handleSettingsToggle = () => {
+    setSettingsOpen(true);
     setAgentOpen(false);
-    navigate("/dashboard/account/billing");
+    navigate("/dashboard/settings/account");
   };
 
   const handleUpgradeClick = () => {
-    setAccountOpen(true);
+    setSettingsOpen(true);
     setAgentOpen(false);
-    navigate("/dashboard/account/billing");
+    navigate("/dashboard/settings/billing");
   };
 
   const handleCallsClick = () => {
     setAgentOpen(false);
-    setAccountOpen(false);
+    setSettingsOpen(false);
   };
 
   const handleIntegrationsClick = () => {
     setAgentOpen(false);
-    setAccountOpen(false);
+    setSettingsOpen(false);
   };
   
   return (
@@ -130,20 +131,20 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Account - Collapsible */}
-              <Collapsible open={accountOpen} onOpenChange={handleAccountToggle}>
+              {/* Settings - Collapsible */}
+              <Collapsible open={settingsOpen} onOpenChange={handleSettingsToggle}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
-                    isAccountActive
+                    isSettingsActive
                       ? "text-primary font-bold"
                       : "text-muted-foreground hover:text-foreground"
                   }`}>
                     <Settings className="h-4 w-4" />
-                    <span className="flex-1 text-left">Account</span>
+                    <span className="flex-1 text-left">Settings</span>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                  {accountSubItems.map((item) => (
+                  {settingsSubItems.map((item) => (
                     <NavLink
                       key={item.url}
                       to={item.url}

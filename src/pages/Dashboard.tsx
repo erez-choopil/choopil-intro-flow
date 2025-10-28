@@ -48,7 +48,8 @@ import Scheduling from "./agent/Scheduling";
 import Notifications from "./agent/Notifications";
 import CallFiltering from "./agent/CallFiltering";
 
-// Account pages
+// Settings pages
+import AccountSettings from "./settings/AccountSettings";
 import Billing from "./account/Billing";
 
 // Calls pages
@@ -83,10 +84,14 @@ export default function Dashboard() {
             <Route path="agent/transfer" element={<TransferCalls />} />
             <Route path="agent/texts" element={<SendTexts />} />
             <Route path="agent/scheduling" element={<Scheduling />} />
-            <Route path="agent/notifications" element={<Notifications />} />
             <Route path="agent/filtering" element={<CallFiltering />} />
             
-            {/* Account routes */}
+            {/* Settings routes */}
+            <Route path="settings/account" element={<AccountSettings />} />
+            <Route path="settings/notifications" element={<Notifications />} />
+            <Route path="settings/billing" element={<Billing />} />
+            
+            {/* Legacy account route redirect */}
             <Route path="account/billing" element={<Billing />} />
             
             <Route path="integrations" element={<IntegrationsPage />} />
