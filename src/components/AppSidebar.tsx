@@ -82,45 +82,23 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {/* Calls - Collapsible */}
-              <Collapsible open={!agentOpen && !settingsOpen} onOpenChange={handleCallsClick}>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors w-full ${
-                    location.pathname.startsWith("/dashboard/calls")
-                      ? "text-primary font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}>
-                    <Phone className="h-4 w-4" />
-                    <span className="flex-1 text-left">Calls</span>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                  <NavLink
-                    to="/dashboard/calls"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
-                        isActive
-                          ? "text-primary font-bold"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`
-                    }
-                  >
-                    Overview
-                  </NavLink>
-                  <NavLink
-                    to="/dashboard/calls/table"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
-                        isActive
-                          ? "text-primary font-bold"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`
-                    }
-                  >
-                    Call history
-                  </NavLink>
-                </CollapsibleContent>
-              </Collapsible>
+              {/* Calls */}
+              <SidebarMenuItem>
+                <NavLink
+                  to="/dashboard/calls"
+                  onClick={handleCallsClick}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                      isActive
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>Calls</span>
+                </NavLink>
+              </SidebarMenuItem>
 
               {/* Agent - Collapsible */}
               <Collapsible open={agentOpen} onOpenChange={handleAgentToggle}>
