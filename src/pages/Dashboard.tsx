@@ -27,10 +27,10 @@ function CallsPage() {
           <p className="text-sm text-muted-foreground">
             Call AI Assistant at{" "}
             <a 
-              href="tel:+12066871315" 
+              href="tel:+14154135501" 
               className="text-primary hover:underline font-medium"
             >
-              (206) 687-1315
+              (415) 413-5501
             </a>
           </p>
         </div>

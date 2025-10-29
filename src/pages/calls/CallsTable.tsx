@@ -75,7 +75,7 @@ const mockCalls: Call[] = [
     duration: "1:45",
     date: "Oct 27",
     time: "2:10 PM",
-    status: "ENDED",
+    status: "TEST",
     summary: "Customer inquiry about service availability.",
     phone: "+15559876543",
     transcript: [
@@ -201,9 +201,9 @@ export default function CallsTable() {
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <Badge
                           variant={call.status === "ENDED" ? "default" : "secondary"}
-                          className={call.status === "ENDED" ? "bg-emerald-600" : call.status === "TEST" ? "bg-red-100 text-red-700" : ""}
+                          className={call.status === "ENDED" ? "bg-emerald-600" : call.status === "TEST" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" : ""}
                         >
-                          {call.status === "ENDED" ? "Call Ended" : call.status === "TEST" ? "Missed Call" : call.status}
+                          {call.status === "ENDED" ? "Call Ended" : call.status === "TEST" ? "Test" : call.status}
                         </Badge>
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1">

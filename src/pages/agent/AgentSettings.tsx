@@ -50,7 +50,7 @@ export default function AgentSettings() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-foreground">Agent settings</h1>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-foreground">(206) 687-1315</span>
+          <span className="text-sm text-foreground">(415) 413-5501</span>
           <Button variant="outline" size="sm">
             Web call
           </Button>
@@ -66,7 +66,7 @@ export default function AgentSettings() {
             <a href="#" className="text-primary hover:underline">View forwarding instructions</a>.
             Calls from (877) 728-0550 to this number are free.
           </p>
-          <div className="text-lg font-semibold text-foreground">(206) 687-1315</div>
+          <div className="text-lg font-semibold text-foreground">(415) 413-5501</div>
         </div>
 
         {/* Personality */}
