@@ -24,6 +24,15 @@ function CallsPage() {
           <p className="text-muted-foreground">
             We've set it up with the basics. Call now to hear it in action. Then click Agent on the left to keep customizing.
           </p>
+          <p className="text-sm text-muted-foreground">
+            Call AI Assistant at{" "}
+            <a 
+              href="tel:+12066871315" 
+              className="text-primary hover:underline font-medium"
+            >
+              (206) 687-1315
+            </a>
+          </p>
         </div>
 
         <Button className="bg-success hover:bg-success/90 text-white">
