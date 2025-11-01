@@ -46,9 +46,6 @@ function CallsPage() {
               <p className="text-base text-muted-foreground">
                 Call now to hear your assistant in action.
               </p>
-              <p className="text-sm text-muted-foreground">
-                Want to personalize it? Head to the <span className="text-primary font-medium">Agent</span> tab anytime.
-              </p>
             </div>
 
             {/* CTAs */}
@@ -67,6 +64,10 @@ function CallsPage() {
                 Preview a Sample Call
               </Button>
             </div>
+            
+            <p className="text-sm text-muted-foreground mt-4">
+              Want to personalize it? Head to the <span className="text-primary font-medium">Agent</span> tab anytime.
+            </p>
           </div>
         </div>
 
