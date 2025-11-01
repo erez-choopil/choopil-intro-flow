@@ -17,8 +17,11 @@ export default function AccountSettings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [timezone, setTimezone] = useState("eastern");
+  const [language, setLanguage] = useState("english");
 
-  const handleUpdateName = () => {
+  const handleSaveAll = () => {
+    // Validate full name
     if (!firstName.trim() || !lastName.trim()) {
       toast({
         title: "Name required",
@@ -27,13 +30,8 @@ export default function AccountSettings() {
       });
       return;
     }
-    toast({
-      title: "Name updated",
-      description: "Your name has been updated successfully.",
-    });
-  };
 
-  const handleSaveBusinessDetails = () => {
+    // Validate business details
     if (!businessName.trim()) {
       toast({
         title: "Business name required",
@@ -50,67 +48,63 @@ export default function AccountSettings() {
       });
       return;
     }
-    toast({
-      title: "Business details saved",
-      description: "Your business details have been updated successfully.",
-    });
-  };
 
-  const handleUpdateEmail = () => {
-    if (!newEmail.trim()) {
-      toast({
-        title: "Email required",
-        description: "Please enter a new email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!currentPasswordForEmail.trim()) {
+    // Validate email change if attempted
+    if (newEmail.trim() && !currentPasswordForEmail.trim()) {
       toast({
         title: "Password required",
-        description: "Please enter your current password to verify the change.",
+        description: "Please enter your current password to verify the email change.",
         variant: "destructive",
       });
       return;
     }
-    toast({
-      title: "Verification email sent",
-      description: "Please check your inbox to verify your new email address.",
-    });
-  };
 
-  const handleChangePassword = () => {
-    if (!currentPassword.trim()) {
-      toast({
-        title: "Current password required",
-        description: "Please enter your current password.",
-        variant: "destructive",
-      });
-      return;
+    // Validate password change if attempted
+    if (currentPassword.trim() || newPassword.trim() || confirmPassword.trim()) {
+      if (!currentPassword.trim()) {
+        toast({
+          title: "Current password required",
+          description: "Please enter your current password.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!newPassword.trim()) {
+        toast({
+          title: "New password required",
+          description: "Please enter a new password.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        toast({
+          title: "Passwords don't match",
+          description: "Please make sure your new passwords match.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
-    if (!newPassword.trim()) {
-      toast({
-        title: "New password required",
-        description: "Please enter a new password.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your new passwords match.",
-        variant: "destructive",
-      });
-      return;
-    }
+
+    // Success
     toast({
-      title: "Password changed",
-      description: "Your password has been changed successfully.",
+      title: "Settings saved",
+      description: "Your account settings have been updated successfully.",
     });
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+
+    // Clear password fields
+    if (currentPassword.trim()) {
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+    
+    // Clear email change fields
+    if (newEmail.trim()) {
+      setNewEmail("");
+      setCurrentPasswordForEmail("");
+    }
   };
 
   return (
@@ -125,25 +119,23 @@ export default function AccountSettings() {
         <div className="space-y-4">
           <Label className="text-base font-semibold text-foreground">Full name</Label>
           
-          <div className="space-y-2">
-            <Label>First name</Label>
-            <Input
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="max-w-md"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4 max-w-2xl">
+            <div className="space-y-2">
+              <Label>First name</Label>
+              <Input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label>Last name</Label>
-            <Input
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="max-w-md"
-            />
+            <div className="space-y-2">
+              <Label>Last name</Label>
+              <Input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
           </div>
-
-          <Button onClick={handleUpdateName} className="w-full" size="lg">Update name</Button>
         </div>
 
         {/* Business details */}
@@ -187,7 +179,6 @@ export default function AccountSettings() {
             </p>
           </div>
 
-          <Button onClick={handleSaveBusinessDetails} className="w-full" size="lg">Save details</Button>
         </div>
 
         {/* Change email */}
@@ -219,9 +210,6 @@ export default function AccountSettings() {
             />
           </div>
 
-          <Button onClick={handleUpdateEmail} disabled={!newEmail || !currentPasswordForEmail} className="w-full" size="lg">
-            Update email
-          </Button>
         </div>
 
         {/* Change password */}
@@ -239,31 +227,27 @@ export default function AccountSettings() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>New password</Label>
-            <Input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="••••••••"
-              className="max-w-md"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4 max-w-2xl">
+            <div className="space-y-2">
+              <Label>New password</Label>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label>Confirm new password</Label>
-            <Input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              className="max-w-md"
-            />
+            <div className="space-y-2">
+              <Label>Confirm new password</Label>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
           </div>
-
-          <Button onClick={handleChangePassword} disabled={!currentPassword || !newPassword || !confirmPassword} className="w-full" size="lg">
-            Change password
-          </Button>
         </div>
 
         {/* Other */}
@@ -272,7 +256,7 @@ export default function AccountSettings() {
 
           <div className="space-y-2">
             <Label>Time zone</Label>
-            <Select defaultValue="eastern">
+            <Select value={timezone} onValueChange={setTimezone}>
               <SelectTrigger className="max-w-md">
                 <SelectValue />
               </SelectTrigger>
@@ -290,7 +274,7 @@ export default function AccountSettings() {
 
           <div className="space-y-2">
             <Label>Language</Label>
-            <Select defaultValue="english">
+            <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="max-w-md">
                 <SelectValue />
               </SelectTrigger>
@@ -306,6 +290,13 @@ export default function AccountSettings() {
               Language used to translate call information
             </p>
           </div>
+        </div>
+
+        {/* Save button */}
+        <div className="pt-4">
+          <Button onClick={handleSaveAll} className="w-full" size="lg">
+            Save changes
+          </Button>
         </div>
       </div>
     </div>
