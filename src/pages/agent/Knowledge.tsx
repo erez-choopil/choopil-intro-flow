@@ -424,32 +424,45 @@ export default function Knowledge() {
             </p>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             {Object.keys(schedule).map((day) => (
-              <div key={day} className="flex items-center gap-4">
-                <div className="flex items-center gap-3 w-36 shrink-0">
-                  <Switch
-                    checked={schedule[day].enabled}
-                    onCheckedChange={() => toggleDay(day)}
-                  />
-                  <span className="text-sm font-medium text-foreground">{day}</span>
+              <div key={day} className="border border-border/30 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      checked={schedule[day].enabled}
+                      onCheckedChange={() => toggleDay(day)}
+                    />
+                    <span className="text-sm font-semibold text-foreground">{day}</span>
+                  </div>
+                  {schedule[day].enabled && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addTimeSlot(day)}
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add Hours
+                    </Button>
+                  )}
                 </div>
 
                 {schedule[day].enabled ? (
-                  <div className="flex-1 space-y-2 min-w-0">
+                  <div className="space-y-3 pl-11">
                     {schedule[day].slots.map((slot, idx) => (
-                      <>
+                      <div key={slot.id}>
                         {idx > 0 && (
-                          <div className="text-sm text-muted-foreground py-1">and</div>
+                          <div className="text-xs text-muted-foreground font-medium mb-2 -mt-1">and</div>
                         )}
-                        <div key={slot.id} className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Input
                             value={slot.start}
                             onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
-                            className="w-20 shrink-0"
+                            className="w-24"
+                            placeholder="9:00"
                           />
                           <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
-                            <SelectTrigger className="w-20 shrink-0">
+                            <SelectTrigger className="w-20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -458,15 +471,16 @@ export default function Knowledge() {
                             </SelectContent>
                           </Select>
 
-                          <span className="text-muted-foreground shrink-0">to</span>
+                          <span className="text-muted-foreground text-sm">to</span>
 
                           <Input
                             value={slot.end}
                             onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
-                            className="w-20 shrink-0"
+                            className="w-24"
+                            placeholder="5:00"
                           />
                           <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
-                            <SelectTrigger className="w-20 shrink-0">
+                            <SelectTrigger className="w-20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -475,33 +489,23 @@ export default function Knowledge() {
                             </SelectContent>
                           </Select>
 
-                          <div className="flex items-center gap-1 ml-2 shrink-0">
-                            {schedule[day].slots.length > 1 && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeTimeSlot(day, slot.id)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-
-                            {idx === schedule[day].slots.length - 1 && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => addTimeSlot(day)}
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
+                          {schedule[day].slots.length > 1 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeTimeSlot(day, slot.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Remove
+                            </Button>
+                          )}
                         </div>
-                      </>
+                      </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-sm text-muted-foreground flex-1">Closed</div>
+                  <div className="text-sm text-muted-foreground pl-11">Closed</div>
                 )}
               </div>
             ))}
