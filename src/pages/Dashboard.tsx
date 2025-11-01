@@ -3,10 +3,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 function CallsPage() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 bg-gradient-to-b from-background to-primary/5">
+  return <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 bg-gradient-to-b from-background to-primary/5">
       <div className="w-full max-w-3xl space-y-12 animate-fade-in">
         {/* Hero Zone */}
         <div className="text-center space-y-4">
@@ -14,17 +12,11 @@ function CallsPage() {
             <div className="absolute inset-0 animate-ping">
               <Phone className="h-12 w-12 text-primary opacity-20" />
             </div>
-            <div className="relative bg-primary/10 p-4 rounded-full">
-              <Phone className="h-12 w-12 text-primary" />
-            </div>
+            
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Meet your new AI receptionist — ready to take your calls.
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choopil answers, books, and follows up — so you never miss a lead again.
-          </p>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">Meet your new AI receptionist - ready to take your calls</h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">Choopil answers, books, and follows up - so you never miss a lead again.</p>
         </div>
 
         {/* Number Card */}
@@ -36,10 +28,7 @@ function CallsPage() {
             </div>
             
             <div className="space-y-4">
-              <a 
-                href="tel:+14154135501"
-                className="block text-4xl md:text-5xl font-bold text-foreground hover:text-primary transition-colors group"
-              >
+              <a href="tel:+14154135501" className="block text-4xl md:text-5xl font-bold text-foreground hover:text-primary transition-colors group">
                 (415) 413-5501
               </a>
               
@@ -50,17 +39,10 @@ function CallsPage() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Button 
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hover-scale"
-              >
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hover-scale">
                 Start Free Trial
               </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="hover-scale"
-              >
+              <Button size="lg" variant="outline" className="hover-scale">
                 Preview a Sample Call
               </Button>
             </div>
@@ -78,8 +60,7 @@ function CallsPage() {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
 
 // Agent pages
@@ -99,19 +80,14 @@ import Billing from "./account/Billing";
 
 // Calls pages
 import CallsTable from "./calls/CallsTable";
-
 function IntegrationsPage() {
-  return (
-    <div className="p-8">
+  return <div className="p-8">
       <h1 className="text-3xl font-bold text-foreground mb-4">Integrations</h1>
       <p className="text-muted-foreground">Connect with other tools and services.</p>
-    </div>
-  );
+    </div>;
 }
-
 export default function Dashboard() {
-  return (
-    <SidebarProvider defaultOpen={true}>
+  return <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1">
@@ -144,6 +120,5 @@ export default function Dashboard() {
           </Routes>
         </main>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 }
