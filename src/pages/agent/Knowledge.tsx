@@ -426,7 +426,7 @@ export default function Knowledge() {
           
           <div className="space-y-3">
             {Object.keys(schedule).map((day) => (
-              <div key={day} className="flex items-start gap-4">
+              <div key={day} className="flex items-center gap-4">
                 <div className="flex items-center gap-3 w-36 shrink-0">
                   <Switch
                     checked={schedule[day].enabled}
@@ -438,63 +438,66 @@ export default function Knowledge() {
                 {schedule[day].enabled ? (
                   <div className="flex-1 space-y-2 min-w-0">
                     {schedule[day].slots.map((slot, idx) => (
-                      <div key={slot.id} className="flex items-center gap-2">
-                        <Input
-                          value={slot.start}
-                          onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
-                          className="w-20 shrink-0"
-                        />
-                        <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
-                          <SelectTrigger className="w-20 shrink-0">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <>
+                        {idx > 0 && (
+                          <div className="text-sm text-muted-foreground py-1">and</div>
+                        )}
+                        <div key={slot.id} className="flex items-center gap-2">
+                          <Input
+                            value={slot.start}
+                            onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
+                            className="w-20 shrink-0"
+                          />
+                          <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
+                            <SelectTrigger className="w-20 shrink-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="AM">AM</SelectItem>
+                              <SelectItem value="PM">PM</SelectItem>
+                            </SelectContent>
+                          </Select>
 
-                        <span className="text-muted-foreground shrink-0">to</span>
+                          <span className="text-muted-foreground shrink-0">to</span>
 
-                        <Input
-                          value={slot.end}
-                          onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
-                          className="w-20 shrink-0"
-                        />
-                        <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
-                          <SelectTrigger className="w-20 shrink-0">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="PM">PM</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          <Input
+                            value={slot.end}
+                            onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
+                            className="w-20 shrink-0"
+                          />
+                          <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
+                            <SelectTrigger className="w-20 shrink-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="AM">AM</SelectItem>
+                              <SelectItem value="PM">PM</SelectItem>
+                            </SelectContent>
+                          </Select>
 
-                        <div className="flex items-center gap-1 ml-auto shrink-0">
-                          {schedule[day].slots.length > 1 && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeTimeSlot(day, slot.id)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <div className="flex items-center gap-1 ml-2 shrink-0">
+                            {schedule[day].slots.length > 1 && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeTimeSlot(day, slot.id)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
 
-                          {idx === schedule[day].slots.length - 1 && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => addTimeSlot(day)}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          )}
+                            {idx === schedule[day].slots.length - 1 && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => addTimeSlot(day)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
-
-                        {idx === 1 && <span className="text-sm text-muted-foreground shrink-0">and</span>}
-                      </div>
+                      </>
                     ))}
                   </div>
                 ) : (
