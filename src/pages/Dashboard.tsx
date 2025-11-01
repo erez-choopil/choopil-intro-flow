@@ -6,42 +6,76 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 function CallsPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] p-8">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="relative inline-block">
-          <div className="absolute inset-0 animate-ping">
-            <Phone className="h-16 w-16 text-success opacity-20" />
+    <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 bg-gradient-to-b from-background to-primary/5">
+      <div className="w-full max-w-3xl space-y-12 animate-fade-in">
+        {/* Hero Zone */}
+        <div className="text-center space-y-4">
+          <div className="relative inline-block mb-4">
+            <div className="absolute inset-0 animate-ping">
+              <Phone className="h-12 w-12 text-primary opacity-20" />
+            </div>
+            <div className="relative bg-primary/10 p-4 rounded-full">
+              <Phone className="h-12 w-12 text-primary" />
+            </div>
           </div>
-          <div className="relative bg-success/10 p-6 rounded-full">
-            <Phone className="h-16 w-16 text-success" />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">
-            Call your new receptionist at (415) 413-5501
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
+            Meet your new AI receptionist — ready to take your calls.
           </h1>
-          <p className="text-muted-foreground">
-            We've set it up with the basics. Call now to hear it in action. Then click Agent on the left to keep customizing.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Call AI Assistant at{" "}
-            <a 
-              href="tel:+14154135501" 
-              className="text-primary hover:underline font-medium"
-            >
-              (415) 413-5501
-            </a>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Choopil answers, books, and follows up — so you never miss a lead again.
           </p>
         </div>
 
-        <Button className="bg-success hover:bg-success/90 text-white">
-          Web call
-        </Button>
+        {/* Number Card */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+          <div className="relative bg-card/80 backdrop-blur-sm border-2 border-primary/20 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
+              📞 Your AI line
+            </div>
+            
+            <div className="space-y-4">
+              <a 
+                href="tel:+14154135501"
+                className="block text-4xl md:text-5xl font-bold text-foreground hover:text-primary transition-colors group"
+              >
+                (415) 413-5501
+              </a>
+              
+              <p className="text-base text-muted-foreground">
+                Call now to hear your assistant in action.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Want to personalize it? Head to the <span className="text-primary font-medium">Agent</span> tab anytime.
+              </p>
+            </div>
 
-        <p className="text-sm text-muted-foreground">
-          No phone nearby? Test with a web call.
-        </p>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
+              <Button 
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hover-scale"
+              >
+                Start Free Trial
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="hover-scale"
+              >
+                Preview a Sample Call
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Social Proof */}
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">
+            Trusted by 2,000+ small businesses to handle their calls professionally.
+          </p>
+        </div>
       </div>
     </div>
   );
