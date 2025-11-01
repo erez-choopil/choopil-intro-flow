@@ -1,6 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Routes, Route, Navigate } from "react-router-dom";
 function CallsPage() {
@@ -9,9 +8,7 @@ function CallsPage() {
         {/* Hero Zone */}
         <div className="text-center space-y-4">
           <div className="relative inline-block mb-4">
-            <div className="absolute inset-0 animate-ping">
-              <Phone className="h-12 w-12 text-primary opacity-20" />
-            </div>
+            
             
           </div>
           
