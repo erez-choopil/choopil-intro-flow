@@ -13,16 +13,18 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import choopilLogo from "@/assets/choopil-logo.svg";
 
 const agentSubItems = [
   { title: "Agent settings", url: "/dashboard/agent/settings" },
   { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
   { title: "Ask questions", url: "/dashboard/agent/questions" },
-  { title: "Transfer calls", url: "/dashboard/agent/transfer" },
-  { title: "Send texts", url: "/dashboard/agent/texts" },
-  { title: "Scheduling", url: "/dashboard/agent/scheduling" },
-  { title: "Call filtering", url: "/dashboard/agent/filtering" },
+  { title: "Transfer calls", url: "/dashboard/agent/transfer", comingSoon: true },
+  { title: "Send texts", url: "/dashboard/agent/texts", comingSoon: true },
+  // Hidden but kept in structure for future use
+  // { title: "Scheduling", url: "/dashboard/agent/scheduling" },
+  // { title: "Call filtering", url: "/dashboard/agent/filtering" },
 ];
 
 const settingsSubItems = [
@@ -34,8 +36,9 @@ const settingsSubItems = [
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [agentOpen, setAgentOpen] = useState(true);
+  const [agentOpen, setAgentOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
   
   const isAgentActive = location.pathname.startsWith("/dashboard/agent");
   const isSettingsActive = location.pathname.startsWith("/dashboard/settings");
@@ -113,21 +116,41 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                  {agentSubItems.map((item) => (
-                    <NavLink
-                      key={item.url}
-                      to={item.url}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
-                          isActive
-                            ? "text-primary font-bold"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`
-                      }
-                    >
-                      {item.title}
-                    </NavLink>
-                  ))}
+                  <TooltipProvider>
+                    {agentSubItems.map((item) => (
+                      item.comingSoon ? (
+                        <Tooltip key={item.url}>
+                          <TooltipTrigger asChild>
+                            <div
+                              className="flex items-center justify-between px-3 py-1.5 rounded-md text-sm text-muted-foreground/50 cursor-not-allowed"
+                            >
+                              <span>{item.title}</span>
+                              <span className="px-2 py-0.5 text-[11px] font-medium text-white bg-primary rounded-full">
+                                Coming soon
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>This feature is on its way!</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <NavLink
+                          key={item.url}
+                          to={item.url}
+                          className={({ isActive }) =>
+                            `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
+                              isActive
+                                ? "text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`
+                          }
+                        >
+                          {item.title}
+                        </NavLink>
+                      )
+                    ))}
+                  </TooltipProvider>
                 </CollapsibleContent>
               </Collapsible>
 
@@ -184,14 +207,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4 space-y-2">
+      <SidebarFooter className="border-t p-4 space-y-3">
         <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-3 space-y-2">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
+            <div className="flex items-center gap-1.5 bg-primary text-white px-2 py-1 rounded-md text-xs font-medium">
               <Sparkles className="h-3 w-3" />
               <span>Trial</span>
             </div>
-            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">14 days left</span>
+            <span className="text-sm font-medium text-primary">14 days left</span>
           </div>
           
           <Button 
@@ -203,15 +226,24 @@ export function AppSidebar() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
-          <User className="h-4 w-4" />
-          <span>erez@choopil.com</span>
+        <div 
+          className="relative flex items-center justify-between px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-accent/50 transition-all duration-200"
+          onMouseEnter={() => setShowSignOut(true)}
+          onMouseLeave={() => setShowSignOut(false)}
+        >
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4" />
+            <span className="text-sm">erez@choopil.com</span>
+          </div>
+          <button 
+            className={`transition-all duration-200 ${
+              showSignOut ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 pointer-events-none'
+            }`}
+            onClick={() => {/* handle sign out */}}
+          >
+            <LogOut className="h-4 w-4 text-primary hover:text-primary/80" />
+          </button>
         </div>
-
-        <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-md transition-colors w-full">
-          <LogOut className="h-4 w-4" />
-          <span>Sign out</span>
-        </button>
       </SidebarFooter>
     </Sidebar>
   );
