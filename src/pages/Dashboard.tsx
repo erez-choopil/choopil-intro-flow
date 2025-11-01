@@ -28,10 +28,9 @@ function CallsPage() {
             </div>
             
             <div className="space-y-4">
-              <div className="block text-4xl md:text-5xl font-bold text-foreground">
-                <span>(415) 413-</span>
-                <span className="blur-sm select-none">5501</span>
-              </div>
+              <a href="tel:+14154135501" className="block text-4xl md:text-5xl font-bold text-foreground hover:text-primary transition-colors group">
+                (415) 413-5501
+              </a>
               
               <p className="text-base text-muted-foreground">
                 Call now to hear your assistant in action.
