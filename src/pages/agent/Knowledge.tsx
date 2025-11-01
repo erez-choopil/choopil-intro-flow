@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2, Info } from "lucide-react";
+import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 
@@ -251,74 +251,92 @@ export default function Knowledge() {
             Business knowledge
           </h1>
           <p className="text-muted-foreground">
-            Add information about your business or custom instructions
+            Train your AI agent with information about your business. All fields are optional, but more information helps your agent provide better responses.
           </p>
         </div>
 
-        {/* General Business Information */}
-        <div className="space-y-8">
-          <div className="space-y-2">
-            <Label htmlFor="businessName" className="text-foreground">
-              Business Name <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="businessName"
-              placeholder="Enter your business name"
-              value={businessName}
-              onChange={(e) => { setBusinessName(e.target.value); markAsChanged(); }}
-              className="max-w-full"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="businessAddress" className="text-foreground">Business Address</Label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="businessAddress"
-                placeholder="123 Main Street, City, State, ZIP"
-                value={businessAddress}
-                onChange={(e) => { setBusinessAddress(e.target.value); markAsChanged(); }}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="website" className="text-foreground">Website</Label>
-            <div className="relative">
-              <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="website"
-                placeholder="https://yourwebsite.com"
-                value={website}
-                onChange={(e) => { setWebsite(e.target.value); markAsChanged(); }}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="googleProfile" className="text-foreground">Google Business Profile URL</Label>
-            <div className="relative">
-              <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="googleProfile"
-                placeholder="https://g.page/your-business"
-                value={googleProfile}
-                onChange={(e) => { setGoogleProfile(e.target.value); markAsChanged(); }}
-                className="pl-10"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              We'll automatically import your business information from your Google Business Profile
+        {/* Section 1: Basic Business Information */}
+        <div className="space-y-6 pt-4">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Basic Business Information
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Provide essential details about your business for accurate caller assistance.
             </p>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="businessName" className="text-foreground">
+                Business Name
+              </Label>
+              <Input
+                id="businessName"
+                placeholder="Enter your business name"
+                value={businessName}
+                onChange={(e) => { setBusinessName(e.target.value); markAsChanged(); }}
+                className="max-w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="businessAddress" className="text-foreground">Business Address</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="businessAddress"
+                  placeholder="123 Main Street, City, State, ZIP"
+                  value={businessAddress}
+                  onChange={(e) => { setBusinessAddress(e.target.value); markAsChanged(); }}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="website" className="text-foreground">Website</Label>
+              <div className="relative">
+                <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="website"
+                  placeholder="https://yourwebsite.com"
+                  value={website}
+                  onChange={(e) => { setWebsite(e.target.value); markAsChanged(); }}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="googleProfile" className="text-foreground">Google Business Profile URL</Label>
+              <div className="relative">
+                <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="googleProfile"
+                  placeholder="https://g.page/your-business"
+                  value={googleProfile}
+                  onChange={(e) => { setGoogleProfile(e.target.value); markAsChanged(); }}
+                  className="pl-10"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                We'll automatically import your business information from your Google Business Profile
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Business Operation Hours */}
-        <div className="space-y-4">
-          <Label className="text-foreground text-base font-semibold">Business Operation Hours</Label>
+        {/* Section 2: Business Hours */}
+        <div className="space-y-6 pt-4 border-t">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Business Hours
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Set your operating hours so your agent can inform callers when you're available.
+            </p>
+          </div>
           
           <div className="space-y-3">
             {Object.keys(schedule).map((day) => (
@@ -399,17 +417,18 @@ export default function Knowledge() {
           </div>
         </div>
 
-        {/* Custom Business Information */}
-        <div className="space-y-4">
+        {/* Section 3: Custom Business Information */}
+        <div className="space-y-6 pt-4 border-t">
           <div>
-            <Label className="text-foreground text-base font-semibold">Custom Business Information</Label>
-            <p className="text-sm text-muted-foreground mt-1">
-              Add any additional information about your business that you want the AI assistant to know.
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Custom Business Information
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Add any additional information about your business that you want the AI agent to know. This can include special policies, services, or instructions.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="additionalInfo" className="text-foreground">Additional Information</Label>
             <Textarea
               id="additionalInfo"
               placeholder="Example: We offer free consultations for first-time clients. Our specialty is family law cases..."
@@ -422,9 +441,20 @@ export default function Knowledge() {
               {additionalInfo.length}/5000 characters
             </p>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label className="text-foreground">Upload Documents</Label>
+        {/* Section 4: Documents */}
+        <div className="space-y-6 pt-4 border-t">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Documents
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Upload documents that contain information about your business. Your AI agent will use these to answer caller questions.
+            </p>
+          </div>
+
+          <div className="space-y-4">
             <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
               <input
                 type="file"
@@ -470,18 +500,22 @@ export default function Knowledge() {
           </div>
         </div>
 
-        {/* FAQs */}
-        <div className="space-y-4">
+        {/* Section 5: FAQs */}
+        <div className="space-y-6 pt-4 border-t">
           <div>
-            <Label className="text-foreground text-base font-semibold">Frequently Asked Questions</Label>
-            <p className="text-sm text-muted-foreground mt-1">
-              Add common questions and answers that your AI assistant should know.
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Add common questions and answers that your AI agent should know. This helps provide quick, accurate responses to frequent caller inquiries.
             </p>
           </div>
-          <Button onClick={() => setShowAddFaq(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add FAQ
-          </Button>
+          <div>
+            <Button onClick={() => setShowAddFaq(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add FAQ
+            </Button>
+          </div>
 
           {showAddFaq && (
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
@@ -597,29 +631,19 @@ export default function Knowledge() {
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-          <div className="flex gap-3">
-            <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-semibold text-foreground mb-1">How this information is used</h4>
-              <p className="text-sm text-muted-foreground">
-                All information entered here will be added to your AI assistant's knowledge base. The assistant will use this information to answer caller questions accurately and provide relevant information about your business.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Save Button */}
-        <div className="pt-4">
+        <div className="pt-6 border-t">
           <Button 
             onClick={handleSave} 
             disabled={!hasChanges}
             className="w-full"
             size="lg"
           >
-            Save knowledge
+            Update Knowledge
           </Button>
+          <p className="text-xs text-muted-foreground text-center mt-3">
+            Your AI agent will use all this information to provide accurate responses to callers
+          </p>
         </div>
       </div>
     </div>
