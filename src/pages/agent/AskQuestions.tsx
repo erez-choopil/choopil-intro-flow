@@ -48,80 +48,77 @@ export default function AskQuestions() {
   };
 
   return (
-    <div className="p-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-8 max-w-2xl mx-auto">
+      <div className="space-y-8">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Ask questions</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Ask questions
+          </h1>
+          <p className="text-muted-foreground">
             Customize what information your agent collects from callers. Questions will be asked in this order.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-foreground">(415) 413-5501</span>
-          <Button variant="outline" size="sm">
-            Web call
-          </Button>
-        </div>
-      </div>
 
-      <Button className="mb-6" onClick={() => setIsAddingQuestion(true)}>
-        <Plus className="h-4 w-4 mr-2" />
-        Add new question
-      </Button>
+        <Button onClick={() => setIsAddingQuestion(true)} className="w-full" size="lg">
+          <Plus className="h-4 w-4 mr-2" />
+          Add new question
+        </Button>
 
-      <div className="space-y-2">
-        {questions.map((question) => (
-          <div
-            key={question.id}
-            className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors"
-          >
-            <div className="flex items-center gap-3 flex-1">
-              <div className="w-6 h-6 flex items-center justify-center text-muted-foreground">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 6h8M4 10h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
+        <div className="space-y-3">
+          {questions.map((question) => (
+            <div
+              key={question.id}
+              className="flex items-center justify-between p-4 border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-6 h-6 flex items-center justify-center text-muted-foreground">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6h8M4 10h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <span className="font-medium text-foreground">{question.label}</span>
+                  {question.description && (
+                    <p className="text-sm text-muted-foreground">{question.description}</p>
+                  )}
+                </div>
               </div>
-              <div className="flex-1">
-                <span className="font-medium text-foreground">{question.label}</span>
-                {question.description && (
-                  <p className="text-sm text-muted-foreground">{question.description}</p>
-                )}
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => handleDelete(question.id)}
+                >
+                  <Trash2 className="h-4 w-4 text-muted-foreground" />
+                </Button>
+                <Switch 
+                  checked={question.enabled} 
+                  onCheckedChange={() => handleToggle(question.id)}
+                />
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => handleDelete(question.id)}
-              >
-                <Trash2 className="h-4 w-4 text-muted-foreground" />
-              </Button>
-              <Switch 
-                checked={question.enabled} 
-                onCheckedChange={() => handleToggle(question.id)}
+          ))}
+
+          {isAddingQuestion && (
+            <div className="flex items-center gap-2 p-4 border rounded-lg bg-muted/30">
+              <Input
+                placeholder="Enter question text"
+                value={newQuestionText}
+                onChange={(e) => setNewQuestionText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddQuestion()}
+                autoFocus
               />
+              <Button onClick={handleAddQuestion}>Save</Button>
+              <Button variant="ghost" onClick={() => {
+                setIsAddingQuestion(false);
+                setNewQuestionText("");
+              }}>
+                Cancel
+              </Button>
             </div>
-          </div>
-        ))}
-
-        {isAddingQuestion && (
-          <div className="flex items-center gap-2 p-4 border rounded-lg bg-card">
-            <Input
-              placeholder="Enter question text"
-              value={newQuestionText}
-              onChange={(e) => setNewQuestionText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddQuestion()}
-              autoFocus
-            />
-            <Button onClick={handleAddQuestion}>Save</Button>
-            <Button variant="ghost" onClick={() => {
-              setIsAddingQuestion(false);
-              setNewQuestionText("");
-            }}>
-              Cancel
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

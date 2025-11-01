@@ -114,10 +114,13 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-2xl font-bold text-foreground mb-8">Account settings</h1>
-
+    <div className="p-8 max-w-2xl mx-auto">
       <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Account settings</h1>
+          <p className="text-muted-foreground">Manage your account information and preferences</p>
+        </div>
         {/* Full name */}
         <div className="space-y-4">
           <Label className="text-base font-semibold text-foreground">Full name</Label>
@@ -140,7 +143,7 @@ export default function AccountSettings() {
             />
           </div>
 
-          <Button onClick={handleUpdateName}>Update name</Button>
+          <Button onClick={handleUpdateName} className="w-full" size="lg">Update name</Button>
         </div>
 
         {/* Business details */}
@@ -184,7 +187,7 @@ export default function AccountSettings() {
             </p>
           </div>
 
-          <Button onClick={handleSaveBusinessDetails}>Save details</Button>
+          <Button onClick={handleSaveBusinessDetails} className="w-full" size="lg">Save details</Button>
         </div>
 
         {/* Change email */}
@@ -216,7 +219,7 @@ export default function AccountSettings() {
             />
           </div>
 
-          <Button onClick={handleUpdateEmail} disabled={!newEmail || !currentPasswordForEmail}>
+          <Button onClick={handleUpdateEmail} disabled={!newEmail || !currentPasswordForEmail} className="w-full" size="lg">
             Update email
           </Button>
         </div>
@@ -258,7 +261,7 @@ export default function AccountSettings() {
             />
           </div>
 
-          <Button onClick={handleChangePassword} disabled={!currentPassword || !newPassword || !confirmPassword}>
+          <Button onClick={handleChangePassword} disabled={!currentPassword || !newPassword || !confirmPassword} className="w-full" size="lg">
             Change password
           </Button>
         </div>

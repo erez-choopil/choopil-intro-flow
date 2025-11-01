@@ -4,8 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -106,20 +104,6 @@ export default function Knowledge() {
       title: "Success",
       description: "Business knowledge saved successfully"
     });
-  };
-
-  const handleCancel = () => {
-    if (hasChanges) {
-      if (window.confirm("You have unsaved changes. Are you sure you want to discard them?")) {
-        // Reset all fields
-        setBusinessName("");
-        setBusinessAddress("");
-        setWebsite("");
-        setGoogleProfile("");
-        setAdditionalInfo("");
-        setHasChanges(false);
-      }
-    }
   };
 
   const toggleDay = (day: string) => {
@@ -259,50 +243,35 @@ export default function Knowledge() {
   };
 
   return (
-    <div className="p-8 max-w-5xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-8 max-w-2xl mx-auto">
+      <div className="space-y-8">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Business knowledge</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Business knowledge
+          </h1>
+          <p className="text-muted-foreground">
             Add information about your business or custom instructions
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-foreground">(415) 413-5501</span>
-          <Button variant="outline" size="sm">
-            Web call
-          </Button>
-        </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3 mb-6">
-        <Button variant="outline" onClick={handleCancel}>
-          Cancel
-        </Button>
-        <Button onClick={handleSave} disabled={!hasChanges}>
-          Save
-        </Button>
-      </div>
-
-      {/* General Business Information */}
-      <Card className="p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">General Business Information</h2>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="businessName">Business Name *</Label>
+        {/* General Business Information */}
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <Label htmlFor="businessName" className="text-foreground">
+              Business Name <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="businessName"
               placeholder="Enter your business name"
               value={businessName}
               onChange={(e) => { setBusinessName(e.target.value); markAsChanged(); }}
+              className="max-w-full"
             />
           </div>
 
-          <div>
-            <Label htmlFor="businessAddress">Business Address</Label>
+          <div className="space-y-2">
+            <Label htmlFor="businessAddress" className="text-foreground">Business Address</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -315,8 +284,8 @@ export default function Knowledge() {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="website">Website</Label>
+          <div className="space-y-2">
+            <Label htmlFor="website" className="text-foreground">Website</Label>
             <div className="relative">
               <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -329,8 +298,8 @@ export default function Knowledge() {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="googleProfile">Google Business Profile URL</Label>
+          <div className="space-y-2">
+            <Label htmlFor="googleProfile" className="text-foreground">Google Business Profile URL</Label>
             <div className="relative">
               <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -341,122 +310,122 @@ export default function Knowledge() {
                 className="pl-10"
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground">
               We'll automatically import your business information from your Google Business Profile
             </p>
           </div>
         </div>
-      </Card>
 
-      {/* Business Operation Hours */}
-      <Card className="p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Business Operation Hours</h2>
-        
-        <div className="space-y-3">
-          {Object.keys(schedule).map((day) => (
-            <div key={day} className="flex items-start gap-4">
-              <div className="flex items-center gap-3 w-32">
-                <Switch
-                  checked={schedule[day].enabled}
-                  onCheckedChange={() => toggleDay(day)}
-                />
-                <span className="text-sm font-medium">{day}</span>
-              </div>
-
-              {schedule[day].enabled ? (
-                <div className="flex-1 space-y-2">
-                  {schedule[day].slots.map((slot, idx) => (
-                    <div key={slot.id} className="flex items-center gap-2">
-                      <Input
-                        value={slot.start}
-                        onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
-                        className="w-20"
-                      />
-                      <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
-                        <SelectTrigger className="w-20">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AM">AM</SelectItem>
-                          <SelectItem value="PM">PM</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      <span className="text-muted-foreground">to</span>
-
-                      <Input
-                        value={slot.end}
-                        onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
-                        className="w-20"
-                      />
-                      <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
-                        <SelectTrigger className="w-20">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AM">AM</SelectItem>
-                          <SelectItem value="PM">PM</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      {schedule[day].slots.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeTimeSlot(day, slot.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-
-                      {idx === schedule[day].slots.length - 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => addTimeSlot(day)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      )}
-
-                      {idx === 1 && <span className="text-sm text-muted-foreground">and</span>}
-                    </div>
-                  ))}
+        {/* Business Operation Hours */}
+        <div className="space-y-4">
+          <Label className="text-foreground text-base font-semibold">Business Operation Hours</Label>
+          
+          <div className="space-y-3">
+            {Object.keys(schedule).map((day) => (
+              <div key={day} className="flex items-start gap-4">
+                <div className="flex items-center gap-3 w-32">
+                  <Switch
+                    checked={schedule[day].enabled}
+                    onCheckedChange={() => toggleDay(day)}
+                  />
+                  <span className="text-sm font-medium text-foreground">{day}</span>
                 </div>
-              ) : (
-                <div className="text-sm text-muted-foreground">Closed</div>
-              )}
-            </div>
-          ))}
+
+                {schedule[day].enabled ? (
+                  <div className="flex-1 space-y-2">
+                    {schedule[day].slots.map((slot, idx) => (
+                      <div key={slot.id} className="flex items-center gap-2">
+                        <Input
+                          value={slot.start}
+                          onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
+                          className="w-20"
+                        />
+                        <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
+                          <SelectTrigger className="w-20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="AM">AM</SelectItem>
+                            <SelectItem value="PM">PM</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <span className="text-muted-foreground">to</span>
+
+                        <Input
+                          value={slot.end}
+                          onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
+                          className="w-20"
+                        />
+                        <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
+                          <SelectTrigger className="w-20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="AM">AM</SelectItem>
+                            <SelectItem value="PM">PM</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        {schedule[day].slots.length > 1 && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeTimeSlot(day, slot.id)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+
+                        {idx === schedule[day].slots.length - 1 && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => addTimeSlot(day)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        )}
+
+                        {idx === 1 && <span className="text-sm text-muted-foreground">and</span>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">Closed</div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </Card>
 
-      {/* Custom Business Information */}
-      <Card className="p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-2">Custom Business Information</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Add any additional information about your business that you want the AI assistant to know.
-        </p>
-
+        {/* Custom Business Information */}
         <div className="space-y-4">
           <div>
-            <Label htmlFor="additionalInfo">Additional Information</Label>
+            <Label className="text-foreground text-base font-semibold">Custom Business Information</Label>
+            <p className="text-sm text-muted-foreground mt-1">
+              Add any additional information about your business that you want the AI assistant to know.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="additionalInfo" className="text-foreground">Additional Information</Label>
             <Textarea
               id="additionalInfo"
               placeholder="Example: We offer free consultations for first-time clients. Our specialty is family law cases..."
               value={additionalInfo}
               onChange={(e) => { setAdditionalInfo(e.target.value); markAsChanged(); }}
-              className="min-h-[120px]"
+              className="min-h-[120px] resize-none"
               maxLength={5000}
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              {additionalInfo.length} characters
+            <p className="text-xs text-muted-foreground">
+              {additionalInfo.length}/5000 characters
             </p>
           </div>
 
-          <div>
-            <Label>Upload Documents</Label>
-            <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
+          <div className="space-y-2">
+            <Label className="text-foreground">Upload Documents</Label>
+            <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
               <input
                 type="file"
                 id="fileUpload"
@@ -467,7 +436,7 @@ export default function Knowledge() {
               />
               <label htmlFor="fileUpload" className="cursor-pointer">
                 <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm font-medium">Click to upload or drag and drop</p>
+                <p className="text-sm font-medium text-foreground">Click to upload or drag and drop</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   PDF, DOC, DOCX, or TXT (max 10MB)
                 </p>
@@ -475,13 +444,13 @@ export default function Knowledge() {
             </div>
 
             {uploadedFiles.length > 0 && (
-              <div className="mt-4 space-y-2">
+              <div className="space-y-2">
                 {uploadedFiles.map(file => (
-                  <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
                     <div className="flex items-center gap-3">
                       <FileText className="h-5 w-5 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">{file.name}</p>
+                        <p className="text-sm font-medium text-foreground">{file.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {(file.size / 1024).toFixed(2)} KB
                         </p>
@@ -500,14 +469,12 @@ export default function Knowledge() {
             )}
           </div>
         </div>
-      </Card>
 
-      {/* FAQs */}
-      <Card className="p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+        {/* FAQs */}
+        <div className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold">Frequently Asked Questions</h2>
-            <p className="text-sm text-muted-foreground">
+            <Label className="text-foreground text-base font-semibold">Frequently Asked Questions</Label>
+            <p className="text-sm text-muted-foreground mt-1">
               Add common questions and answers that your AI assistant should know.
             </p>
           </div>
@@ -515,13 +482,13 @@ export default function Knowledge() {
             <Plus className="h-4 w-4 mr-2" />
             Add FAQ
           </Button>
-        </div>
 
-        {showAddFaq && (
-          <Card className="p-4 mb-4 bg-muted/30">
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="faqQuestion">Question *</Label>
+          {showAddFaq && (
+            <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="faqQuestion" className="text-foreground">
+                  Question <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="faqQuestion"
                   placeholder="Enter the question"
@@ -530,21 +497,23 @@ export default function Knowledge() {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="faqAnswer">Answer *</Label>
+              <div className="space-y-2">
+                <Label htmlFor="faqAnswer" className="text-foreground">
+                  Answer <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="faqAnswer"
                   placeholder="Enter the answer"
                   value={newFaqAnswer}
                   onChange={(e) => setNewFaqAnswer(e.target.value)}
-                  className="min-h-[80px]"
+                  className="min-h-[80px] resize-none"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="faqCategory">Category</Label>
+              <div className="space-y-2">
+                <Label htmlFor="faqCategory" className="text-foreground">Category</Label>
                 <Select value={newFaqCategory} onValueChange={setNewFaqCategory}>
-                  <SelectTrigger id="faqCategory">
+                  <SelectTrigger id="faqCategory" className="max-w-[280px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -576,71 +545,83 @@ export default function Knowledge() {
                 </Button>
               </div>
             </div>
-          </Card>
-        )}
+          )}
 
-        {faqs.length === 0 && !showAddFaq && (
-          <p className="text-center text-muted-foreground py-8">
-            No FAQs added yet. Click "Add FAQ" to get started.
-          </p>
-        )}
+          {faqs.length === 0 && !showAddFaq && (
+            <p className="text-center text-muted-foreground py-8">
+              No FAQs added yet. Click "Add FAQ" to get started.
+            </p>
+          )}
 
-        <div className="space-y-3">
-          {faqs.map(faq => (
-            <Card key={faq.id} className="p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-medium">{faq.question}</h3>
-                    <span className={`text-xs px-2 py-1 rounded ${getCategoryColor(faq.category)}`}>
-                      {faq.category}
-                    </span>
+          <div className="space-y-3">
+            {faqs.map(faq => (
+              <div key={faq.id} className="rounded-lg border border-border bg-muted/30 p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-medium text-foreground">{faq.question}</h3>
+                      <span className={`text-xs px-2 py-1 rounded ${getCategoryColor(faq.category)}`}>
+                        {faq.category}
+                      </span>
+                    </div>
+                    {faq.expanded && (
+                      <p className="text-sm text-muted-foreground mt-2">{faq.answer}</p>
+                    )}
                   </div>
-                  {faq.expanded && (
-                    <p className="text-sm text-muted-foreground mt-2">{faq.answer}</p>
-                  )}
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => toggleFaqExpanded(faq.id)}
-                  >
-                    {faq.expanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => editFaq(faq)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteFaq(faq.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => toggleFaqExpanded(faq.id)}
+                    >
+                      {faq.expanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => editFaq(faq)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteFaq(faq.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
-      </Card>
-
-      {/* Info Box */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
-        <div className="flex gap-3">
-          <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-blue-900 mb-1">How this information is used</h4>
-            <p className="text-sm text-blue-800">
-              All information entered here will be added to your AI assistant's knowledge base. The assistant will use this information to answer caller questions accurately and provide relevant information about your business.
-            </p>
+            ))}
           </div>
         </div>
-      </Card>
+
+        {/* Info Box */}
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <div className="flex gap-3">
+            <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-foreground mb-1">How this information is used</h4>
+              <p className="text-sm text-muted-foreground">
+                All information entered here will be added to your AI assistant's knowledge base. The assistant will use this information to answer caller questions accurately and provide relevant information about your business.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="pt-4">
+          <Button 
+            onClick={handleSave} 
+            disabled={!hasChanges}
+            className="w-full"
+            size="lg"
+          >
+            Save knowledge
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

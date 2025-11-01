@@ -110,30 +110,24 @@ export default function Notifications() {
   };
 
   return (
-    <div className="p-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-8 max-w-2xl mx-auto">
+      <div className="space-y-8">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Notifications</h1>
+          <p className="text-muted-foreground">
             Set up who gets notified about calls, when they're notified, and how (email or text)
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-foreground">(415) 413-5501</span>
-          <Button variant="outline" size="sm">
-            Web call
-          </Button>
-        </div>
-      </div>
 
-      <Button className="mb-6" onClick={() => setIsDialogOpen(true)}>
-        <Plus className="h-4 w-4 mr-2" />
-        Add person or department
-      </Button>
+        <Button className="w-full" size="lg" onClick={() => setIsDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add person or department
+        </Button>
 
-      <div className="space-y-3">
-        {people.map((person) => (
-          <div key={person.id} className="border rounded-lg p-4 bg-card">
+        <div className="space-y-3">
+          {people.map((person) => (
+            <div key={person.id} className="border rounded-lg p-4 bg-muted/30">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
@@ -168,11 +162,11 @@ export default function Notifications() {
                 </Button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Who should be notified about calls?</DialogTitle>
@@ -418,7 +412,8 @@ export default function Notifications() {
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+        </Dialog>
+      </div>
     </div>
   );
 }

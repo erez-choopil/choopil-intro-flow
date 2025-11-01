@@ -64,8 +64,12 @@ export default function Billing() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-foreground mb-8">Subscription</h1>
+    <div className="p-8 max-w-5xl mx-auto">
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Subscription</h1>
+          <p className="text-muted-foreground">Choose the plan that fits your business</p>
+        </div>
       
       {/* Current Plan */}
       <Card className="mb-8">
@@ -162,6 +166,7 @@ export default function Billing() {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }
