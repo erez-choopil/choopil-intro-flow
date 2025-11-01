@@ -69,10 +69,10 @@ export default function AskQuestions() {
           {questions.map((question) => (
             <div
               key={question.id}
-              className="flex items-start justify-between p-4 border rounded-lg bg-muted/30"
+              className="flex items-center justify-between p-4 border rounded-lg bg-muted/30"
             >
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className="w-6 h-6 flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-6 h-6 flex items-center justify-center text-muted-foreground shrink-0">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 6h8M4 10h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
