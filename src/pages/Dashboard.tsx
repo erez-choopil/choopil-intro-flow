@@ -88,8 +88,7 @@ export default function Dashboard() {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1">
-          <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-6 z-10">
-          </header>
+          
           <Routes>
             <Route path="/" element={<Navigate to="calls" replace />} />
             <Route path="calls" element={<CallsPage />} />
