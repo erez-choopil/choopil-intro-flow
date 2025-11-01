@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const CATEGORIES = [
   "General", "Pricing", "Services", "Hours", "Location", "Appointments",
@@ -42,6 +43,8 @@ type FAQ = {
 
 export default function Knowledge() {
   const [hasChanges, setHasChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   // General Business Information
   const [businessName, setBusinessName] = useState("");
@@ -72,6 +75,51 @@ export default function Knowledge() {
   const [newFaqCategory, setNewFaqCategory] = useState("General");
   const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
 
+  // Fetch business profile data on mount
+  useEffect(() => {
+    const fetchBusinessProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('business_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data) {
+          setBusinessName(data.business_name || "");
+          setBusinessAddress(data.business_address || "");
+          setWebsite(data.website || "");
+          setGoogleProfile(data.google_profile || "");
+          setAdditionalInfo(data.additional_info || "");
+          
+          if (data.business_hours && typeof data.business_hours === 'object') {
+            setSchedule(data.business_hours as Record<string, DaySchedule>);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching business profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load business information",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBusinessProfile();
+  }, []);
+
   // Warn user before leaving page with unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -89,21 +137,51 @@ export default function Knowledge() {
     setHasChanges(true);
   };
 
-  const handleSave = () => {
-    if (!businessName.trim()) {
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to save",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const profileData = {
+        user_id: user.id,
+        business_name: businessName,
+        business_address: businessAddress,
+        website: website,
+        google_profile: googleProfile,
+        additional_info: additionalInfo,
+        business_hours: schedule
+      };
+
+      const { error } = await supabase
+        .from('business_profiles')
+        .upsert(profileData, { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      setHasChanges(false);
       toast({
-        title: "Validation Error",
-        description: "Business Name is required",
+        title: "Success",
+        description: "Business knowledge saved successfully"
+      });
+    } catch (error) {
+      console.error('Error saving business profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save business information",
         variant: "destructive"
       });
-      return;
+    } finally {
+      setIsSaving(false);
     }
-
-    setHasChanges(false);
-    toast({
-      title: "Success",
-      description: "Business knowledge saved successfully"
-    });
   };
 
   const toggleDay = (day: string) => {
@@ -242,6 +320,14 @@ export default function Knowledge() {
     return colors[category] || colors["Other"];
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-8 max-w-2xl mx-auto flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Loading business information...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <div className="space-y-8">
@@ -256,7 +342,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 1: Basic Business Information */}
-        <div className="space-y-6 pt-4">
+        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Basic Business Information
@@ -328,7 +414,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 2: Business Hours */}
-        <div className="space-y-6 pt-4 border-t">
+        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Business Hours
@@ -418,7 +504,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 3: Custom Business Information */}
-        <div className="space-y-6 pt-4 border-t">
+        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Custom Business Information
@@ -444,7 +530,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 4: Documents */}
-        <div className="space-y-6 pt-4 border-t">
+        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Documents
@@ -501,7 +587,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 5: FAQs */}
-        <div className="space-y-6 pt-4 border-t">
+        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Frequently Asked Questions
@@ -632,14 +718,14 @@ export default function Knowledge() {
         </div>
 
         {/* Save Button */}
-        <div className="pt-6 border-t">
+        <div className="pt-6">
           <Button 
             onClick={handleSave} 
-            disabled={!hasChanges}
+            disabled={!hasChanges || isSaving}
             className="w-full"
             size="lg"
           >
-            Update Knowledge
+            {isSaving ? "Saving..." : "Update Knowledge"}
           </Button>
           <p className="text-xs text-muted-foreground text-center mt-3">
             Your AI agent will use all this information to provide accurate responses to callers
