@@ -13,7 +13,6 @@ export default function AccountSettings() {
   const [phoneNumber, setPhoneNumber] = useState("(73) 384-4422");
   const [countryCode, setCountryCode] = useState("+972");
   const [newEmail, setNewEmail] = useState("");
-  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,7 +49,7 @@ export default function AccountSettings() {
     }
 
     // Validate email change if attempted
-    if (newEmail.trim() && !currentPasswordForEmail.trim()) {
+    if (newEmail.trim() && !currentPassword.trim()) {
       toast({
         title: "Password required",
         description: "Please enter your current password to verify the email change.",
@@ -100,10 +99,9 @@ export default function AccountSettings() {
       setConfirmPassword("");
     }
     
-    // Clear email change fields
+    // Clear email change field
     if (newEmail.trim()) {
       setNewEmail("");
-      setCurrentPasswordForEmail("");
     }
   };
 
@@ -198,23 +196,14 @@ export default function AccountSettings() {
               className="max-w-md"
             />
           </div>
-
-          <div className="space-y-2">
-            <Label>Current password</Label>
-            <Input
-              type="password"
-              value={currentPasswordForEmail}
-              onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
-              placeholder="••••••••"
-              className="max-w-md"
-            />
-          </div>
-
         </div>
 
         {/* Change password */}
         <div className="space-y-4">
           <Label className="text-base font-semibold text-foreground">Change password</Label>
+          <p className="text-sm text-muted-foreground">
+            Enter your current password to set a new one
+          </p>
 
           <div className="space-y-2">
             <Label>Current password</Label>
