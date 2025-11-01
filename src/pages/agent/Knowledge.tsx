@@ -530,7 +530,7 @@ export default function Knowledge() {
         </div>
 
         {/* Section 4: Documents */}
-        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
+        <div className="hidden space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
           <div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               Documents
