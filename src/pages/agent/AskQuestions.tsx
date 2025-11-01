@@ -25,7 +25,7 @@ export default function AskQuestions() {
   const [newQuestionText, setNewQuestionText] = useState("");
 
   const handleAddQuestion = () => {
-    if (newQuestionText.trim()) {
+    if (newQuestionText.trim() && newQuestionText.length <= 150) {
       const newQuestion: Question = {
         id: Date.now(),
         label: newQuestionText,
@@ -69,22 +69,22 @@ export default function AskQuestions() {
           {questions.map((question) => (
             <div
               key={question.id}
-              className="flex items-center justify-between p-4 border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+              className="flex items-start justify-between p-4 border rounded-lg bg-muted/30"
             >
-              <div className="flex items-center gap-3 flex-1">
-                <div className="w-6 h-6 flex items-center justify-center text-muted-foreground">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-6 h-6 flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 6h8M4 10h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                 </div>
-                <div className="flex-1">
-                  <span className="font-medium text-foreground">{question.label}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="font-medium text-foreground break-words">{question.label}</span>
                   {question.description && (
-                    <p className="text-sm text-muted-foreground">{question.description}</p>
+                    <p className="text-sm text-muted-foreground break-words">{question.description}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0 ml-3">
                 <Button 
                   variant="ghost" 
                   size="icon"
@@ -102,14 +102,20 @@ export default function AskQuestions() {
 
           {isAddingQuestion && (
             <div className="flex items-center gap-2 p-4 border rounded-lg bg-muted/30">
-              <Input
-                placeholder="Enter question text"
-                value={newQuestionText}
-                onChange={(e) => setNewQuestionText(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddQuestion()}
-                autoFocus
-              />
-              <Button onClick={handleAddQuestion}>Save</Button>
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter question text (max 150 characters)"
+                  value={newQuestionText}
+                  onChange={(e) => setNewQuestionText(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddQuestion()}
+                  maxLength={150}
+                  autoFocus
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {newQuestionText.length}/150 characters
+                </p>
+              </div>
+              <Button onClick={handleAddQuestion} disabled={!newQuestionText.trim()}>Save</Button>
               <Button variant="ghost" onClick={() => {
                 setIsAddingQuestion(false);
                 setNewQuestionText("");
