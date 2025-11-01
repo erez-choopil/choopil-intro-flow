@@ -115,8 +115,6 @@ export default function AccountSettings() {
         </div>
         {/* Full name */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-foreground">Full name</Label>
-          
           <div className="grid grid-cols-2 gap-4 max-w-2xl">
             <div className="space-y-2">
               <Label>First name</Label>
@@ -138,8 +136,6 @@ export default function AccountSettings() {
 
         {/* Business details */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-foreground">Business details</Label>
-
           <div className="space-y-2">
             <Label>
               Business name <span className="text-destructive">*</span>
@@ -181,11 +177,6 @@ export default function AccountSettings() {
 
         {/* Change email */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-foreground">Change email</Label>
-          <p className="text-sm text-muted-foreground">
-            We'll send a confirmation link to verify your new email address
-          </p>
-
           <div className="space-y-2">
             <Label>New email address</Label>
             <Input
@@ -200,11 +191,6 @@ export default function AccountSettings() {
 
         {/* Change password */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-foreground">Change password</Label>
-          <p className="text-sm text-muted-foreground">
-            Enter your current password to set a new one
-          </p>
-
           <div className="space-y-2">
             <Label>Current password</Label>
             <Input
@@ -241,8 +227,6 @@ export default function AccountSettings() {
 
         {/* Other */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-foreground">Other</Label>
-
           <div className="space-y-2">
             <Label>Time zone</Label>
             <Select value={timezone} onValueChange={setTimezone}>
