@@ -13,7 +13,7 @@ interface Question {
 
 const initialQuestions: Question[] = [
   { id: 1, label: "Name", enabled: true },
-  { id: 2, label: "Phone", enabled: true },
+  { id: 2, label: "Phone number", enabled: true },
   { id: 3, label: "Email", enabled: false },
   { id: 4, label: "Company", enabled: false },
   { id: 5, label: "Address", enabled: false },
