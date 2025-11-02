@@ -1,5 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { TrialBanner } from "@/components/TrialBanner";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Agent pages
@@ -31,8 +32,7 @@ export default function Dashboard() {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1">
-          <header className="sticky top-0 flex h-10 items-center gap-4 bg-background px-6 z-10">
-          </header>
+          <TrialBanner />
           <Routes>
             <Route path="/" element={<Navigate to="calls" replace />} />
             <Route path="calls" element={<CallsWithTabs />} />
