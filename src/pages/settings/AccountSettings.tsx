@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -106,167 +107,169 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="space-y-8">
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="space-y-6">
         {/* Header */}
-        <div>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Account settings</h1>
           <p className="text-muted-foreground">Manage your account information and preferences</p>
         </div>
-        {/* Full name */}
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4 max-w-2xl">
+
+        {/* Personal Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Personal Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>First name</Label>
+                <Input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Last name</Label>
+                <Input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Business Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Business Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>First name</Label>
+              <Label>
+                Business name <span className="text-destructive">*</span>
+              </Label>
               <Input
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
               />
             </div>
-
             <div className="space-y-2">
-              <Label>Last name</Label>
+              <Label>
+                Business phone number <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex gap-2">
+                <Select value={countryCode} onValueChange={setCountryCode}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="+972">🇮🇱 +972</SelectItem>
+                    <SelectItem value="+1">🇺🇸 +1</SelectItem>
+                    <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="flex-1"
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Calling from this number to your agent is free
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Email Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Email</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Label>New email address</Label>
               <Input
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="name@company.com"
+              />
+              <p className="text-sm text-muted-foreground">
+                We'll send a confirmation link to verify your new email address
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Change Password */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Change Password</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Current password</Label>
+              <Input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••"
               />
             </div>
-          </div>
-        </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>New password</Label>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Confirm new password</Label>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Business details */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>
-              Business name <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
-              className="max-w-md"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>
-              Business phone number <span className="text-destructive">*</span>
-            </Label>
-            <div className="flex gap-2 max-w-md">
-              <Select value={countryCode} onValueChange={setCountryCode}>
-                <SelectTrigger className="w-32">
+        {/* Preferences */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Preferences</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Time zone</Label>
+              <Select value={timezone} onValueChange={setTimezone}>
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="+972">🇮🇱 +972</SelectItem>
-                  <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                  <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                  <SelectItem value="eastern">Eastern Time — 07:52 PM</SelectItem>
+                  <SelectItem value="central">Central Time — 06:52 PM</SelectItem>
+                  <SelectItem value="mountain">Mountain Time — 05:52 PM</SelectItem>
+                  <SelectItem value="pacific">Pacific Time — 04:52 PM</SelectItem>
                 </SelectContent>
               </Select>
-              <Input
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex-1"
-              />
+              <p className="text-sm text-muted-foreground">
+                Used to display time in the app
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Calling from this number to your agent is free
-            </p>
-          </div>
-
-        </div>
-
-        {/* Change email */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>New email address</Label>
-            <Input
-              type="email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              placeholder="name@company.com"
-              className="max-w-md"
-            />
-          </div>
-        </div>
-
-        {/* Change password */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Current password</Label>
-            <Input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="••••••••"
-              className="max-w-md"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 max-w-2xl">
-            <div className="space-y-2">
-              <Label>New password</Label>
-              <Input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Confirm new password</Label>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Other */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Time zone</Label>
-            <Select value={timezone} onValueChange={setTimezone}>
-              <SelectTrigger className="max-w-md">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="eastern">Eastern Time — 07:52 PM</SelectItem>
-                <SelectItem value="central">Central Time — 06:52 PM</SelectItem>
-                <SelectItem value="mountain">Mountain Time — 05:52 PM</SelectItem>
-                <SelectItem value="pacific">Pacific Time — 04:52 PM</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-sm text-muted-foreground">
-              Used to display time in the app
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Language</Label>
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="max-w-md">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="english">English</SelectItem>
-                <SelectItem value="spanish">Spanish</SelectItem>
-                <SelectItem value="french">French</SelectItem>
-                <SelectItem value="german">German</SelectItem>
-                <SelectItem value="hebrew">Hebrew</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-sm text-muted-foreground">
-              Language used to translate call information
-            </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Save button */}
-        <div className="pt-4">
+        <div className="pt-2">
           <Button onClick={handleSaveAll} className="w-full" size="lg">
             Save changes
           </Button>
