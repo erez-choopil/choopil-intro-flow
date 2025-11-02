@@ -21,9 +21,7 @@ export function TrialBanner() {
   return <div className="relative bg-gradient-to-r from-primary to-secondary px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 flex-1 min-w-[250px]">
-          <div className="shrink-0 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <Sparkles className="h-6 w-6 text-white shrink-0" />
           <p className="text-white text-base font-medium">
             Kickstart your new AI agent - Start your 7-day free trial
           </p>
