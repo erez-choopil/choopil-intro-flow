@@ -14,14 +14,14 @@ const nextSteps = [
     number: 1,
     title: "View Forwarding Instructions",
     description: "Set up call forwarding from your existing number or start using your new Choopil number.",
-    link: "/dashboard/agent-settings",
+    link: "/dashboard/agent/settings",
     linkText: "Go to Agent Settings",
   },
   {
     number: 2,
     title: "Add Business Context",
     description: "Provide additional information about your business to help your AI agent answer questions more accurately.",
-    link: "/dashboard/quick-start?step=train",
+    link: "/dashboard/agent/knowledge",
     linkText: "Go to Business Knowledge",
   },
   {
@@ -37,7 +37,7 @@ export default function SuccessModal({ open, onOpenChange, planName }: SuccessMo
   const navigate = useNavigate();
 
   const handleCompleteSetup = () => {
-    navigate("/dashboard/agent-settings");
+    navigate("/dashboard/agent/settings");
     onOpenChange(false);
   };
 

@@ -50,8 +50,8 @@ export default function TestStep({ onExplorePlans }: TestStepProps) {
         </p>
       </div>
 
-      <Alert className="bg-primary/5 border-primary/20">
-        <Info className="h-4 w-4 text-primary" />
+      <Alert className="bg-[hsl(220,100%,95%)] border-[hsl(220,100%,85%)]">
+        <Lock className="h-4 w-4 text-primary" />
         <AlertDescription className="text-foreground">
           Only you can call Choopil. No external callers will be able to reach this agent until you go-live.
         </AlertDescription>

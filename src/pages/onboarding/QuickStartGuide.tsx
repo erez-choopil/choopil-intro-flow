@@ -22,6 +22,10 @@ export default function QuickStartGuide() {
   ];
 
   const handleStepChange = (step: Step) => {
+    // Prevent jumping from train to launch (step 1 to step 3)
+    if (currentStep === "train" && step === "launch") {
+      return;
+    }
     setSearchParams({ step });
   };
 
