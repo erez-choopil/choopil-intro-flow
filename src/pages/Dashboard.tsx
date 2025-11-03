@@ -21,6 +21,9 @@ import Billing from "./account/Billing";
 // Calls pages
 import CallsWithTabs from "./calls/CallsWithTabs";
 
+// Onboarding pages
+import QuickStartGuide from "./onboarding/QuickStartGuide";
+
 function IntegrationsPage() {
   return <div className="p-8">
       <h1 className="text-3xl font-bold text-foreground mb-4">Integrations</h1>
@@ -34,7 +37,8 @@ export default function Dashboard() {
         <main className="flex-1">
           <TrialBanner />
           <Routes>
-            <Route path="/" element={<Navigate to="calls" replace />} />
+            <Route path="/" element={<Navigate to="quick-start?step=test" replace />} />
+            <Route path="quick-start" element={<QuickStartGuide />} />
             <Route path="calls" element={<CallsWithTabs />} />
             
             {/* Agent routes */}

@@ -1,4 +1,4 @@
-import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User } from "lucide-react";
+import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User, CircleHelp } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -85,6 +85,24 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
+              {/* Quick Start Guide */}
+              <SidebarMenuItem>
+                <NavLink
+                  to="/dashboard/quick-start?step=test"
+                  onClick={handleCallsClick}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                      isActive
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
+                >
+                  <CircleHelp className="h-4 w-4" />
+                  <span>Quick Start Guide</span>
+                </NavLink>
+              </SidebarMenuItem>
+
               {/* Calls */}
               <SidebarMenuItem>
                 <NavLink
