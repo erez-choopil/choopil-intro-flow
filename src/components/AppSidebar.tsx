@@ -19,9 +19,9 @@ import choopilLogo from "@/assets/choopil-logo.svg";
 const agentSubItems = [
   { title: "Agent settings", url: "/dashboard/agent/settings" },
   { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
-  { title: "Ask questions", url: "/dashboard/agent/questions" },
+  { title: "Send texts", url: "/dashboard/agent/texts" },
+  { title: "Ask questions", url: "/dashboard/agent/questions", comingSoon: true },
   { title: "Transfer calls", url: "/dashboard/agent/transfer", comingSoon: true },
-  { title: "Send texts", url: "/dashboard/agent/texts", comingSoon: true },
   // Hidden but kept in structure for future use
   // { title: "Scheduling", url: "/dashboard/agent/scheduling" },
   // { title: "Call filtering", url: "/dashboard/agent/filtering" },

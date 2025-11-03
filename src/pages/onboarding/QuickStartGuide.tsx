@@ -45,21 +45,22 @@ export default function QuickStartGuide() {
       {/* Step Navigation */}
       <div className="border-b bg-card">
         <div className="max-w-4xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2">
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <button
                   onClick={() => handleStepChange(step.id)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                     currentStep === step.id
-                      ? "bg-primary text-primary-foreground shadow-lg"
+                      ? "bg-primary text-primary-foreground"
                       : isStepComplete(step.id)
                       ? "bg-success/10 text-success"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
                   }`}
+                  disabled={currentStep === "train" && step.id === "launch"}
                 >
                   <div
-                    className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold ${
+                    className={`flex items-center justify-center w-6 h-6 rounded-full text-sm font-semibold ${
                       currentStep === step.id
                         ? "bg-primary-foreground text-primary"
                         : isStepComplete(step.id)
@@ -68,15 +69,15 @@ export default function QuickStartGuide() {
                     }`}
                   >
                     {isStepComplete(step.id) ? (
-                      <Check className="h-5 w-5" />
+                      <Check className="h-4 w-4" />
                     ) : (
                       step.number
                     )}
                   </div>
-                  <span className="font-semibold">{step.label}</span>
+                  <span className="text-sm font-medium">{step.label}</span>
                 </button>
                 {index < steps.length - 1 && (
-                  <div className="w-12 h-0.5 bg-border mx-2" />
+                  <div className="w-8 h-0.5 bg-border mx-1" />
                 )}
               </div>
             ))}
