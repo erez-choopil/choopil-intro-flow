@@ -8,32 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
-
 function CallsLandingPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [annualBilling, setAnnualBilling] = useState(false);
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
   };
-
   const handleGetStarted = () => {
     scrollToSection('pricing-section');
   };
-
   const handleTestCall = () => {
     scrollToSection('test-call-section');
   };
-
   const validatePhone = (phone: string) => {
     const cleaned = phone.replace(/\D/g, "");
     return cleaned.length === 10;
   };
-
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
     if (value && !validatePhone(value)) {
@@ -42,7 +39,6 @@ function CallsLandingPage() {
       setPhoneError("");
     }
   };
-
   const handleCallMe = () => {
     if (validatePhone(phoneNumber)) {
       console.log("Calling:", phoneNumber);
@@ -50,64 +46,36 @@ function CallsLandingPage() {
       setPhoneError("Please enter a valid 10-digit phone number");
     }
   };
-
   const handleWebCall = () => {
     console.log("Starting web call");
   };
-
   const handleSelectPlan = (planName: string) => {
     console.log("Selected plan:", planName);
   };
-
-  const plans = [
-    {
-      name: "Starter",
-      price: 49,
-      annualPrice: 39,
-      description: "Perfect for small teams",
-      features: [
-        "100 calls per month",
-        "Basic analytics",
-        "Email support",
-        "24/7 AI receptionist"
-      ]
-    },
-    {
-      name: "Professional",
-      price: 99,
-      annualPrice: 79,
-      description: "For growing businesses",
-      popular: true,
-      features: [
-        "500 calls per month",
-        "Advanced analytics",
-        "Priority support",
-        "Custom voice options",
-        "CRM integration"
-      ]
-    },
-    {
-      name: "Enterprise",
-      price: 199,
-      annualPrice: 159,
-      description: "For large organizations",
-      features: [
-        "Unlimited calls",
-        "Full analytics suite",
-        "Dedicated support",
-        "White-label options",
-        "API access",
-        "Custom integrations"
-      ]
-    }
-  ];
-
+  const plans = [{
+    name: "Starter",
+    price: 49,
+    annualPrice: 39,
+    description: "Perfect for small teams",
+    features: ["100 calls per month", "Basic analytics", "Email support", "24/7 AI receptionist"]
+  }, {
+    name: "Professional",
+    price: 99,
+    annualPrice: 79,
+    description: "For growing businesses",
+    popular: true,
+    features: ["500 calls per month", "Advanced analytics", "Priority support", "Custom voice options", "CRM integration"]
+  }, {
+    name: "Enterprise",
+    price: 199,
+    annualPrice: 159,
+    description: "For large organizations",
+    features: ["Unlimited calls", "Full analytics suite", "Dedicated support", "White-label options", "API access", "Custom integrations"]
+  }];
   const getDisplayPrice = (plan: typeof plans[0]) => {
     return annualBilling ? plan.annualPrice : plan.price;
   };
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[85vh] p-8 bg-gradient-to-b from-background to-primary/5">
+  return <div className="flex flex-col items-center justify-center min-h-[85vh] p-8 bg-gradient-to-b from-background to-primary/5">
       <div className="w-full max-w-3xl space-y-12 animate-fade-in">
         {/* Hero Section */}
         <div className="text-center space-y-6">
@@ -137,19 +105,10 @@ function CallsLandingPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                onClick={handleGetStarted} 
-                size="lg"
-                className="flex-1"
-              >
+              <Button onClick={handleGetStarted} size="lg" className="flex-1">
                 Get Started Free
               </Button>
-              <Button 
-                onClick={handleTestCall} 
-                variant="outline" 
-                size="lg"
-                className="flex-1"
-              >
+              <Button onClick={handleTestCall} variant="outline" size="lg" className="flex-1">
                 Try a Test Call
               </Button>
             </div>
@@ -184,31 +143,19 @@ function CallsLandingPage() {
             <Label htmlFor="billing-toggle" className={!annualBilling ? "font-semibold" : ""}>
               Monthly
             </Label>
-            <Switch
-              id="billing-toggle"
-              checked={annualBilling}
-              onCheckedChange={setAnnualBilling}
-            />
+            <Switch id="billing-toggle" checked={annualBilling} onCheckedChange={setAnnualBilling} />
             <Label htmlFor="billing-toggle" className={annualBilling ? "font-semibold" : ""}>
               Annual
             </Label>
-            {annualBilling && (
-              <span className="text-sm text-success font-medium">Save 20%</span>
-            )}
+            {annualBilling && <span className="text-sm text-success font-medium">Save 20%</span>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <Card 
-              key={plan.name}
-              className={plan.popular ? "border-primary shadow-lg relative" : ""}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+          {plans.map(plan => <Card key={plan.name} className={plan.popular ? "border-primary shadow-lg relative" : ""}>
+              {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
                   Most Popular
-                </div>
-              )}
+                </div>}
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-2">
                   <h3 className="text-2xl font-bold text-foreground">{plan.name}</h3>
@@ -222,43 +169,26 @@ function CallsLandingPage() {
                     </span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
-                  {annualBilling && (
-                    <p className="text-sm text-muted-foreground">
+                  {annualBilling && <p className="text-sm text-muted-foreground">
                       Billed annually (${getDisplayPrice(plan) * 12}/year)
-                    </p>
-                  )}
+                    </p>}
                 </div>
 
-                <Button 
-                  onClick={() => handleSelectPlan(plan.name)}
-                  className="w-full"
-                  variant={plan.popular ? "default" : "outline"}
-                  size="lg"
-                >
+                <Button onClick={() => handleSelectPlan(plan.name)} className="w-full" variant={plan.popular ? "default" : "outline"} size="lg">
                   {plan.popular ? "Get Started Now" : "Select Plan"}
                 </Button>
 
                 <div className="space-y-3 pt-4 border-t">
-                  {plan.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
+                  {plan.features.map((feature, index) => <div key={index} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-success shrink-0 mt-0.5" />
                       <span className="text-sm text-foreground">{feature}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
-        <div className="mt-12 text-center space-y-4">
-          <p className="text-muted-foreground">All plans include:</p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-foreground">
-            <span>✓ No setup fees</span>
-            <span>✓ Cancel anytime</span>
-            <span>✓ 14-day money-back guarantee</span>
-          </div>
-        </div>
+        
       </div>
 
       {/* Test Call Section */}
@@ -312,23 +242,9 @@ function CallsLandingPage() {
                 </p>
               </div>
               <div className="space-y-3">
-                <Input
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  value={phoneNumber}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  className={phoneError ? "border-destructive" : ""}
-                />
-                {phoneError && (
-                  <p className="text-sm text-destructive">{phoneError}</p>
-                )}
-                <Button 
-                  onClick={handleCallMe} 
-                  variant="outline" 
-                  className="w-full" 
-                  size="lg"
-                  disabled={!phoneNumber || !!phoneError}
-                >
+                <Input type="tel" placeholder="(555) 123-4567" value={phoneNumber} onChange={e => handlePhoneChange(e.target.value)} className={phoneError ? "border-destructive" : ""} />
+                {phoneError && <p className="text-sm text-destructive">{phoneError}</p>}
+                <Button onClick={handleCallMe} variant="outline" className="w-full" size="lg" disabled={!phoneNumber || !!phoneError}>
                   Call me now
                 </Button>
               </div>
@@ -336,27 +252,18 @@ function CallsLandingPage() {
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export default function CallsWithTabs() {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Tabs defaultValue="overview" className="w-full">
         <div className="border-b px-6">
           <TabsList className="bg-transparent h-auto p-0">
-            <TabsTrigger 
-              value="overview" 
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent"
-            >
+            <TabsTrigger value="overview" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent">
               <Phone className="h-4 w-4 mr-2" />
               Overview
             </TabsTrigger>
-            <TabsTrigger 
-              value="history" 
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent"
-            >
+            <TabsTrigger value="history" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 data-[state=active]:bg-transparent">
               <History className="h-4 w-4 mr-2" />
               Call History
             </TabsTrigger>
@@ -371,6 +278,5 @@ export default function CallsWithTabs() {
           <CallsTable />
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 }
