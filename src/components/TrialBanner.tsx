@@ -21,14 +21,14 @@ export function TrialBanner() {
   return <div className="relative bg-gradient-to-r from-primary to-secondary px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 flex-1 min-w-[250px]">
-          <Sparkles className="h-6 w-6 text-white shrink-0" />
-          <p className="text-white text-base font-medium">
+          <Sparkles className="h-6 w-6 text-primary-foreground shrink-0" />
+          <p className="text-primary-foreground text-base font-medium">
             Kickstart your new AI agent - Start your 7-day free trial
           </p>
         </div>
         
         <div className="flex items-center gap-3">
-          <Button onClick={handleStartTrial} size="sm" className="bg-white text-primary hover:bg-white/90 font-semibold">
+          <Button onClick={handleStartTrial} size="sm" className="bg-background text-foreground hover:bg-background/90 font-semibold border border-border">
             Start Free Trial
           </Button>
           
