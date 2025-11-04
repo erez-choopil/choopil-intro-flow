@@ -37,8 +37,9 @@ export default function Dashboard() {
         <main className="flex-1">
           <TrialBanner />
           <Routes>
-            <Route path="/" element={<Navigate to="quick-start?step=test" replace />} />
-            <Route path="quick-start" element={<QuickStartGuide />} />
+            <Route path="/" element={<Navigate to="calls" replace />} />
+            {/* Temporarily hidden - will be restored later */}
+            {/* <Route path="quick-start" element={<QuickStartGuide />} /> */}
             <Route path="calls" element={<CallsWithTabs />} />
             
             {/* Agent routes */}

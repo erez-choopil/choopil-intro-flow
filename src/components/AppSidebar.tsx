@@ -86,8 +86,8 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {/* Quick Start Guide */}
-              <SidebarMenuItem>
+              {/* Quick Start Guide - Temporarily hidden, will be restored later */}
+              {/* <SidebarMenuItem>
                 <NavLink
                   to="/dashboard/quick-start?step=test"
                   onClick={handleCallsClick}
@@ -102,7 +102,7 @@ export function AppSidebar() {
                   <CircleHelp className="h-4 w-4" />
                   <span>Quick Start Guide</span>
                 </NavLink>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
 
               {/* Calls */}
               <SidebarMenuItem>
