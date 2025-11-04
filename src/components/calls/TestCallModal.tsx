@@ -80,12 +80,14 @@ export function TestCallModal({
 
               </p>
               </div>
-              <div className="space-y-3">
-                <Input type="tel" placeholder="(555) 123-4567" value={phoneNumber} onChange={e => handlePhoneChange(e.target.value)} className={phoneError ? "border-destructive" : ""} />
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input type="tel" placeholder="(555) 123-4567" value={phoneNumber} onChange={e => handlePhoneChange(e.target.value)} className={phoneError ? "border-destructive" : ""} />
+                  <Button onClick={handleCallMe} variant="outline" size="lg" disabled={!phoneNumber || !!phoneError} className="whitespace-nowrap px-6">
+                    Call me now
+                  </Button>
+                </div>
                 {phoneError && <p className="text-sm text-destructive">{phoneError}</p>}
-                <Button onClick={handleCallMe} variant="outline" className="w-full" size="lg" disabled={!phoneNumber || !!phoneError}>
-                  Call me now
-                </Button>
               </div>
             </CardContent>
           </Card>
