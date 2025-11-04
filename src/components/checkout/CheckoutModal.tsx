@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import choopilLogo from "@/assets/choopil-logo.svg";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -64,7 +63,7 @@ export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true
               onClick={() => onOpenChange(false)}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              <img src={choopilLogo} alt="Choopil" className="h-5" />
+              Back
             </Button>
 
             <div className="flex-1">
