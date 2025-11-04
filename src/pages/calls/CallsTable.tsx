@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Filter, 
   Clock, 
   Phone,
   Users,
@@ -11,8 +10,20 @@ import {
   Play,
   Volume2,
   MessageSquare,
-  Download
+  Download,
+  Settings2,
+  X,
+  ShieldOff,
+  Timer,
+  Calendar,
+  PhoneOff,
+  TrendingUp,
+  CalendarDays,
+  CalendarClock,
 } from "lucide-react";
+import { CustomizeMetricsModal, type Metric } from "@/components/calls/CustomizeMetricsModal";
+import { FiltersDropdown, type FilterState } from "@/components/calls/FiltersDropdown";
+import { format } from "date-fns";
 
 interface Call {
   id: string;
@@ -93,16 +104,101 @@ const mockCalls: Call[] = [
   },
 ];
 
+const allMetrics: Metric[] = [
+  { id: "total-calls", label: "Total Calls", value: "4", icon: Phone, color: "bg-blue-500/10 text-blue-500" },
+  { id: "spam-blocked", label: "Spam Blocked", value: "12", icon: ShieldOff, color: "bg-red-500/10 text-red-500" },
+  { id: "total-time-saved", label: "Total Time Saved", value: "2h 15m", icon: Timer, color: "bg-green-500/10 text-green-500" },
+  { id: "after-hours-calls", label: "After-Hours Calls", value: "8", icon: Calendar, color: "bg-purple-500/10 text-purple-500" },
+  { id: "avg-duration", label: "Average Call Duration", value: "1m 39s", icon: Clock, color: "bg-blue-500/10 text-blue-500" },
+  { id: "missed-calls", label: "Missed Calls", value: "1", icon: PhoneMissed, color: "bg-red-500/10 text-red-500" },
+  { id: "unique-callers", label: "Unique Callers", value: "4", icon: Users, color: "bg-blue-500/10 text-blue-500" },
+  { id: "hung-up-calls", label: "Hung up Calls", value: "2", icon: PhoneOff, color: "bg-orange-500/10 text-orange-500" },
+  { id: "calls-today", label: "Calls Today", value: "4", icon: TrendingUp, color: "bg-green-500/10 text-green-500" },
+  { id: "calls-week", label: "Calls this Week", value: "28", icon: CalendarDays, color: "bg-blue-500/10 text-blue-500" },
+  { id: "calls-month", label: "Calls this Month", value: "142", icon: CalendarClock, color: "bg-purple-500/10 text-purple-500" },
+];
+
 export default function CallsTable() {
   const [selectedCall, setSelectedCall] = useState<Call | null>(mockCalls[1]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([
+    "total-calls",
+    "avg-duration",
+    "unique-callers",
+    "missed-calls",
+  ]);
+  const [filters, setFilters] = useState<FilterState>({
+    dateRange: "last-7-days",
+    callStatus: ["all"],
+  });
 
-  const stats = [
-    { label: "Total Calls", value: "4", icon: Phone },
-    { label: "Average Duration", value: "1m 39s", icon: Clock },
-    { label: "Unique Callers", value: "4", icon: Users },
-    { label: "Missed Calls", value: "1", icon: PhoneMissed },
-  ];
+  const displayedMetrics = selectedMetrics
+    .map((id) => allMetrics.find((m) => m.id === id))
+    .filter(Boolean) as Metric[];
+
+  const getActiveFilterPills = () => {
+    const pills: Array<{ label: string; onRemove: () => void }> = [];
+
+    // Date range pill
+    if (filters.dateRange !== "last-7-days") {
+      let label = "";
+      if (filters.dateRange === "today") label = "Today";
+      else if (filters.dateRange === "last-30-days") label = "Last 30 days";
+      else if (filters.dateRange === "custom") {
+        if (filters.customDateFrom && filters.customDateTo) {
+          label = `${format(filters.customDateFrom, "MMM d")} - ${format(
+            filters.customDateTo,
+            "MMM d"
+          )}`;
+        } else {
+          label = "Custom range";
+        }
+      }
+      pills.push({
+        label,
+        onRemove: () => setFilters({ ...filters, dateRange: "last-7-days" }),
+      });
+    }
+
+    // Call status pills
+    if (!(filters.callStatus.length === 1 && filters.callStatus[0] === "all")) {
+      const statusLabels = filters.callStatus
+        .map((id) => {
+          switch (id) {
+            case "completed": return "Completed";
+            case "missed": return "Missed";
+            case "test-call": return "Test call";
+            case "hung-up": return "Hung up";
+            case "spam": return "Spam";
+            case "blocked": return "Blocked";
+            case "call-transferred": return "Call Transferred";
+            default: return null;
+          }
+        })
+        .filter(Boolean)
+        .join(", ");
+
+      pills.push({
+        label: statusLabels,
+        onRemove: () => setFilters({ ...filters, callStatus: ["all"] }),
+      });
+    }
+
+    return pills;
+  };
+
+  const activeFilterPills = getActiveFilterPills();
+  const hasActiveFilters = activeFilterPills.length > 0;
+
+  const handleClearAllFilters = () => {
+    setFilters({
+      dateRange: "last-7-days",
+      callStatus: ["all"],
+      customDateFrom: undefined,
+      customDateTo: undefined,
+    });
+  };
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -117,34 +213,71 @@ export default function CallsTable() {
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, idx) => (
-            <div key={idx} className="rounded-lg border border-border bg-muted/30 p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <stat.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+        {/* Assistant Metrics */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-foreground">Assistant Metrics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {displayedMetrics.map((metric) => (
+              <div key={metric.id} className="rounded-lg border border-border bg-card p-6">
+                <div className="flex items-start gap-3">
+                  <div className={`p-3 rounded-lg ${metric.color}`}>
+                    <metric.icon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground mb-1">{metric.label}</p>
+                    <p className="text-2xl font-bold text-foreground">{metric.value}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        {/* Active Filter Pills */}
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm text-muted-foreground">Active filters:</span>
+            {activeFilterPills.map((pill, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="gap-1 pr-1"
+              >
+                {pill.label}
+                <button
+                  onClick={pill.onRemove}
+                  className="ml-1 hover:bg-muted-foreground/20 rounded-sm p-0.5"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+            <button
+              onClick={handleClearAllFilters}
+              className="text-sm text-primary hover:text-primary/80 font-medium"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
 
         {/* Filter and Search */}
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Filter
+          <FiltersDropdown filters={filters} onFiltersChange={setFilters} />
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setShowCustomizeModal(true)}
+          >
+            <Settings2 className="h-4 w-4" />
+            Customize Metrics
           </Button>
           <Input
             placeholder="Search by caller name or number..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-md"
+            className="flex-1"
           />
         </div>
 
@@ -287,6 +420,14 @@ export default function CallsTable() {
           </div>
         </div>
       </div>
+
+      {/* Customize Metrics Modal */}
+      <CustomizeMetricsModal
+        open={showCustomizeModal}
+        onOpenChange={setShowCustomizeModal}
+        selectedMetrics={selectedMetrics}
+        onSave={setSelectedMetrics}
+      />
     </div>
   );
 }
