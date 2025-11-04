@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,9 @@ import {
 } from "lucide-react";
 import { CustomizeMetricsModal, type Metric } from "@/components/calls/CustomizeMetricsModal";
 import { FiltersDropdown, type FilterState } from "@/components/calls/FiltersDropdown";
-import { format } from "date-fns";
+import { FeedbackModal } from "@/components/calls/FeedbackModal";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { format, isToday, isWithinInterval, subDays } from "date-fns";
 
 interface Call {
   id: string;
@@ -31,13 +33,14 @@ interface Call {
   duration: string;
   date: string;
   time: string;
-  status: "TEST" | "ENDED";
+  status: "completed" | "missed" | "test-call" | "hung-up" | "spam" | "blocked" | "call-transferred";
   summary: string;
   phone: string;
   transcript: Array<{
     role: "agent" | "caller";
     message: string;
   }>;
+  callDate: Date;
 }
 
 const mockCalls: Call[] = [
@@ -47,9 +50,10 @@ const mockCalls: Call[] = [
     duration: "0:59",
     date: "Oct 27",
     time: "5:52 PM",
-    status: "ENDED",
+    status: "completed",
     summary: "Customer called regarding a refund for a cancelled appointment.",
     phone: "+18484209420",
+    callDate: new Date(2024, 9, 27, 17, 52),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -61,9 +65,10 @@ const mockCalls: Call[] = [
     duration: "2:15",
     date: "Oct 27",
     time: "3:20 PM",
-    status: "ENDED",
+    status: "completed",
     summary: "Customer called regarding a refund for a cancelled appointment. Agent confirmed the refund would be processed within 5-7 business days and provided the reference number. Customer satisfied with resolution.",
     phone: "+15552341234",
+    callDate: new Date(2024, 9, 27, 15, 20),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -83,9 +88,10 @@ const mockCalls: Call[] = [
     duration: "1:45",
     date: "Oct 27",
     time: "2:10 PM",
-    status: "TEST",
+    status: "test-call",
     summary: "Customer inquiry about service availability.",
     phone: "+15559876543",
+    callDate: new Date(2024, 9, 27, 14, 10),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "I wanted to check if you have availability next week." },
@@ -97,9 +103,10 @@ const mockCalls: Call[] = [
     duration: "0:00",
     date: "Oct 27",
     time: "1:05 PM",
-    status: "TEST",
+    status: "missed",
     summary: "Missed call - no voicemail left.",
     phone: "+15551234567",
+    callDate: new Date(2024, 9, 27, 13, 5),
     transcript: [],
   },
 ];
@@ -122,6 +129,8 @@ export default function CallsTable() {
   const [selectedCall, setSelectedCall] = useState<Call | null>(mockCalls[1]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackCallId, setFeedbackCallId] = useState<string>("");
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([
     "total-calls",
     "avg-duration",
@@ -129,7 +138,7 @@ export default function CallsTable() {
     "missed-calls",
   ]);
   const [filters, setFilters] = useState<FilterState>({
-    dateRange: "last-7-days",
+    dateRange: null,
     callStatus: ["all"],
   });
 
@@ -137,13 +146,65 @@ export default function CallsTable() {
     .map((id) => allMetrics.find((m) => m.id === id))
     .filter(Boolean) as Metric[];
 
+  // Filter calls based on filters
+  const filteredCalls = useMemo(() => {
+    let filtered = mockCalls;
+
+    // Apply date range filter
+    if (filters.dateRange) {
+      const now = new Date();
+      filtered = filtered.filter((call) => {
+        if (filters.dateRange === "today") {
+          return isToday(call.callDate);
+        } else if (filters.dateRange === "last-7-days") {
+          return isWithinInterval(call.callDate, {
+            start: subDays(now, 7),
+            end: now,
+          });
+        } else if (filters.dateRange === "last-30-days") {
+          return isWithinInterval(call.callDate, {
+            start: subDays(now, 30),
+            end: now,
+          });
+        } else if (filters.dateRange === "custom") {
+          if (filters.customDateFrom && filters.customDateTo) {
+            return isWithinInterval(call.callDate, {
+              start: filters.customDateFrom,
+              end: filters.customDateTo,
+            });
+          }
+        }
+        return true;
+      });
+    }
+
+    // Apply call status filter
+    if (!(filters.callStatus.length === 1 && filters.callStatus[0] === "all")) {
+      filtered = filtered.filter((call) => filters.callStatus.includes(call.status));
+    }
+
+    // Apply search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (call) =>
+          call.caller.toLowerCase().includes(query) ||
+          call.phone.includes(query) ||
+          call.summary.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [filters, searchQuery]);
+
   const getActiveFilterPills = () => {
     const pills: Array<{ label: string; onRemove: () => void }> = [];
 
     // Date range pill
-    if (filters.dateRange !== "last-7-days") {
+    if (filters.dateRange !== null) {
       let label = "";
       if (filters.dateRange === "today") label = "Today";
+      else if (filters.dateRange === "last-7-days") label = "Last 7 days";
       else if (filters.dateRange === "last-30-days") label = "Last 30 days";
       else if (filters.dateRange === "custom") {
         if (filters.customDateFrom && filters.customDateTo) {
@@ -157,7 +218,7 @@ export default function CallsTable() {
       }
       pills.push({
         label,
-        onRemove: () => setFilters({ ...filters, dateRange: "last-7-days" }),
+        onRemove: () => setFilters({ ...filters, dateRange: null }),
       });
     }
 
@@ -193,11 +254,16 @@ export default function CallsTable() {
 
   const handleClearAllFilters = () => {
     setFilters({
-      dateRange: "last-7-days",
+      dateRange: null,
       callStatus: ["all"],
       customDateFrom: undefined,
       customDateTo: undefined,
     });
+  };
+
+  const handleLeaveFeedback = (callId: string) => {
+    setFeedbackCallId(callId);
+    setShowFeedbackModal(true);
   };
 
   return (
@@ -213,25 +279,27 @@ export default function CallsTable() {
           </p>
         </div>
 
-        {/* Assistant Metrics */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Assistant Metrics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {displayedMetrics.map((metric) => (
-              <div key={metric.id} className="rounded-lg border border-border bg-card p-6">
-                <div className="flex items-start gap-3">
-                  <div className={`p-3 rounded-lg ${metric.color}`}>
-                    <metric.icon className="h-6 w-6" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground mb-1">{metric.label}</p>
-                    <p className="text-2xl font-bold text-foreground">{metric.value}</p>
+        {/* Assistant Metrics - Only show if metrics are selected */}
+        {selectedMetrics.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-foreground">Assistant Metrics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {displayedMetrics.map((metric) => (
+                <div key={metric.id} className="rounded-lg border border-border bg-card p-6">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-3 rounded-lg ${metric.color}`}>
+                      <metric.icon className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-muted-foreground mb-1">{metric.label}</p>
+                      <p className="text-2xl font-bold text-foreground">{metric.value}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Active Filter Pills */}
         {hasActiveFilters && (
@@ -274,7 +342,7 @@ export default function CallsTable() {
             Customize Metrics
           </Button>
           <Input
-            placeholder="Search by caller name or number..."
+            placeholder="Search calls by name, phone number or phrase"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1"
@@ -285,7 +353,7 @@ export default function CallsTable() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Calls List */}
           <div className="lg:col-span-1 space-y-3">
-            {mockCalls.map((call) => (
+            {filteredCalls.map((call) => (
               <div
                 key={call.id}
                 className={`cursor-pointer transition-all p-4 rounded-lg border border-border ${
@@ -303,9 +371,21 @@ export default function CallsTable() {
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <Badge
-                    variant={call.status === "ENDED" ? "default" : "secondary"}
+                    variant={call.status === "completed" ? "default" : "secondary"}
                   >
-                    {call.status === "ENDED" ? "Call Ended" : "Test"}
+                    {call.status === "completed"
+                      ? "Call Ended"
+                      : call.status === "missed"
+                      ? "Missed"
+                      : call.status === "test-call"
+                      ? "Test"
+                      : call.status === "hung-up"
+                      ? "Hung up"
+                      : call.status === "spam"
+                      ? "Spam"
+                      : call.status === "blocked"
+                      ? "Blocked"
+                      : "Call Transferred"}
                   </Badge>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
@@ -334,14 +414,30 @@ export default function CallsTable() {
                       {selectedCall.date}, 2025, {selectedCall.time}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <TooltipProvider>
+                    <div className="flex items-center gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleLeaveFeedback(selectedCall.id)}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Leave Feedback</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Download call audio</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
                 </div>
 
                 {/* Summary */}
@@ -427,6 +523,13 @@ export default function CallsTable() {
         onOpenChange={setShowCustomizeModal}
         selectedMetrics={selectedMetrics}
         onSave={setSelectedMetrics}
+      />
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        open={showFeedbackModal}
+        onOpenChange={setShowFeedbackModal}
+        callId={feedbackCallId}
       />
     </div>
   );

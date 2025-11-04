@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 export interface FilterState {
-  dateRange: "today" | "last-7-days" | "last-30-days" | "custom";
+  dateRange: "today" | "last-7-days" | "last-30-days" | "custom" | null;
   callStatus: string[];
   customDateFrom?: Date;
   customDateTo?: Date;
@@ -36,11 +36,13 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
   const [showEndCalendar, setShowEndCalendar] = useState(false);
 
   const handleDateRangeChange = (range: FilterState["dateRange"]) => {
+    // Toggle: if clicking the same range, deselect it
+    const newRange = filters.dateRange === range ? null : range;
     onFiltersChange({
       ...filters,
-      dateRange: range,
-      customDateFrom: range === "custom" ? filters.customDateFrom : undefined,
-      customDateTo: range === "custom" ? filters.customDateTo : undefined,
+      dateRange: newRange,
+      customDateFrom: newRange === "custom" ? filters.customDateFrom : undefined,
+      customDateTo: newRange === "custom" ? filters.customDateTo : undefined,
     });
   };
 
@@ -66,7 +68,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
 
   const handleClearAll = () => {
     onFiltersChange({
-      dateRange: "last-7-days",
+      dateRange: null,
       callStatus: ["all"],
       customDateFrom: undefined,
       customDateTo: undefined,
@@ -74,12 +76,12 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
   };
 
   const isDefaultFilters =
-    filters.dateRange === "last-7-days" &&
+    filters.dateRange === null &&
     filters.callStatus.length === 1 &&
     filters.callStatus[0] === "all";
 
   const activeFilterCount =
-    (filters.dateRange !== "last-7-days" ? 1 : 0) +
+    (filters.dateRange !== null ? 1 : 0) +
     (filters.callStatus.length === 1 && filters.callStatus[0] === "all" ? 0 : 1);
 
   return (

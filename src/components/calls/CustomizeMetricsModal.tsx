@@ -161,21 +161,19 @@ export function CustomizeMetricsModal({
     .map((id) => allMetrics.find((m) => m.id === id))
     .filter(Boolean) as Metric[];
 
-  const availableMetrics = allMetrics.filter((m) => !localSelected.includes(m.id));
-
   const isMaxReached = localSelected.length >= 4;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle>Customize Performance Metrics</DialogTitle>
           <p className="text-sm text-muted-foreground">
             Select up to 4 metrics to display. Drag to reorder.
           </p>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 px-6 overflow-y-auto flex-1">
           {/* Counter */}
           {localSelected.length > 0 && (
             <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
@@ -209,11 +207,11 @@ export function CustomizeMetricsModal({
             </div>
           )}
 
-          {/* Available Metrics */}
+          {/* Available Metrics - Show ALL metrics */}
           <div className="space-y-3">
             <h4 className="font-semibold text-foreground">Available Metrics</h4>
             <div className="grid grid-cols-2 gap-3">
-              {availableMetrics.map((metric) => {
+              {allMetrics.map((metric) => {
                 const isSelected = localSelected.includes(metric.id);
                 const isDisabled = !isSelected && isMaxReached;
 
@@ -245,16 +243,18 @@ export function CustomizeMetricsModal({
           </div>
         </div>
 
-        <div className="text-xs text-muted-foreground border-t pt-4">
-          Tip: Drag selected metrics above to change their display order
+        {/* Sticky Footer */}
+        <div className="border-t bg-background px-6 py-4 space-y-4">
+          <div className="text-xs text-muted-foreground">
+            Tip: Drag selected metrics above to change their display order
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave}>Save Changes</Button>
+          </DialogFooter>
         </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
