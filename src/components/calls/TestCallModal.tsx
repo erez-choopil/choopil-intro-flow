@@ -59,11 +59,16 @@ export function TestCallModal({ open, onOpenChange }: TestCallModalProps) {
           </p>
         </DialogHeader>
 
-        <div className="space-y-6 mt-4">
-          {/* Web Call Section */}
-          <Card className="border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="p-8 space-y-4">
-              <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          {/* Web Call Card */}
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Phone className="h-8 w-8 text-primary" />
+                </div>
+              </div>
+              <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">
                   Web call
                 </h3>
@@ -71,31 +76,25 @@ export function TestCallModal({ open, onOpenChange }: TestCallModalProps) {
                   Test with a web call using your browser. No phone needed.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2">
-                <Button onClick={handleWebCall} className="w-full max-w-md" size="lg">
-                  Web call
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  No phone nearby? Test with a web call.
-                </p>
-              </div>
+              <Button onClick={handleWebCall} className="w-full" size="lg">
+                <Phone className="h-4 w-4 mr-2" />
+                Web call
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                No phone nearby? Test with a web call.
+              </p>
             </CardContent>
           </Card>
 
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or</span>
-            </div>
-          </div>
-
-          {/* AI Assistant Call Me Section */}
-          <Card className="border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="p-8 space-y-4">
-              <div className="space-y-2">
+          {/* AI Assistant Call Me Card */}
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Phone className="h-8 w-8 text-primary" />
+                </div>
+              </div>
+              <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">
                   AI assistant call me
                 </h3>
@@ -103,7 +102,7 @@ export function TestCallModal({ open, onOpenChange }: TestCallModalProps) {
                   Enter your phone number and Choopil will call you.
                 </p>
               </div>
-              <div className="space-y-3 max-w-md mx-auto">
+              <div className="space-y-3">
                 <Input
                   type="tel"
                   placeholder="(555) 123-4567"
