@@ -6,8 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 import { useState } from "react";
 
@@ -76,33 +75,35 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold text-center mb-4">
-            Choose Your Plan
+            Select the perfect plan for your business needs
           </DialogTitle>
           <p className="text-lg text-muted-foreground text-center mb-6">
-            Choose your plan and start your 7-day free trial. You'll only be charged after the trial ends.
+            Start your 7-day free trial today - start pay only after
           </p>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <Label
-              htmlFor="billing-toggle"
-              className={!annualBilling ? "font-semibold" : ""}
-            >
-              Monthly
-            </Label>
-            <Switch
-              id="billing-toggle"
-              checked={annualBilling}
-              onCheckedChange={setAnnualBilling}
-            />
-            <Label
-              htmlFor="billing-toggle"
-              className={annualBilling ? "font-semibold" : ""}
-            >
-              Annual
-            </Label>
-            {annualBilling && (
-              <span className="text-sm text-success font-medium">Save 20%</span>
-            )}
+          <div className="flex items-center justify-center mb-8">
+            <div className="inline-flex items-center bg-muted p-1 rounded-full">
+              <button
+                onClick={() => setAnnualBilling(false)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  !annualBilling
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setAnnualBilling(true)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  annualBilling
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Yearly - 20% off
+              </button>
+            </div>
           </div>
         </DialogHeader>
 
@@ -110,18 +111,25 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`transition-all duration-300 hover:scale-105 hover:shadow-xl ${plan.popular ? "border-primary shadow-lg relative" : ""}`}
+              className={`transition-all duration-300 hover:scale-105 hover:shadow-xl relative ${plan.popular ? "border-primary shadow-lg" : ""}`}
             >
-              {plan.popular && (
+              {annualBilling && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                  Recommended
+                  20% off
                 </div>
               )}
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-foreground">
-                    {plan.name}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-2xl font-bold text-foreground">
+                      {plan.name}
+                    </h3>
+                    {plan.popular && (
+                      <Badge variant="secondary" className="text-xs">
+                        Recommended
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-muted-foreground">{plan.description}</p>
                 </div>
 
