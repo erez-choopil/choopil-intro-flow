@@ -363,13 +363,8 @@ export default function CallsTable() {
                 }`}
                 onClick={() => setSelectedCall(call)}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground truncate">{call.caller}</p>
-                    <p className="text-sm text-muted-foreground truncate">{call.phone}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="space-y-3">
+                  {/* Label at top */}
                   <Badge
                     variant={call.status === "completed" ? "default" : "secondary"}
                   >
@@ -387,15 +382,23 @@ export default function CallsTable() {
                       ? "Blocked"
                       : "Call Transferred"}
                   </Badge>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
+
+                  {/* Caller name and phone */}
+                  <div>
+                    <p className="font-semibold text-foreground truncate">{call.caller}</p>
+                    <p className="text-sm text-muted-foreground truncate">{call.phone}</p>
+                  </div>
+
+                  {/* Timestamp footer */}
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <span className="text-xs text-muted-foreground">
+                      {call.date}, {call.time}
+                    </span>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       {call.duration}
                     </span>
                   </div>
-                </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  {call.date}, {call.time}
                 </div>
               </div>
             ))}
