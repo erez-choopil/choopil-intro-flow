@@ -17,7 +17,7 @@ interface PricingModalProps {
 }
 
 export function PricingModal({ open, onOpenChange }: PricingModalProps) {
-  const [annualBilling, setAnnualBilling] = useState(false);
+  const [annualBilling, setAnnualBilling] = useState(true);
 
   const plans = [
     {
@@ -79,7 +79,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
             Choose Your Plan
           </DialogTitle>
           <p className="text-lg text-muted-foreground text-center mb-6">
-            Select the perfect plan for your business needs
+            Choose your plan and start your 7-day free trial. You'll only be charged after the trial ends.
           </p>
 
           <div className="flex items-center justify-center gap-4 mb-8">
@@ -110,11 +110,11 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={plan.popular ? "border-primary shadow-lg relative" : ""}
+              className={`transition-all duration-300 hover:scale-105 hover:shadow-xl ${plan.popular ? "border-primary shadow-lg relative" : ""}`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
+                  Recommended
                 </div>
               )}
               <CardContent className="p-6 space-y-6">
@@ -126,7 +126,12 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex items-baseline gap-2">
+                    {annualBilling && (
+                      <span className="text-2xl font-medium text-muted-foreground line-through">
+                        ${plan.price}
+                      </span>
+                    )}
                     <span className="text-4xl font-bold text-foreground">
                       ${getDisplayPrice(plan)}
                     </span>
@@ -145,7 +150,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                   variant={plan.popular ? "default" : "outline"}
                   size="lg"
                 >
-                  {plan.popular ? "Get Started Now" : "Select Plan"}
+                  Get Started
                 </Button>
 
                 <div className="space-y-3 pt-4 border-t">
