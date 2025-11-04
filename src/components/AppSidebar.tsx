@@ -19,7 +19,8 @@ import choopilLogo from "@/assets/choopil-logo.svg";
 const agentSubItems = [
   { title: "Agent settings", url: "/dashboard/agent/settings" },
   { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
-  { title: "Send texts", url: "/dashboard/agent/texts" },
+  // Temporarily hidden - will be restored later
+  // { title: "Send texts", url: "/dashboard/agent/texts" },
   { title: "Ask questions", url: "/dashboard/agent/questions", comingSoon: true },
   { title: "Transfer calls", url: "/dashboard/agent/transfer", comingSoon: true },
   // Hidden but kept in structure for future use
@@ -203,8 +204,8 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Integrations */}
-              <SidebarMenuItem>
+              {/* Integrations - Temporarily hidden, will be restored later */}
+              {/* <SidebarMenuItem>
                 <NavLink
                   to="/dashboard/integrations"
                   onClick={handleIntegrationsClick}
@@ -219,7 +220,7 @@ export function AppSidebar() {
                   <Puzzle className="h-4 w-4" />
                   <span>Integrations</span>
                 </NavLink>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
