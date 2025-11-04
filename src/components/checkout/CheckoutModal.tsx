@@ -54,7 +54,7 @@ export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[1200px] max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
         <div className="flex flex-col md:flex-row bg-[#F6F9FC]">
           {/* Left side - Summary */}
           <div className="w-full md:w-2/5 bg-white p-6 md:p-8 flex flex-col">
