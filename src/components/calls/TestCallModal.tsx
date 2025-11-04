@@ -1,8 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Phone } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 interface TestCallModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -38,15 +40,19 @@ export function TestCallModal({
     onOpenChange(false);
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl relative z-50">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold text-center mb-2">
             Try a Test Call
           </DialogTitle>
-          <p className="text-lg text-muted-foreground text-center">Experience your AI receptionist in action!</p>
+          <DialogDescription className="text-lg text-muted-foreground text-center">
+            Experience your AI receptionist in action!
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <p className="text-center text-sm text-muted-foreground mb-6">Choose one option:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Web Call Card */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6 space-y-4">
@@ -66,15 +72,13 @@ export function TestCallModal({
             </CardContent>
           </Card>
 
-          {/* OR Divider */}
-          <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center z-10">
-            <div className="bg-background px-4 py-2 rounded-full border-2 border-muted">
-              <span className="text-sm font-medium text-muted-foreground">or</span>
-            </div>
+          {/* Or Divider - visible only on desktop */}
+          <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center w-12 h-12 rounded-full bg-background border-2 border-border z-10">
+            <span className="text-sm font-medium text-muted-foreground">or</span>
           </div>
 
-          {/* Mobile OR Divider */}
-          <div className="md:hidden flex items-center gap-4">
+          {/* Or Divider - visible only on mobile */}
+          <div className="md:hidden flex items-center gap-4 -my-3">
             <div className="flex-1 h-px bg-border"></div>
             <span className="text-sm font-medium text-muted-foreground">or</span>
             <div className="flex-1 h-px bg-border"></div>
@@ -94,8 +98,23 @@ export function TestCallModal({
               </div>
               <div className="space-y-2">
                 <div className="flex gap-2">
-                  <Input type="tel" placeholder="(555) 123-4567" value={phoneNumber} onChange={e => handlePhoneChange(e.target.value)} className={`h-11 border-2 border-primary ${phoneError ? "border-destructive" : ""}`} />
-                  <Button onClick={handleCallMe} variant="outline" size="lg" disabled={!phoneNumber || !!phoneError} className="h-11 whitespace-nowrap px-6 border-2 border-primary hover:bg-primary hover:text-primary-foreground">
+                  <Input 
+                    type="tel" 
+                    placeholder="(555) 123-4567" 
+                    value={phoneNumber} 
+                    onChange={e => handlePhoneChange(e.target.value)} 
+                    className={cn(
+                      "h-11 border-2 border-primary",
+                      phoneError && "border-destructive"
+                    )} 
+                  />
+                  <Button 
+                    onClick={handleCallMe} 
+                    variant="outline" 
+                    size="lg" 
+                    disabled={!phoneNumber || !!phoneError} 
+                    className="whitespace-nowrap px-6 h-11 border-2 border-primary hover:bg-primary hover:text-primary-foreground"
+                  >
                     Call me now
                   </Button>
                 </div>
