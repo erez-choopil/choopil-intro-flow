@@ -1,6 +1,7 @@
 import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User, CircleHelp } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { PricingModal } from "@/components/calls/PricingModal";
 import {
   Sidebar,
   SidebarContent,
@@ -40,6 +41,7 @@ export function AppSidebar() {
   const [agentOpen, setAgentOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   
   const isAgentActive = location.pathname.startsWith("/dashboard/agent");
   const isSettingsActive = location.pathname.startsWith("/dashboard/settings");
@@ -57,9 +59,7 @@ export function AppSidebar() {
   };
 
   const handleUpgradeClick = () => {
-    setSettingsOpen(true);
-    setAgentOpen(false);
-    navigate("/dashboard/settings/billing");
+    setIsPricingModalOpen(true);
   };
 
   const handleCallsClick = () => {
@@ -264,6 +264,7 @@ export function AppSidebar() {
           </button>
         </div>
       </SidebarFooter>
+      <PricingModal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen} />
     </Sidebar>
   );
 }

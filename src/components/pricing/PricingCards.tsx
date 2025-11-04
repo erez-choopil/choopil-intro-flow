@@ -108,11 +108,11 @@ export function PricingCards({ onSelectPlan }: PricingCardsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4 px-4 md:px-0">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`transition-all duration-300 hover:scale-105 hover:shadow-xl relative ${
+            className={`transition-all duration-300 lg:hover:scale-105 hover:shadow-xl relative ${
               plan.popular ? "border-primary shadow-lg" : ""
             }`}
           >
@@ -186,7 +186,7 @@ export function PricingCards({ onSelectPlan }: PricingCardsProps) {
         <p className="text-sm text-muted-foreground mb-4">
           Trusted by businesses worldwide to handle their customer communications
         </p>
-        <div className="flex items-center justify-center gap-8 flex-wrap">
+        <div className="flex items-center justify-center gap-4 md:gap-8 flex-wrap px-4">
           <div className="flex items-center gap-2">
             <Check className="h-5 w-5 text-primary" />
             <span className="text-sm font-medium">No setup fees</span>
