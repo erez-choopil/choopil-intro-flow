@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,12 +40,14 @@ export function TestCallModal({
     onOpenChange(false);
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl relative">
+      <DialogContent className="max-w-4xl relative z-50">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold text-center mb-2">
             Try a Test Call
           </DialogTitle>
-          <p className="text-lg text-muted-foreground text-center">Experience your AI receptionist in action!</p>
+          <DialogDescription className="text-lg text-muted-foreground text-center">
+            Experience your AI receptionist in action!
+          </DialogDescription>
         </DialogHeader>
 
         <p className="text-center text-sm text-muted-foreground mb-6">Choose one option:</p>
