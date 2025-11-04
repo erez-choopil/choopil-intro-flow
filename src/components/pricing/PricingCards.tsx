@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { useState } from "react";
 
 interface PricingCardsProps {
-  onSelectPlan?: (plan: { name: string; price: string; annualPrice: string }) => void;
+  onSelectPlan?: (plan: { name: string; price: string; annualPrice: string }, isAnnual: boolean) => void;
 }
 
 const plans = [
@@ -68,7 +68,7 @@ export function PricingCards({ onSelectPlan }: PricingCardsProps) {
 
   const handleSelectPlan = (plan: typeof plans[0]) => {
     if (onSelectPlan) {
-      onSelectPlan(plan);
+      onSelectPlan(plan, annualBilling);
     }
   };
 

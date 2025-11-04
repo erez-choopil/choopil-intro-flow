@@ -13,7 +13,9 @@ export default function Checkout() {
   const location = useLocation();
   const { toast } = useToast();
   
-  const planDetails = location.state || { name: "Starter", price: "$24.95" };
+  const planDetails = location.state || { name: "Starter", price: "$24.95", annualPrice: "$19.96", isAnnual: true };
+  const isAnnual = planDetails.isAnnual ?? true;
+  const displayPrice = isAnnual ? planDetails.annualPrice : planDetails.price;
   
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
@@ -59,7 +61,7 @@ export default function Checkout() {
           </h1>
           <div className="mb-8">
             <span className="text-5xl font-bold text-foreground">
-              {planDetails.price}
+              {displayPrice}
             </span>
             <span className="text-muted-foreground ml-2">per<br/>month</span>
           </div>
@@ -67,15 +69,15 @@ export default function Checkout() {
           <div className="space-y-4 mb-8">
             <div className="flex justify-between items-center py-2">
               <span className="text-foreground">{planDetails.name} plan</span>
-              <span className="font-semibold text-foreground">{planDetails.price}</span>
+              <span className="font-semibold text-foreground">{displayPrice}</span>
             </div>
-            <div className="text-sm text-muted-foreground">Billed monthly</div>
+            <div className="text-sm text-muted-foreground">Billed {isAnnual ? 'annually' : 'monthly'}</div>
           </div>
 
           <div className="border-t pt-4 mb-4">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-semibold text-foreground">{planDetails.price}</span>
+              <span className="font-semibold text-foreground">{displayPrice}</span>
             </div>
           </div>
 
@@ -103,7 +105,7 @@ export default function Checkout() {
           <div className="border-t mt-6 pt-6">
             <div className="flex justify-between items-center">
               <span className="font-semibold text-foreground">Total due today</span>
-              <span className="text-2xl font-bold text-foreground">{planDetails.price}</span>
+              <span className="text-2xl font-bold text-foreground">{displayPrice}</span>
             </div>
           </div>
         </div>
