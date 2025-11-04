@@ -7,6 +7,8 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
 import { useState } from "react";
 
@@ -77,33 +79,31 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           <DialogTitle className="text-3xl font-bold text-center mb-4">
             Select the perfect plan for your business needs
           </DialogTitle>
-          <p className="text-lg text-muted-foreground text-center mb-6">
+          <p className="text-lg text-muted-foreground text-center mb-10">
             Start your 7-day free trial today - start pay only after
           </p>
 
-          <div className="flex items-center justify-center mb-8">
-            <div className="inline-flex items-center bg-muted p-1 rounded-full">
-              <button
-                onClick={() => setAnnualBilling(false)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  !annualBilling
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setAnnualBilling(true)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  annualBilling
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Yearly - 20% off
-              </button>
-            </div>
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <Label
+              htmlFor="billing-toggle"
+              className={`text-sm font-medium transition-colors ${!annualBilling ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Monthly
+            </Label>
+            <Switch
+              id="billing-toggle"
+              checked={annualBilling}
+              onCheckedChange={setAnnualBilling}
+            />
+            <Label
+              htmlFor="billing-toggle"
+              className={`text-sm font-medium transition-colors ${annualBilling ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Yearly
+            </Label>
+            {annualBilling && (
+              <Badge variant="secondary" className="text-xs">20% off</Badge>
+            )}
           </div>
         </DialogHeader>
 
@@ -133,8 +133,8 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                   <p className="text-muted-foreground">{plan.description}</p>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-baseline gap-2">
+                <div className="space-y-1 min-h-[100px]">
+                  <div className="flex items-baseline gap-2 min-h-[48px]">
                     {annualBilling && (
                       <span className="text-2xl font-medium text-muted-foreground line-through">
                         ${plan.price}
@@ -145,11 +145,13 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                     </span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
-                  {annualBilling && (
-                    <p className="text-sm text-muted-foreground">
-                      Billed annually (${getDisplayPrice(plan) * 12}/year)
-                    </p>
-                  )}
+                  <div className="min-h-[20px]">
+                    {annualBilling && (
+                      <p className="text-sm text-muted-foreground">
+                        Billed annually (${getDisplayPrice(plan) * 12}/year)
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <Button
