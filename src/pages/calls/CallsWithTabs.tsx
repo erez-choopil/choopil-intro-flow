@@ -11,7 +11,7 @@ function CallsLandingPage() {
   const [testCallModalOpen, setTestCallModalOpen] = useState(false);
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-[85vh] p-8 bg-gradient-to-b from-background to-primary/5">
+      <div className="flex flex-col items-center justify-center min-h-[85vh] p-8">
         <div className="w-full max-w-3xl space-y-12 animate-fade-in">
           {/* Hero Section */}
           <div className="text-center space-y-6">
@@ -32,8 +32,8 @@ function CallsLandingPage() {
               </div>
               
               <div className="space-y-3">
-                <h2 className="text-4xl md:text-5xl font-bold text-foreground blur-sm select-none">
-                  (415) 413-5501
+                <h2 className="text-4xl md:text-5xl font-bold text-foreground select-none">
+                  (•••) •••-••••
                 </h2>
                 <p className="text-muted-foreground">
                   Your dedicated number will be activated after signup
@@ -84,7 +84,7 @@ function CallsLandingPage() {
   );
 }
 export default function CallsWithTabs() {
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-gradient-to-b from-background to-primary/5">
       <Tabs defaultValue="overview" className="w-full">
         <div className="border-b px-6">
           <TabsList className="bg-transparent h-auto p-0">
