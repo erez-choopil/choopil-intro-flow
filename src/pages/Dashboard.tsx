@@ -1,6 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { TrialBanner } from "@/components/TrialBanner";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Agent pages
@@ -35,7 +34,6 @@ export default function Dashboard() {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1">
-          <TrialBanner />
           <Routes>
             <Route path="/" element={<Navigate to="calls" replace />} />
             {/* Temporarily hidden - will be restored later */}

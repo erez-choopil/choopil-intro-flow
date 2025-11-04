@@ -11,8 +11,8 @@ interface PricingCardsProps {
 const plans = [
   {
     name: "Starter",
-    price: "$24.95",
-    annualPrice: "$19.96",
+    price: "$49.00",
+    annualPrice: "$39.20",
     description: "Perfect for small businesses just getting started",
     features: [
       "30 calls",
@@ -24,8 +24,8 @@ const plans = [
   },
   {
     name: "Professional",
-    price: "$59.95",
-    annualPrice: "$47.96",
+    price: "$99.00",
+    annualPrice: "$79.20",
     popular: true,
     description: "Ideal for growing businesses with higher call volume",
     features: [
@@ -41,8 +41,8 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "$159.95",
-    annualPrice: "$127.96",
+    price: "$199.00",
+    annualPrice: "$159.20",
     description: "Enterprise-grade solution for high-volume operations",
     features: [
       "300 calls",
