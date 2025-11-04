@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Phone, Inbox, Clock, Sparkles, Zap, Star } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import { Check, Clock, Zap } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +20,7 @@ const plans = [
     ],
   },
   {
-    name: "Premium",
+    name: "Professional",
     price: "$59.95",
     annualPrice: "$47.96",
     popular: true,
@@ -58,7 +57,7 @@ const plans = [
 ];
 
 export default function Billing() {
-  const [annualBilling, setAnnualBilling] = useState(false);
+  const [annualBilling, setAnnualBilling] = useState(true);
   const navigate = useNavigate();
 
   const handleSelectPlan = (plan: { name: string; price: string; annualPrice: string }) => {
@@ -94,89 +93,100 @@ export default function Billing() {
 
         {/* Pricing Plans */}
         <div className="space-y-6">
-          <div className="text-center space-y-3">
-            <h1 className="text-4xl font-bold text-foreground">Choose Your Perfect Plan</h1>
-            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-              Scale your business with AI-powered phone automation. Answer every call, 24/7.
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl font-bold text-foreground">Choose Your Perfect Plan</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Start your 7-day free trial today - start pay only after
             </p>
             
-            <div className="flex items-center justify-center gap-3 py-3">
-              <span className={`text-sm font-medium transition-colors ${!annualBilling ? 'text-foreground' : 'text-muted-foreground'}`}>
-                Monthly
-              </span>
-              <Switch checked={annualBilling} onCheckedChange={setAnnualBilling} />
-              <span className={`text-sm font-medium transition-colors ${annualBilling ? 'text-foreground' : 'text-muted-foreground'}`}>
-                Annual
-              </span>
-              <Badge className="bg-primary text-primary-foreground">
-                <Star className="h-3 w-3 mr-1" />
-                Save 20%
-              </Badge>
+            <div className="flex items-center justify-center mb-8">
+              <div className="inline-flex items-center bg-muted p-1 rounded-full">
+                <button
+                  onClick={() => setAnnualBilling(false)}
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    !annualBilling
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setAnnualBilling(true)}
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    annualBilling
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Yearly - 20% off
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {plans.map((plan, index) => (
-              <Card 
-                key={plan.name} 
-                className={`relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                  plan.popular 
-                    ? "border-primary border-2 shadow-lg md:scale-105 z-10" 
-                    : "hover:border-primary/50"
-                } animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+            {plans.map((plan) => (
+              <Card
+                key={plan.name}
+                className={`transition-all duration-300 hover:scale-105 hover:shadow-xl relative ${plan.popular ? "border-primary shadow-lg" : ""}`}
               >
-                {plan.popular && (
-                  <>
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5"></div>
-                    <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
-                    <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground shadow-lg">
-                      <Star className="h-3 w-3 mr-1" />
-                      MOST POPULAR
-                    </Badge>
-                  </>
+                {annualBilling && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                    20% off
+                  </div>
                 )}
-                
-                <CardContent className="relative p-6">
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
-                    <div className="flex items-baseline gap-2 mb-2">
-                      {annualBilling && (
-                        <span className="text-2xl font-semibold text-muted-foreground line-through">{plan.price}</span>
+                <CardContent className="p-6 space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-2xl font-bold text-foreground">
+                        {plan.name}
+                      </h3>
+                      {plan.popular && (
+                        <Badge variant="secondary" className="text-xs">
+                          Recommended
+                        </Badge>
                       )}
-                      <span className="text-4xl font-bold text-primary">{getDisplayPrice(plan)}</span>
-                      <div className="flex flex-col">
-                        <span className="text-sm text-muted-foreground">per month</span>
-                      </div>
+                    </div>
+                    <p className="text-muted-foreground">{plan.description}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      {annualBilling && (
+                        <span className="text-2xl font-medium text-muted-foreground line-through">
+                          {plan.price}
+                        </span>
+                      )}
+                      <span className="text-4xl font-bold text-foreground">
+                        {getDisplayPrice(plan)}
+                      </span>
+                      <span className="text-muted-foreground">/month</span>
                     </div>
                     {annualBilling && (
-                      <p className="text-sm font-medium text-primary">Save ${(parseFloat(plan.price.slice(1)) * 12 - parseFloat(plan.annualPrice.slice(1)) * 12).toFixed(0)}/year</p>
+                      <p className="text-sm text-muted-foreground">
+                        Billed annually (${(parseFloat(getDisplayPrice(plan).slice(1)) * 12).toFixed(2)}/year)
+                      </p>
                     )}
                   </div>
 
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <div className="mt-0.5 p-1 rounded-full bg-primary/10">
-                          <Check className="h-3 w-3 text-primary flex-shrink-0" />
-                        </div>
-                        <span className="text-sm text-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button 
-                    className={`w-full h-11 text-base font-semibold transition-all duration-300 ${
-                      plan.popular 
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl" 
-                        : "hover:bg-primary hover:text-primary-foreground"
-                    }`}
-                    variant={plan.popular ? "default" : "outline"}
+                  <Button
                     onClick={() => handleSelectPlan(plan)}
+                    className="w-full"
+                    variant={plan.popular ? "default" : "outline"}
+                    size="lg"
                   >
-                    {plan.popular ? "Get Started Now" : "Select Plan"}
+                    Get Started
                   </Button>
+
+                  <div className="space-y-3 pt-4 border-t">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             ))}
