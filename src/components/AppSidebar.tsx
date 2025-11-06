@@ -20,6 +20,7 @@ import choopilLogo from "@/assets/choopil-logo.svg";
 const agentSubItems = [
   { title: "Agent settings", url: "/dashboard/agent/settings" },
   { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
+  { title: "Launch instructions", url: "/dashboard/agent/launch" },
   // Temporarily hidden - will be restored later
   // { title: "Send texts", url: "/dashboard/agent/texts" },
   { title: "Ask questions", url: "/dashboard/agent/questions", comingSoon: true },

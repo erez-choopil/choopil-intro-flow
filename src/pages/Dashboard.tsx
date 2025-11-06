@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 // Agent pages
 import AgentSettings from "./agent/AgentSettings";
 import Knowledge from "./agent/Knowledge";
+import LaunchInstructions from "./agent/LaunchInstructions";
 import AskQuestions from "./agent/AskQuestions";
 import TransferCalls from "./agent/TransferCalls";
 import SendTexts from "./agent/SendTexts";
@@ -43,6 +44,7 @@ export default function Dashboard() {
             {/* Agent routes */}
             <Route path="agent/settings" element={<AgentSettings />} />
             <Route path="agent/knowledge" element={<Knowledge />} />
+            <Route path="agent/launch" element={<LaunchInstructions />} />
             <Route path="agent/questions" element={<AskQuestions />} />
             <Route path="agent/transfer" element={<TransferCalls />} />
             <Route path="agent/texts" element={<SendTexts />} />
