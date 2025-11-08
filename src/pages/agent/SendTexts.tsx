@@ -150,29 +150,6 @@ export default function SendTexts() {
       {/* Content Section */}
       {textMessagesEnabled && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* SMS Preview Box */}
-          <div className="space-y-4">
-            <div className="border rounded-xl bg-card p-6 space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <MessageSquare className="h-5 w-5 text-primary" />
-                <Label className="text-base font-medium">Message Preview</Label>
-              </div>
-              
-              <div className="bg-muted/30 rounded-lg p-4 border">
-                <div className="bg-background rounded-lg p-4 shadow-sm">
-                  <p className="text-sm whitespace-pre-wrap">{getPreviewMessage()}</p>
-                </div>
-              </div>
-
-              <div className="text-xs text-muted-foreground">
-                Character count: {getCharacterCount()} / 160
-                {getCharacterCount() > 160 && (
-                  <span className="text-warning ml-2">⚠️ Message will be split into multiple SMS</span>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Link Options */}
           <div className="space-y-4">
             <div>
@@ -280,15 +257,31 @@ export default function SendTexts() {
               </div>
             </RadioGroup>
           </div>
+
+          {/* SMS Preview Box */}
+          <div className="space-y-4">
+            <div className="border rounded-xl bg-card p-6 space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <MessageSquare className="h-5 w-5 text-primary" />
+                <Label className="text-base font-medium">Message Preview</Label>
+              </div>
+              
+              <div className="bg-muted/30 rounded-lg p-4 border">
+                <div className="bg-background rounded-lg p-4 shadow-sm">
+                  <p className="text-sm whitespace-pre-wrap">{getPreviewMessage()}</p>
+                </div>
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                Character count: {getCharacterCount()} / 160
+                {getCharacterCount() > 160 && (
+                  <span className="text-warning ml-2">⚠️ Message will be split into multiple SMS</span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Need Help Button */}
-      <div className="flex justify-center mt-8">
-        <Button variant="outline" size="lg">
-          Need help?
-        </Button>
-      </div>
     </div>
   );
 }

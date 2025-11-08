@@ -1,381 +1,228 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Phone, Clock, MessageSquare, Users, CreditCard, 
-  Download, ChevronRight, Shield, AlertTriangle, CheckCircle2
-} from "lucide-react";
-import { ChangePlanModal } from "@/components/billing/ChangePlanModal";
-import { CancelSubscriptionModal } from "@/components/billing/CancelSubscriptionModal";
-import { PaymentMethodCard } from "@/components/billing/PaymentMethodCard";
-import { AddPaymentMethodModal } from "@/components/billing/AddPaymentMethodModal";
-import { UpdateBillingInfoModal } from "@/components/billing/UpdateBillingInfoModal";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Check } from "lucide-react";
+import { CheckoutModal } from "@/components/checkout/CheckoutModal";
+
+const plans = [
+  {
+    name: "Starter",
+    price: "$39.20",
+    originalPrice: "$49.00",
+    annualPrice: "$470.40",
+    discount: "20% off",
+    description: "Perfect for small businesses just getting started",
+    features: [
+      "30 calls",
+      "$1.5 per additional call",
+      "24/7 answering",
+      "Instant call summaries",
+      "Call transfers",
+    ],
+  },
+  {
+    name: "Professional",
+    price: "$79.20",
+    originalPrice: "$99.00",
+    annualPrice: "$950.40",
+    discount: "20% off",
+    isRecommended: true,
+    description: "Ideal for growing businesses with higher call volume",
+    features: [
+      "90 calls",
+      "$1 per additional call",
+      "24/7 answering",
+      "Instant call summaries",
+      "Call transfers",
+      "Send text messages",
+      "Call recordings & transcription",
+      "Spam blocking",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "$159.20",
+    originalPrice: "$199.00",
+    annualPrice: "$1910.40",
+    discount: "20% off",
+    description: "Enterprise-grade solution for high-volume operations",
+    features: [
+      "300 calls",
+      "$0.75 per additional call",
+      "24/7 answering",
+      "Instant call summaries",
+      "Call transfers",
+      "Send text messages",
+      "Call recordings & transcription",
+      "Spam blocking",
+      "Zapier integration",
+      "Priority support",
+    ],
+  },
+];
 
 export default function Billing() {
-  const [changePlanOpen, setChangePlanOpen] = useState(false);
-  const [cancelSubOpen, setCancelSubOpen] = useState(false);
-  const [addPaymentOpen, setAddPaymentOpen] = useState(false);
-  const [updateBillingOpen, setUpdateBillingOpen] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(true);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{
+    name: string;
+    price: string;
+    annualPrice: string;
+  } | null>(null);
 
-  // Mock data - replace with real data from API
-  const subscription = {
-    planName: "Scale",
-    planId: "scale",
-    price: 149,
-    billingCycle: "monthly",
-    nextBillingDate: "December 15, 2025",
-    status: "active",
-    features: [
-      "Up to 500 calls per month",
-      "24/7 AI receptionist",
-      "Industry-specific training",
-      "Call transcripts & summaries",
-      "SMS capabilities",
-      "Call forwarding",
-      "Priority support"
-    ]
+  const handleSelectPlan = (plan: typeof plans[0]) => {
+    setSelectedPlan({
+      name: plan.name,
+      price: plan.price,
+      annualPrice: plan.annualPrice,
+    });
+    setCheckoutModalOpen(true);
   };
-
-  const usage = {
-    calls: { used: 127, limit: 500 },
-    minutes: { used: 3240, limit: null },
-    sms: { used: 89, limit: 1000 },
-    seats: { used: 3, total: 5 }
-  };
-
-  const paymentMethods = [
-    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true }
-  ];
-
-  const billingInfo = {
-    businessName: "Acme Corp",
-    email: "billing@acme.com",
-    address: "123 Main St, San Francisco, CA 94102",
-    country: "United States",
-    vatId: ""
-  };
-
-  const invoices = [
-    { id: "1", number: "INV-2024-1125", date: "Nov 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
-    { id: "2", number: "INV-2024-1025", date: "Oct 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
-    { id: "3", number: "INV-2024-0925", date: "Sep 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
-    { id: "4", number: "INV-2024-0825", date: "Aug 25, 2024", description: "Professional Plan - Monthly", amount: 49.00, status: "paid" }
-  ];
-
-  const getUsagePercentage = (used: number, limit: number | null) => {
-    if (!limit) return 0;
-    return (used / limit) * 100;
-  };
-
-  const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return "text-destructive";
-    if (percentage >= 70) return "text-yellow-600";
-    return "text-success";
-  };
-
-  const callsPercentage = getUsagePercentage(usage.calls.used, usage.calls.limit);
-  const smsPercentage = getUsagePercentage(usage.sms.used, usage.sms.limit);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
-        {/* Usage Warning Banner */}
-        {callsPercentage >= 90 && (
-          <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
-            <CardContent className="flex items-center gap-3 py-4">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
-              <p className="text-sm text-yellow-900 dark:text-yellow-100">
-                You've used {callsPercentage.toFixed(0)}% of your monthly calls. Consider upgrading your plan.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+    <>
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold text-foreground">
+              Choose Your Perfect Plan
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Start your 7-day free trial today - start pay only after
+            </p>
 
-        {/* Current Plan Section */}
-        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center gap-3">
-                  <CardTitle className="text-3xl">{subscription.planName} Plan</CardTitle>
-                  <Badge className="bg-success text-success-foreground">ACTIVE</Badge>
-                </div>
-                <CardDescription className="text-base">
-                  ${subscription.price}/month • Billed {subscription.billingCycle}
-                </CardDescription>
-              </div>
-              <Button onClick={() => setChangePlanOpen(true)}>
-                Change Plan
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-3">Next Billing Date</h4>
-                <p className="text-lg font-semibold">{subscription.nextBillingDate}</p>
-                <p className="text-sm text-muted-foreground mt-1">Total Amount: ${subscription.price}.00 USD</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-3">Features Included</h4>
-                <ul className="space-y-1">
-                  {subscription.features.slice(0, 3).map((feature, idx) => (
-                    <li key={idx} className="text-sm flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      {feature}
-                    </li>
-                  ))}
-                  <li className="text-sm text-muted-foreground">+ {subscription.features.length - 3} more features</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Usage Progress */}
-            <div className="bg-background/50 rounded-lg p-4 space-y-3">
-              <h4 className="text-sm font-medium">This Month's Usage</h4>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Calls</span>
-                  <span className={`font-semibold ${getUsageColor(callsPercentage)}`}>
-                    {usage.calls.used} / {usage.calls.limit} calls
-                  </span>
-                </div>
-                <Progress value={callsPercentage} className="h-2" />
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <Button 
-                variant="ghost" 
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => setCancelSubOpen(true)}
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Label
+                htmlFor="billing-toggle"
+                className={`text-base ${!isAnnual ? "text-foreground font-medium" : "text-muted-foreground"}`}
               >
-                Cancel Subscription
-              </Button>
+                Monthly
+              </Label>
+              <Switch
+                id="billing-toggle"
+                checked={isAnnual}
+                onCheckedChange={setIsAnnual}
+                className="scale-110"
+              />
+              <Label
+                htmlFor="billing-toggle"
+                className={`text-base ${isAnnual ? "text-foreground font-medium" : "text-muted-foreground"}`}
+              >
+                Yearly - 20% off
+              </Label>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Usage & Limits Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Usage This Month</CardTitle>
-            <CardDescription>November 1 - November 30, 2025</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="h-4 w-4" />
-                  <span className="text-sm font-medium">Calls Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.calls.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.calls.limit} calls</div>
-                </div>
-                <Progress value={callsPercentage} className="h-2" />
-                <div className="text-xs text-muted-foreground">{callsPercentage.toFixed(0)}% used</div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm font-medium">Minutes Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.minutes.used.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Unlimited</div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MessageSquare className="h-4 w-4" />
-                  <span className="text-sm font-medium">SMS Sent</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.sms.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.sms.limit} messages</div>
-                </div>
-                <Progress value={smsPercentage} className="h-2" />
-                <div className="text-xs text-muted-foreground">{smsPercentage.toFixed(0)}% used</div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span className="text-sm font-medium">Seats Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.seats.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.seats.total} seats</div>
-                </div>
-                <Button variant="link" className="h-auto p-0 text-sm">Manage Seats</Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Payment & Billing Info Section */}
-        <div className="grid gap-8 lg:grid-cols-5">
-          {/* Payment Methods */}
-          <div className="lg:col-span-3 space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Methods</CardTitle>
-                <CardDescription>Manage your payment methods</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {paymentMethods.map((method) => (
-                  <PaymentMethodCard key={method.id} method={method} />
-                ))}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setAddPaymentOpen(true)}
-                >
-                  + Add Payment Method
-                </Button>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Your payment information is encrypted and secure</span>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
-          {/* Billing Information */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Billing Information</CardTitle>
-                <CardDescription>Update your billing details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Business Name</div>
-                  <div className="text-sm font-semibold mt-1">{billingInfo.businessName}</div>
-                </div>
-                <Separator />
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Billing Email</div>
-                  <div className="text-sm mt-1">{billingInfo.email}</div>
-                </div>
-                <Separator />
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Billing Address</div>
-                  <div className="text-sm mt-1">{billingInfo.address}</div>
-                  <div className="text-sm text-muted-foreground">{billingInfo.country}</div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setUpdateBillingOpen(true)}
-                >
-                  Edit Billing Information
-                </Button>
-              </CardContent>
-            </Card>
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {plans.map((plan) => (
+              <Card
+                key={plan.name}
+                className={`relative ${
+                  plan.isRecommended ? "border-primary border-2" : ""
+                }`}
+              >
+                {plan.isRecommended && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                      Recommended
+                    </span>
+                  </div>
+                )}
+                <CardContent className="p-6 space-y-6">
+                  {/* Plan Header */}
+                  <div className="space-y-2">
+                    {plan.discount && (
+                      <div className="inline-block">
+                        <span className="bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded">
+                          {plan.discount}
+                        </span>
+                      </div>
+                    )}
+                    <h3 className="text-2xl font-bold text-foreground">
+                      {plan.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {plan.description}
+                    </p>
+                  </div>
+
+                  {/* Pricing */}
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-muted-foreground line-through text-lg">
+                        {plan.originalPrice}
+                      </span>
+                      <span className="text-4xl font-bold text-foreground">
+                        {plan.price}
+                      </span>
+                      <span className="text-muted-foreground">/month</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Billed annually ({plan.annualPrice}/year)
+                    </p>
+                  </div>
+
+                  {/* CTA Button */}
+                  <Button
+                    onClick={() => handleSelectPlan(plan)}
+                    className={`w-full ${
+                      plan.isRecommended ? "" : "variant-outline"
+                    }`}
+                    variant={plan.isRecommended ? "default" : "outline"}
+                  >
+                    Get Started
+                  </Button>
+
+                  {/* Features */}
+                  <div className="space-y-3 pt-4 border-t">
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Trust Badge */}
+          <div className="text-center space-y-4 pt-8">
+            <p className="text-muted-foreground font-medium">
+              Trusted by businesses worldwide to handle their customer communications
+            </p>
+            <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-primary" />
+                <span>No setup fees</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-primary" />
+                <span>Cancel anytime</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-primary" />
+                <span>24/7 support</span>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Invoice History */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Invoice History</CardTitle>
-            <CardDescription>View and download your past invoices</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Invoice #</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Description</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Amount</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoices.map((invoice) => (
-                      <tr key={invoice.id} className="border-b hover:bg-muted/50">
-                        <td className="py-4 px-4">
-                          <Button variant="link" className="h-auto p-0 font-mono text-sm">
-                            {invoice.number}
-                          </Button>
-                        </td>
-                        <td className="py-4 px-4 text-sm">{invoice.date}</td>
-                        <td className="py-4 px-4 text-sm">{invoice.description}</td>
-                        <td className="py-4 px-4 text-sm text-right font-semibold">${invoice.amount.toFixed(2)}</td>
-                        <td className="py-4 px-4 text-center">
-                          <Badge className="bg-success text-success-foreground">
-                            {invoice.status.toUpperCase()}
-                          </Badge>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Cards */}
-              <div className="md:hidden space-y-3">
-                {invoices.map((invoice) => (
-                  <Card key={invoice.id}>
-                    <CardContent className="pt-6">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-sm font-semibold">{invoice.number}</span>
-                          <Badge className="bg-success text-success-foreground">
-                            {invoice.status.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <div className="text-sm text-muted-foreground">{invoice.date}</div>
-                        <div className="text-sm">{invoice.description}</div>
-                        <div className="flex items-center justify-between pt-2 border-t">
-                          <span className="text-lg font-bold">${invoice.amount.toFixed(2)}</span>
-                          <Button variant="outline" size="sm">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="flex justify-center pt-4">
-                <Button variant="outline">
-                  Load More Invoices
-                  <ChevronRight className="h-4 w-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
       </div>
 
-      {/* Modals */}
-      <ChangePlanModal open={changePlanOpen} onOpenChange={setChangePlanOpen} currentPlan={subscription.planId} />
-      <CancelSubscriptionModal open={cancelSubOpen} onOpenChange={setCancelSubOpen} subscription={subscription} />
-      <AddPaymentMethodModal open={addPaymentOpen} onOpenChange={setAddPaymentOpen} />
-      <UpdateBillingInfoModal open={updateBillingOpen} onOpenChange={setUpdateBillingOpen} billingInfo={billingInfo} />
-    </div>
+      {selectedPlan && (
+        <CheckoutModal
+          open={checkoutModalOpen}
+          onOpenChange={setCheckoutModalOpen}
+          planDetails={selectedPlan}
+          isAnnual={isAnnual}
+        />
+      )}
+    </>
   );
 }

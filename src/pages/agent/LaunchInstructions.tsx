@@ -122,27 +122,6 @@ const LaunchInstructions = () => {
         <div className="grid md:grid-cols-2 gap-4">
           <Card
             className={`p-6 cursor-pointer transition-all ${
-              selectedOption === "forward"
-                ? "border-primary bg-primary/5"
-                : "hover:border-muted-foreground/50"
-            }`}
-            onClick={() => setSelectedOption("forward")}
-          >
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Phone className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-1">Forward Calls</h3>
-                <p className="text-sm text-muted-foreground">
-                  Send calls from your existing number to Choopil.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            className={`p-6 cursor-pointer transition-all ${
               selectedOption === "use-number"
                 ? "border-primary bg-primary/5"
                 : "hover:border-muted-foreground/50"
@@ -150,8 +129,8 @@ const LaunchInstructions = () => {
             onClick={() => setSelectedOption("use-number")}
           >
             <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-muted">
-                <Phone className="h-6 w-6 text-muted-foreground" />
+              <div className="p-3 rounded-lg bg-primary/10">
+                <Phone className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-1">Use Choopil Number</h3>
@@ -161,7 +140,44 @@ const LaunchInstructions = () => {
               </div>
             </div>
           </Card>
+
+          <Card
+            className={`p-6 cursor-pointer transition-all ${
+              selectedOption === "forward"
+                ? "border-primary bg-primary/5"
+                : "hover:border-muted-foreground/50"
+            }`}
+            onClick={() => setSelectedOption("forward")}
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-lg bg-muted">
+                <Phone className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Forward Calls</h3>
+                <p className="text-sm text-muted-foreground">
+                  Send calls from your existing number to Choopil.
+                </p>
+              </div>
+            </div>
+          </Card>
         </div>
+
+        {/* Use Choopil Number Section */}
+        {selectedOption === "use-number" && (
+          <Card className="p-6 bg-primary/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-primary font-semibold mb-1">Your Choopil Number</h3>
+                <p className="text-2xl font-bold">{CHOOPIL_NUMBER}</p>
+              </div>
+              <Button onClick={copyNumber} variant="outline" className="gap-2">
+                <Copy className="h-4 w-4" />
+                Copy
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Forward Calls Section */}
         {selectedOption === "forward" && (
@@ -209,29 +225,6 @@ const LaunchInstructions = () => {
             </Card>
           </div>
         )}
-
-        {/* Use Choopil Number Section */}
-        {selectedOption === "use-number" && (
-          <Card className="p-6 bg-primary/5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-primary font-semibold mb-1">Your Choopil Number</h3>
-                <p className="text-2xl font-bold">{CHOOPIL_NUMBER}</p>
-              </div>
-              <Button onClick={copyNumber} variant="outline" className="gap-2">
-                <Copy className="h-4 w-4" />
-                Copy
-              </Button>
-            </div>
-          </Card>
-        )}
-
-        {/* Need Help Button */}
-        <div className="flex justify-center">
-          <Button variant="outline" className="gap-2">
-            Need help?
-          </Button>
-        </div>
       </div>
     </div>
   );

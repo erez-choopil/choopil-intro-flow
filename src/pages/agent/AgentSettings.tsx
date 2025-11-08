@@ -21,24 +21,14 @@ export default function AgentSettings() {
   const [selectedVoice, setSelectedVoice] = useState("aria");
   const [agentName, setAgentName] = useState("Cassidy");
   const [greetingMessage, setGreetingMessage] = useState("You've reached Goody. How can I help you today?");
-  const [goodbyeMessage, setGoodbyeMessage] = useState("Thanks for calling. Have a great day.");
 
   const greetingCharCount = greetingMessage.length;
-  const goodbyeCharCount = goodbyeMessage.length;
 
   const handleSaveSettings = () => {
     if (!greetingMessage.trim()) {
       toast({
         title: "Greeting Message is required",
         description: "Please enter a greeting message before saving.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!goodbyeMessage.trim()) {
-      toast({
-        title: "Goodbye Message is required",
-        description: "Please enter a goodbye message before saving.",
         variant: "destructive",
       });
       return;
@@ -140,28 +130,6 @@ export default function AgentSettings() {
                 }
               }}
               placeholder="You've reached Goody. How can I help you today?"
-              className="min-h-[80px] resize-none"
-              maxLength={280}
-            />
-          </div>
-
-          {/* Goodbye Message */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="goodbye" className="text-foreground">
-                Goodbye message <span className="text-destructive">*</span>
-              </Label>
-              <p className="text-xs text-muted-foreground">{goodbyeCharCount}/280</p>
-            </div>
-            <Textarea
-              id="goodbye"
-              value={goodbyeMessage}
-              onChange={(e) => {
-                if (e.target.value.length <= 280) {
-                  setGoodbyeMessage(e.target.value);
-                }
-              }}
-              placeholder="Thanks for calling. Have a great day."
               className="min-h-[80px] resize-none"
               maxLength={280}
             />

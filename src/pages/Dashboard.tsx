@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { DashboardTrialBanner } from "@/components/DashboardTrialBanner";
 
 // Agent pages
 import AgentSettings from "./agent/AgentSettings";
@@ -17,6 +18,7 @@ import CallFiltering from "./agent/CallFiltering";
 import AccountSettings from "./settings/AccountSettings";
 import Checkout from "./settings/Checkout";
 import Billing from "./account/Billing";
+import BillingPayed from "./account/BillingPayed";
 
 // Calls pages
 import QuickStart from "./calls/QuickStart";
@@ -33,6 +35,7 @@ export default function Dashboard() {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1">
+          <DashboardTrialBanner />
           <Routes>
             <Route path="/" element={<Navigate to="quick-start" replace />} />
             <Route path="quick-start" element={<QuickStart />} />
@@ -52,10 +55,8 @@ export default function Dashboard() {
             <Route path="settings/account" element={<AccountSettings />} />
             <Route path="settings/notifications" element={<Notifications />} />
             <Route path="settings/billing" element={<Billing />} />
+            <Route path="settings/billing/payed" element={<BillingPayed />} />
             <Route path="settings/checkout" element={<Checkout />} />
-            
-            {/* Legacy account route redirect */}
-            <Route path="account/billing" element={<Billing />} />
             
             <Route path="integrations" element={<IntegrationsPage />} />
           </Routes>

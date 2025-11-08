@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Phone, Sparkles } from "lucide-react";
+import { Phone } from "lucide-react";
 import { useState } from "react";
 import { PricingModal } from "@/components/calls/PricingModal";
 import { TestCallModal } from "@/components/calls/TestCallModal";
@@ -12,25 +12,6 @@ export default function QuickStart() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-background to-primary/5">
-        {/* Trial Banner */}
-        <div className="bg-primary text-primary-foreground px-6 py-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-5 w-5 flex-shrink-0" />
-              <span className="font-medium">
-                Kickstart your new AI agent - Start your 7-day free trial
-              </span>
-            </div>
-            <Button 
-              onClick={() => setPricingModalOpen(true)}
-              variant="secondary"
-              className="flex-shrink-0"
-            >
-              Start Free Trial
-            </Button>
-          </div>
-        </div>
-
         <div className="flex flex-col items-center justify-center min-h-[85vh] p-8">
           <div className="w-full max-w-3xl space-y-12 animate-fade-in">
             {/* Hero Section */}

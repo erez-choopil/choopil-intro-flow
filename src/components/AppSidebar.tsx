@@ -29,9 +29,19 @@ const agentSubItems = [
   // { title: "Call filtering", url: "/dashboard/agent/filtering" },
 ];
 
-const settingsSubItems = [
+const settingsSubItems: Array<{ 
+  title: string; 
+  url: string; 
+  subItems?: Array<{ title: string; url: string }> 
+}> = [
   { title: "Account", url: "/dashboard/settings/account" },
-  { title: "Billing", url: "/dashboard/settings/billing" },
+  { 
+    title: "Billing", 
+    url: "/dashboard/settings/billing",
+    subItems: [
+      { title: "Payed", url: "/dashboard/settings/billing/payed" },
+    ]
+  },
   { title: "Call notifications", url: "/dashboard/settings/notifications" },
 ];
 
@@ -182,19 +192,55 @@ export function AppSidebar() {
                 </SidebarMenuItem>
                 <CollapsibleContent className="ml-4 mt-1 space-y-1">
                   {settingsSubItems.map((item) => (
-                    <NavLink
-                      key={item.url}
-                      to={item.url}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
-                          isActive
-                            ? "text-primary font-bold"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`
-                      }
-                    >
-                      {item.title}
-                    </NavLink>
+                    item.subItems ? (
+                      // Billing with sub-items
+                      <div key={item.url} className="space-y-1">
+                        <NavLink
+                          to={item.url}
+                          className={({ isActive }) =>
+                            `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
+                              isActive
+                                ? "text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`
+                          }
+                        >
+                          {item.title}
+                        </NavLink>
+                        <div className="ml-4 space-y-1">
+                          {item.subItems.map((subItem) => (
+                            <NavLink
+                              key={subItem.url}
+                              to={subItem.url}
+                              className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-xs ${
+                                  isActive
+                                    ? "text-primary font-bold"
+                                    : "text-muted-foreground hover:text-foreground"
+                                }`
+                              }
+                            >
+                              {subItem.title}
+                            </NavLink>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      // Regular menu items
+                      <NavLink
+                        key={item.url}
+                        to={item.url}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-1.5 rounded-md transition-colors text-sm ${
+                            isActive
+                              ? "text-primary font-bold"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`
+                        }
+                      >
+                        {item.title}
+                      </NavLink>
+                    )
                   ))}
                 </CollapsibleContent>
               </Collapsible>

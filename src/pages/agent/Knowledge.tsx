@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -329,7 +330,7 @@ export default function Knowledge() {
   }
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto">
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -342,17 +343,15 @@ export default function Knowledge() {
         </div>
 
         {/* Section 1: Basic Business Information */}
-        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Basic Business Information
-            </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Business Information</CardTitle>
             <p className="text-sm text-muted-foreground">
               Provide essential details about your business for accurate caller assistance.
             </p>
-          </div>
-          
-          <div className="space-y-4">
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="businessName" className="text-foreground">
                 Business Name
@@ -410,21 +409,20 @@ export default function Knowledge() {
                 We'll automatically import your business information from your Google Business Profile
               </p>
             </div>
-          </div>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Section 2: Business Hours */}
-        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Business Hours
-            </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Business Hours</CardTitle>
             <p className="text-sm text-muted-foreground">
               Set your operating hours so your agent can inform callers when you're available.
             </p>
-          </div>
-          
-          <div className="space-y-3">
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
             {Object.keys(schedule).map((day) => (
               <div key={day} className="flex items-center gap-4">
                 <div className="flex items-center gap-3 w-36 shrink-0">
@@ -505,19 +503,19 @@ export default function Knowledge() {
                 )}
               </div>
             ))}
-          </div>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Section 3: Custom Business Information */}
-        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Custom Business Information
-            </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Custom Business Information</CardTitle>
             <p className="text-sm text-muted-foreground">
               Add any additional information about your business that you want the AI agent to know. This can include special policies, services, or instructions.
             </p>
-          </div>
+          </CardHeader>
+          <CardContent>
 
           <div className="space-y-2">
             <Textarea
@@ -532,7 +530,8 @@ export default function Knowledge() {
               {additionalInfo.length}/5000 characters
             </p>
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Section 4: Documents */}
         <div className="hidden space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
@@ -592,15 +591,14 @@ export default function Knowledge() {
         </div>
 
         {/* Section 5: FAQs */}
-        <div className="space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Frequently Asked Questions
-            </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Frequently Asked Questions</CardTitle>
             <p className="text-sm text-muted-foreground">
               Add common questions and answers that your AI agent should know. This helps provide quick, accurate responses to frequent caller inquiries.
             </p>
-          </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
           <div>
             <Button onClick={() => setShowAddFaq(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -720,7 +718,8 @@ export default function Knowledge() {
               </div>
             ))}
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Save Button */}
         <div className="pt-6">
