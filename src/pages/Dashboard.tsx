@@ -19,10 +19,8 @@ import Checkout from "./settings/Checkout";
 import Billing from "./account/Billing";
 
 // Calls pages
-import CallsWithTabs from "./calls/CallsWithTabs";
-
-// Onboarding pages
-import QuickStartGuide from "./onboarding/QuickStartGuide";
+import QuickStart from "./calls/QuickStart";
+import Calls from "./calls/Calls";
 
 function IntegrationsPage() {
   return <div className="p-8">
@@ -36,10 +34,9 @@ export default function Dashboard() {
         <AppSidebar />
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Navigate to="calls" replace />} />
-            {/* Temporarily hidden - will be restored later */}
-            {/* <Route path="quick-start" element={<QuickStartGuide />} /> */}
-            <Route path="calls" element={<CallsWithTabs />} />
+            <Route path="/" element={<Navigate to="quick-start" replace />} />
+            <Route path="quick-start" element={<QuickStart />} />
+            <Route path="calls" element={<Calls />} />
             
             {/* Agent routes */}
             <Route path="agent/settings" element={<AgentSettings />} />

@@ -1,4 +1,4 @@
-import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User, CircleHelp } from "lucide-react";
+import { Phone, Bot, Settings, Puzzle, Sparkles, LogOut, User, Rocket } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PricingModal } from "@/components/calls/PricingModal";
@@ -62,12 +62,7 @@ export function AppSidebar() {
     setIsPricingModalOpen(true);
   };
 
-  const handleCallsClick = () => {
-    setAgentOpen(false);
-    setSettingsOpen(false);
-  };
-
-  const handleIntegrationsClick = () => {
+  const handleMainNavClick = () => {
     setAgentOpen(false);
     setSettingsOpen(false);
   };
@@ -86,11 +81,11 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {/* Quick Start Guide - Temporarily hidden, will be restored later */}
-              {/* <SidebarMenuItem>
+              {/* Quick Start */}
+              <SidebarMenuItem>
                 <NavLink
-                  to="/dashboard/quick-start?step=test"
-                  onClick={handleCallsClick}
+                  to="/dashboard/quick-start"
+                  onClick={handleMainNavClick}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
@@ -99,16 +94,16 @@ export function AppSidebar() {
                     }`
                   }
                 >
-                  <CircleHelp className="h-4 w-4" />
-                  <span>Quick Start Guide</span>
+                  <Rocket className="h-4 w-4" />
+                  <span>Quick Start</span>
                 </NavLink>
-              </SidebarMenuItem> */}
+              </SidebarMenuItem>
 
               {/* Calls */}
               <SidebarMenuItem>
                 <NavLink
                   to="/dashboard/calls"
-                  onClick={handleCallsClick}
+                  onClick={handleMainNavClick}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive
