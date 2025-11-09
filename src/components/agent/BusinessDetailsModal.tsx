@@ -15,13 +15,11 @@ interface BusinessDetailsModalProps {
   businessAddress: string;
   businessPhone: string;
   businessEmail: string;
-  businessOverview: string;
   onSave: (data: {
     businessName: string;
     businessAddress: string;
     businessPhone: string;
     businessEmail: string;
-    businessOverview: string;
   }) => void;
 }
 
@@ -32,15 +30,12 @@ export function BusinessDetailsModal({
   businessAddress: initialAddress,
   businessPhone: initialPhone,
   businessEmail: initialEmail,
-  businessOverview: initialOverview,
   onSave,
 }: BusinessDetailsModalProps) {
   const [businessName, setBusinessName] = useState(initialName);
   const [businessAddress, setBusinessAddress] = useState(initialAddress);
   const [businessPhone, setBusinessPhone] = useState(initialPhone);
   const [businessEmail, setBusinessEmail] = useState(initialEmail);
-  const [businessOverview, setBusinessOverview] = useState(initialOverview);
-  const [useDefaultOverview, setUseDefaultOverview] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const formatPhoneNumber = (value: string) => {
@@ -83,7 +78,6 @@ export function BusinessDetailsModal({
         businessAddress,
         businessPhone,
         businessEmail,
-        businessOverview: useDefaultOverview ? "" : businessOverview,
       });
       toast({
         title: "Success",
@@ -190,49 +184,6 @@ export function BusinessDetailsModal({
                 value={businessEmail}
                 onChange={(e) => setBusinessEmail(e.target.value)}
               />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="overview">Business Overview</Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>A brief description of your business</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="flex gap-2 mb-2">
-                <Button
-                  type="button"
-                  variant={useDefaultOverview ? "default" : "outline"}
-                  onClick={() => setUseDefaultOverview(true)}
-                  className="flex-1"
-                >
-                  Default
-                </Button>
-                <Button
-                  type="button"
-                  variant={!useDefaultOverview ? "default" : "outline"}
-                  onClick={() => setUseDefaultOverview(false)}
-                  className="flex-1"
-                >
-                  Write My Own
-                </Button>
-              </div>
-              {!useDefaultOverview && (
-                <Textarea
-                  id="overview"
-                  placeholder="Describe your business, services, specialty..."
-                  value={businessOverview}
-                  onChange={(e) => setBusinessOverview(e.target.value)}
-                  rows={4}
-                />
-              )}
             </div>
           </div>
 

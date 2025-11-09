@@ -59,7 +59,6 @@ export default function Knowledge() {
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessEmail, setBusinessEmail] = useState("");
-  const [businessOverview, setBusinessOverview] = useState("");
   const [showBusinessDetailsModal, setShowBusinessDetailsModal] = useState(false);
 
   // Business Hours
@@ -114,7 +113,6 @@ export default function Knowledge() {
             const additionalData = data.additional_info ? JSON.parse(data.additional_info as string) : {};
             setBusinessPhone(additionalData.business_phone || "");
             setBusinessEmail(additionalData.business_email || "");
-            setBusinessOverview(additionalData.business_overview || "");
             setAdditionalInfo(additionalData.custom_info || "");
           } catch {
             setAdditionalInfo(data.additional_info || "");
@@ -174,7 +172,6 @@ export default function Knowledge() {
       const additionalData = {
         business_phone: businessPhone,
         business_email: businessEmail,
-        business_overview: businessOverview,
         custom_info: additionalInfo
       };
 
@@ -358,13 +355,11 @@ export default function Knowledge() {
     businessAddress: string;
     businessPhone: string;
     businessEmail: string;
-    businessOverview: string;
   }) => {
     setBusinessName(data.businessName);
     setBusinessAddress(data.businessAddress);
     setBusinessPhone(data.businessPhone);
     setBusinessEmail(data.businessEmail);
-    setBusinessOverview(data.businessOverview);
     markAsChanged();
   };
 
@@ -482,14 +477,6 @@ export default function Knowledge() {
                 </span>
                 <span className="text-sm text-foreground">
                   {businessEmail || <span className="text-muted-foreground">Not Set</span>}
-                </span>
-              </div>
-              <div className="flex gap-8">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
-                  Business Overview
-                </span>
-                <span className="text-sm text-foreground">
-                  {businessOverview || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
             </div>
@@ -836,6 +823,35 @@ export default function Knowledge() {
           </p>
         </div>
       </div>
+
+      {/* Modals */}
+      <TrainingSourcesModal
+        open={showTrainingSourcesModal}
+        onOpenChange={setShowTrainingSourcesModal}
+        googleBusinessProfile={googleProfile}
+        businessWebsite={website}
+        onSave={async (data) => {
+          setGoogleProfile(data.googleBusinessProfile);
+          setWebsite(data.businessWebsite);
+          setHasChanges(true);
+        }}
+      />
+
+      <BusinessDetailsModal
+        open={showBusinessDetailsModal}
+        onOpenChange={setShowBusinessDetailsModal}
+        businessName={businessName}
+        businessAddress={businessAddress}
+        businessPhone={businessPhone}
+        businessEmail={businessEmail}
+        onSave={async (data) => {
+          setBusinessName(data.businessName);
+          setBusinessAddress(data.businessAddress);
+          setBusinessPhone(data.businessPhone);
+          setBusinessEmail(data.businessEmail);
+          setHasChanges(true);
+        }}
+      />
     </div>
   );
 }
