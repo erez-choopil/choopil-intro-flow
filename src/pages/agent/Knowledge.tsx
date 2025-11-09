@@ -5,10 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Globe, Plus, X, Upload, FileText, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
+import { Sparkles, Building2, Clock, FileText, HelpCircle, Plus, X, Edit, Trash2, Upload, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { TrainingSourcesModal } from "@/components/agent/TrainingSourcesModal";
+import { BusinessDetailsModal } from "@/components/agent/BusinessDetailsModal";
 
 const CATEGORIES = [
   "General", "Pricing", "Services", "Hours", "Location", "Appointments",
@@ -47,11 +49,18 @@ export default function Knowledge() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // General Business Information
+  // Training Sources
+  const [googleProfile, setGoogleProfile] = useState("");
+  const [website, setWebsite] = useState("");
+  const [showTrainingSourcesModal, setShowTrainingSourcesModal] = useState(false);
+
+  // Business Details
   const [businessName, setBusinessName] = useState("");
   const [businessAddress, setBusinessAddress] = useState("");
-  const [website, setWebsite] = useState("");
-  const [googleProfile, setGoogleProfile] = useState("");
+  const [businessPhone, setBusinessPhone] = useState("");
+  const [businessEmail, setBusinessEmail] = useState("");
+  const [businessOverview, setBusinessOverview] = useState("");
+  const [showBusinessDetailsModal, setShowBusinessDetailsModal] = useState(false);
 
   // Business Hours
   const [schedule, setSchedule] = useState<Record<string, DaySchedule>>({
@@ -96,11 +105,20 @@ export default function Knowledge() {
         if (error) throw error;
 
         if (data) {
+          setGoogleProfile(data.google_profile || "");
+          setWebsite(data.website || "");
           setBusinessName(data.business_name || "");
           setBusinessAddress(data.business_address || "");
-          setWebsite(data.website || "");
-          setGoogleProfile(data.google_profile || "");
-          setAdditionalInfo(data.additional_info || "");
+          // Parse business details from additional_info JSON if exists
+          try {
+            const additionalData = data.additional_info ? JSON.parse(data.additional_info as string) : {};
+            setBusinessPhone(additionalData.business_phone || "");
+            setBusinessEmail(additionalData.business_email || "");
+            setBusinessOverview(additionalData.business_overview || "");
+            setAdditionalInfo(additionalData.custom_info || "");
+          } catch {
+            setAdditionalInfo(data.additional_info || "");
+          }
           
           if (data.business_hours && typeof data.business_hours === 'object') {
             setSchedule(data.business_hours as Record<string, DaySchedule>);
@@ -152,13 +170,21 @@ export default function Knowledge() {
         return;
       }
 
+      // Combine business details with custom info in additional_info JSON
+      const additionalData = {
+        business_phone: businessPhone,
+        business_email: businessEmail,
+        business_overview: businessOverview,
+        custom_info: additionalInfo
+      };
+
       const profileData = {
         user_id: user.id,
+        google_profile: googleProfile,
+        website: website,
         business_name: businessName,
         business_address: businessAddress,
-        website: website,
-        google_profile: googleProfile,
-        additional_info: additionalInfo,
+        additional_info: JSON.stringify(additionalData),
         business_hours: schedule
       };
 
@@ -321,6 +347,27 @@ export default function Knowledge() {
     return colors[category] || colors["Other"];
   };
 
+  const handleTrainingSourcesSave = async (data: { googleBusinessProfile: string; businessWebsite: string }) => {
+    setGoogleProfile(data.googleBusinessProfile);
+    setWebsite(data.businessWebsite);
+    markAsChanged();
+  };
+
+  const handleBusinessDetailsSave = async (data: {
+    businessName: string;
+    businessAddress: string;
+    businessPhone: string;
+    businessEmail: string;
+    businessOverview: string;
+  }) => {
+    setBusinessName(data.businessName);
+    setBusinessAddress(data.businessAddress);
+    setBusinessPhone(data.businessPhone);
+    setBusinessEmail(data.businessEmail);
+    setBusinessOverview(data.businessOverview);
+    markAsChanged();
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 max-w-2xl mx-auto flex items-center justify-center min-h-[400px]">
@@ -335,88 +382,138 @@ export default function Knowledge() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Business knowledge
+            Business Knowledge
           </h1>
           <p className="text-muted-foreground">
             Train your AI agent with information about your business. All fields are optional, but more information helps your agent provide better responses.
           </p>
         </div>
 
-        {/* Section 1: Basic Business Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Business Information</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Provide essential details about your business for accurate caller assistance.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="businessName" className="text-foreground">
-                Business Name
-              </Label>
-              <Input
-                id="businessName"
-                placeholder="Enter your business name"
-                value={businessName}
-                onChange={(e) => { setBusinessName(e.target.value); markAsChanged(); }}
-                className="max-w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="businessAddress" className="text-foreground">Business Address</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="businessAddress"
-                  placeholder="123 Main Street, City, State, ZIP"
-                  value={businessAddress}
-                  onChange={(e) => { setBusinessAddress(e.target.value); markAsChanged(); }}
-                  className="pl-10"
-                />
+        {/* Section 1: Training Sources (Read-only with modal) */}
+        <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <Sparkles className="h-5 w-5 text-primary shrink-0 mt-1" />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                    Training Sources
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    These sources help Choopil learn about your business
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex gap-8">
+                      <span className="text-sm font-medium text-foreground min-w-[180px]">
+                        Google Business Profile
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {googleProfile || "Not Set"}
+                      </span>
+                    </div>
+                    <div className="flex gap-8">
+                      <span className="text-sm font-medium text-foreground min-w-[180px]">
+                        Business Website
+                      </span>
+                      <span className="text-sm text-muted-foreground break-all">
+                        {website || "Not Set"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="website" className="text-foreground">Website</Label>
-              <div className="relative">
-                <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="website"
-                  placeholder="https://yourwebsite.com"
-                  value={website}
-                  onChange={(e) => { setWebsite(e.target.value); markAsChanged(); }}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="googleProfile" className="text-foreground">Google Business Profile URL</Label>
-              <div className="relative">
-                <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="googleProfile"
-                  placeholder="https://g.page/your-business"
-                  value={googleProfile}
-                  onChange={(e) => { setGoogleProfile(e.target.value); markAsChanged(); }}
-                  className="pl-10"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                We'll automatically import your business information from your Google Business Profile
-              </p>
-            </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowTrainingSourcesModal(true)}
+                className="text-primary hover:text-primary hover:bg-primary/10 shrink-0"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Section 2: Business Hours */}
+        {/* Section 2: Business Details (Read-only with modal) */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-start gap-3">
+                <Building2 className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                    Business Details
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Core information gathered from your training sources
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3 pl-8">
+              <div className="flex gap-8">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Name
+                </span>
+                <span className="text-sm text-foreground">
+                  {businessName || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+              <div className="flex gap-8">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Address
+                </span>
+                <span className="text-sm text-foreground">
+                  {businessAddress || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+              <div className="flex gap-8">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Business Primary Phone Number
+                </span>
+                <span className="text-sm text-foreground">
+                  {businessPhone || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+              <div className="flex gap-8">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Business Email
+                </span>
+                <span className="text-sm text-foreground">
+                  {businessEmail || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+              <div className="flex gap-8">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Business Overview
+                </span>
+                <span className="text-sm text-foreground">
+                  {businessOverview || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-end mt-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowBusinessDetailsModal(true)}
+                className="text-primary hover:text-primary hover:bg-primary/10"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 3: Business Hours */}
         <Card>
           <CardHeader>
-            <CardTitle>Business Hours</CardTitle>
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Business Hours</CardTitle>
+            </div>
             <p className="text-sm text-muted-foreground">
               Set your operating hours so your agent can inform callers when you're available.
             </p>
@@ -507,10 +604,13 @@ export default function Knowledge() {
           </CardContent>
         </Card>
 
-        {/* Section 3: Custom Business Information */}
+        {/* Section 4: Custom Business Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Custom Business Information</CardTitle>
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Custom Business Information</CardTitle>
+            </div>
             <p className="text-sm text-muted-foreground">
               Add any additional information about your business that you want the AI agent to know. This can include special policies, services, or instructions.
             </p>
