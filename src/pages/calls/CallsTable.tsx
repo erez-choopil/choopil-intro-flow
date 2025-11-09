@@ -140,6 +140,8 @@ export default function CallsTable() {
   const [filters, setFilters] = useState<FilterState>({
     dateRange: null,
     callStatus: ["all"],
+    starredOnly: false,
+    unreadOnly: false,
   });
 
   const displayedMetrics = selectedMetrics
@@ -256,6 +258,8 @@ export default function CallsTable() {
     setFilters({
       dateRange: null,
       callStatus: ["all"],
+      starredOnly: false,
+      unreadOnly: false,
       customDateFrom: undefined,
       customDateTo: undefined,
     });

@@ -19,6 +19,11 @@ import {
   TrendingUp,
   CalendarDays,
   CalendarClock,
+  Star,
+  AlertCircle,
+  CheckCircle2,
+  Ban,
+  Beaker,
 } from "lucide-react";
 import { CustomizeMetricsModal } from "@/components/calls/CustomizeMetricsModal";
 import type { Metric } from "@/components/calls/CustomizeMetricsModal";
@@ -33,7 +38,7 @@ interface Call {
   duration: string;
   date: string;
   time: string;
-  status: "completed" | "missed" | "test-call" | "hung-up" | "spam" | "blocked" | "call-transferred";
+  status: "follow_up_required" | "no_action_needed" | "spam" | "test_call";
   summary: string;
   phone: string;
   transcript: Array<{
@@ -41,6 +46,8 @@ interface Call {
     message: string;
   }>;
   callDate: Date;
+  isStarred: boolean;
+  isRead: boolean;
 }
 
 const mockCalls: Call[] = [
@@ -50,10 +57,12 @@ const mockCalls: Call[] = [
     duration: "0:59",
     date: "Oct 27",
     time: "5:52 PM",
-    status: "completed",
+    status: "follow_up_required",
     summary: "Customer called regarding a refund for a cancelled appointment.",
     phone: "+18484209420",
     callDate: new Date(2024, 9, 27, 17, 52),
+    isStarred: false,
+    isRead: false,
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -65,10 +74,12 @@ const mockCalls: Call[] = [
     duration: "2:15",
     date: "Oct 27",
     time: "3:20 PM",
-    status: "completed",
+    status: "follow_up_required",
     summary: "Customer called regarding a refund for a cancelled appointment. Agent confirmed the refund would be processed within 5-7 business days and provided the reference number. Customer satisfied with resolution.",
     phone: "+15552341234",
     callDate: new Date(2024, 9, 27, 15, 20),
+    isStarred: true,
+    isRead: true,
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -88,10 +99,12 @@ const mockCalls: Call[] = [
     duration: "1:45",
     date: "Oct 27",
     time: "2:10 PM",
-    status: "test-call",
+    status: "test_call",
     summary: "Customer inquiry about service availability.",
     phone: "+15559876543",
     callDate: new Date(2024, 9, 27, 14, 10),
+    isStarred: false,
+    isRead: true,
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "I wanted to check if you have availability next week." },
@@ -103,10 +116,12 @@ const mockCalls: Call[] = [
     duration: "0:00",
     date: "Oct 27",
     time: "1:05 PM",
-    status: "missed",
-    summary: "Missed call - no voicemail left.",
+    status: "spam",
+    summary: "Blocked spam call - no action required.",
     phone: "+15551234567",
     callDate: new Date(2024, 9, 27, 13, 5),
+    isStarred: false,
+    isRead: true,
     transcript: [],
   },
 ];
@@ -126,7 +141,8 @@ const allMetrics: Metric[] = [
 ];
 
 export default function Calls() {
-  const [selectedCall, setSelectedCall] = useState<Call | null>(mockCalls[1]);
+  const [calls, setCalls] = useState<Call[]>(mockCalls);
+  const [selectedCall, setSelectedCall] = useState<Call | null>(calls[1]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -140,6 +156,8 @@ export default function Calls() {
   const [filters, setFilters] = useState<FilterState>({
     dateRange: null,
     callStatus: ["all"],
+    starredOnly: false,
+    unreadOnly: false,
   });
 
   const displayedMetrics = selectedMetrics
@@ -147,7 +165,7 @@ export default function Calls() {
     .filter(Boolean) as Metric[];
 
   const filteredCalls = useMemo(() => {
-    let filtered = mockCalls;
+    let filtered = calls;
 
     if (filters.dateRange) {
       const now = new Date();
@@ -180,6 +198,14 @@ export default function Calls() {
       filtered = filtered.filter((call) => filters.callStatus.includes(call.status));
     }
 
+    if (filters.starredOnly) {
+      filtered = filtered.filter((call) => call.isStarred);
+    }
+
+    if (filters.unreadOnly) {
+      filtered = filtered.filter((call) => !call.isRead);
+    }
+
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -191,7 +217,7 @@ export default function Calls() {
     }
 
     return filtered;
-  }, [filters, searchQuery]);
+  }, [calls, filters, searchQuery]);
 
   const getActiveFilterPills = () => {
     const pills: Array<{ label: string; onRemove: () => void }> = [];
@@ -221,13 +247,10 @@ export default function Calls() {
       const statusLabels = filters.callStatus
         .map((id) => {
           switch (id) {
-            case "completed": return "Completed";
-            case "missed": return "Missed";
-            case "test-call": return "Test call";
-            case "hung-up": return "Hung up";
+            case "follow_up_required": return "Follow-up Required";
+            case "no_action_needed": return "No Action Needed";
             case "spam": return "Spam";
-            case "blocked": return "Blocked";
-            case "call-transferred": return "Call Transferred";
+            case "test_call": return "Test Call";
             default: return null;
           }
         })
@@ -237,6 +260,20 @@ export default function Calls() {
       pills.push({
         label: statusLabels,
         onRemove: () => setFilters({ ...filters, callStatus: ["all"] }),
+      });
+    }
+
+    if (filters.starredOnly) {
+      pills.push({
+        label: "Starred",
+        onRemove: () => setFilters({ ...filters, starredOnly: false }),
+      });
+    }
+
+    if (filters.unreadOnly) {
+      pills.push({
+        label: "Unread",
+        onRemove: () => setFilters({ ...filters, unreadOnly: false }),
       });
     }
 
@@ -250,10 +287,63 @@ export default function Calls() {
     setFilters({
       dateRange: null,
       callStatus: ["all"],
+      starredOnly: false,
+      unreadOnly: false,
       customDateFrom: undefined,
       customDateTo: undefined,
     });
   };
+
+  const handleCallClick = (call: Call) => {
+    if (!call.isRead) {
+      setCalls(calls.map(c => c.id === call.id ? { ...c, isRead: true } : c));
+    }
+    setSelectedCall(call);
+  };
+
+  const handleToggleStar = (callId: string) => {
+    setCalls(calls.map(c => c.id === callId ? { ...c, isStarred: !c.isStarred } : c));
+    if (selectedCall?.id === callId) {
+      setSelectedCall({ ...selectedCall, isStarred: !selectedCall.isStarred });
+    }
+  };
+
+  const getStatusBadge = (status: Call["status"]) => {
+    switch (status) {
+      case "follow_up_required":
+        return (
+          <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0 gap-1.5">
+            <AlertCircle className="h-3 w-3" />
+            Follow-up Required
+          </Badge>
+        );
+      case "no_action_needed":
+        return (
+          <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-0 gap-1.5">
+            <CheckCircle2 className="h-3 w-3" />
+            No Action Needed
+          </Badge>
+        );
+      case "spam":
+        return (
+          <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-0 gap-1.5">
+            <Ban className="h-3 w-3" />
+            Spam
+          </Badge>
+        );
+      case "test_call":
+        return (
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0 gap-1.5">
+            <Beaker className="h-3 w-3" />
+            Test Call
+          </Badge>
+        );
+    }
+  };
+
+  const followUpCount = calls.filter(c => c.status === "follow_up_required").length;
+  const starredCount = calls.filter(c => c.isStarred).length;
+  const unreadCount = calls.filter(c => !c.isRead).length;
 
   const handleLeaveFeedback = (callId: string) => {
     setFeedbackCallId(callId);
@@ -271,6 +361,31 @@ export default function Calls() {
           <p className="text-muted-foreground">
             Track, review, and follow up on every customer interaction with precision.
           </p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => setFilters({ ...filters, callStatus: ["follow_up_required"], starredOnly: false, unreadOnly: false })}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
+          >
+            <AlertCircle className="h-4 w-4 text-red-700" />
+            <span className="text-sm font-medium text-red-700">{followUpCount} Follow-ups</span>
+          </button>
+          <button
+            onClick={() => setFilters({ ...filters, starredOnly: true, callStatus: ["all"], unreadOnly: false })}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-50 hover:bg-yellow-100 transition-colors"
+          >
+            <Star className="h-4 w-4 text-yellow-600 fill-yellow-600" />
+            <span className="text-sm font-medium text-yellow-700">{starredCount} Starred</span>
+          </button>
+          <button
+            onClick={() => setFilters({ ...filters, unreadOnly: true, callStatus: ["all"], starredOnly: false })}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
+          >
+            <div className="h-2 w-2 rounded-full bg-blue-600" />
+            <span className="text-sm font-medium text-blue-700">{unreadCount} Unread</span>
+          </button>
         </div>
 
         {/* Assistant Metrics */}
@@ -355,30 +470,29 @@ export default function Calls() {
                     ? "bg-muted border-primary" 
                     : "bg-muted/30 hover:bg-muted/50"
                 }`}
-                onClick={() => setSelectedCall(call)}
+                onClick={() => handleCallClick(call)}
               >
                 <div className="space-y-3">
-                  <Badge
-                    variant={call.status === "completed" ? "default" : "secondary"}
-                  >
-                    {call.status === "completed"
-                      ? "Call Ended"
-                      : call.status === "missed"
-                      ? "Missed"
-                      : call.status === "test-call"
-                      ? "Test"
-                      : call.status === "hung-up"
-                      ? "Hung up"
-                      : call.status === "spam"
-                      ? "Spam"
-                      : call.status === "blocked"
-                      ? "Blocked"
-                      : "Call Transferred"}
-                  </Badge>
-
-                  <div>
-                    <p className="font-semibold text-foreground truncate">{call.caller}</p>
-                    <p className="text-sm text-muted-foreground truncate">{call.phone}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      {!call.isRead && (
+                        <div className="h-2 w-2 rounded-full bg-blue-600 flex-shrink-0" />
+                      )}
+                      {call.isStarred && (
+                        <Star className="h-4 w-4 text-yellow-600 fill-yellow-600 flex-shrink-0" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-foreground truncate ${!call.isRead ? 'font-bold' : 'font-semibold'}`}>
+                          {call.caller}
+                        </p>
+                        <p className={`text-sm text-muted-foreground truncate ${!call.isRead ? 'font-semibold' : ''}`}>
+                          {call.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                      {getStatusBadge(call.status)}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-border">
@@ -428,6 +542,20 @@ export default function Calls() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>Download call audio</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleToggleStar(selectedCall.id)}
+                          >
+                            <Star className={`h-5 w-5 ${selectedCall.isStarred ? 'text-yellow-600 fill-yellow-600' : 'text-gray-400'}`} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {selectedCall.isStarred ? 'Unstar this call' : 'Star this call'}
+                        </TooltipContent>
                       </Tooltip>
                     </div>
                   </TooltipProvider>

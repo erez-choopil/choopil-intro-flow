@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Filter, X, Check } from "lucide-react";
+import { Filter, X, Check, AlertCircle, CheckCircle2, Ban, Beaker } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -10,6 +10,8 @@ import { format } from "date-fns";
 export interface FilterState {
   dateRange: "today" | "last-7-days" | "last-30-days" | "custom" | null;
   callStatus: string[];
+  starredOnly: boolean;
+  unreadOnly: boolean;
   customDateFrom?: Date;
   customDateTo?: Date;
 }
@@ -20,14 +22,11 @@ interface FiltersDropdownProps {
 }
 
 const callStatuses = [
-  { id: "all", label: "All calls", color: "bg-gray-500" },
-  { id: "completed", label: "Completed", color: "bg-green-500" },
-  { id: "missed", label: "Missed", color: "bg-red-500" },
-  { id: "test-call", label: "Test call", color: "bg-blue-500" },
-  { id: "hung-up", label: "Hung up", color: "bg-orange-500" },
-  { id: "spam", label: "Spam", color: "bg-red-500" },
-  { id: "blocked", label: "Blocked", color: "bg-red-500" },
-  { id: "call-transferred", label: "Call Transferred", color: "bg-blue-500" },
+  { id: "all", label: "All calls", icon: null },
+  { id: "follow_up_required", label: "Follow-up Required", icon: AlertCircle },
+  { id: "no_action_needed", label: "No Action Needed", icon: CheckCircle2 },
+  { id: "spam", label: "Spam", icon: Ban },
+  { id: "test_call", label: "Test Call", icon: Beaker },
 ];
 
 export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownProps) {
@@ -70,6 +69,8 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
     onFiltersChange({
       dateRange: null,
       callStatus: ["all"],
+      starredOnly: false,
+      unreadOnly: false,
       customDateFrom: undefined,
       customDateTo: undefined,
     });
@@ -78,11 +79,15 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
   const isDefaultFilters =
     filters.dateRange === null &&
     filters.callStatus.length === 1 &&
-    filters.callStatus[0] === "all";
+    filters.callStatus[0] === "all" &&
+    !filters.starredOnly &&
+    !filters.unreadOnly;
 
   const activeFilterCount =
     (filters.dateRange !== null ? 1 : 0) +
-    (filters.callStatus.length === 1 && filters.callStatus[0] === "all" ? 0 : 1);
+    (filters.callStatus.length === 1 && filters.callStatus[0] === "all" ? 0 : 1) +
+    (filters.starredOnly ? 1 : 0) +
+    (filters.unreadOnly ? 1 : 0);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -228,6 +233,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
               <div className="space-y-2">
                 {callStatuses.map((status) => {
                   const isSelected = filters.callStatus.includes(status.id);
+                  const Icon = status.icon;
                   return (
                     <button
                       key={status.id}
@@ -239,13 +245,48 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                           : "hover:bg-muted text-foreground"
                       )}
                     >
-                      <div className={cn("h-2 w-2 rounded-full", status.color)} />
+                      {Icon && <Icon className="h-4 w-4" />}
                       <span className="flex-1">{status.label}</span>
                       {isSelected && <Check className="h-4 w-4" />}
                     </button>
                   );
                 })}
               </div>
+            </div>
+          </div>
+
+          {/* Quick Filters - Full Width Below */}
+          <div className="col-span-2 space-y-3 pt-4 border-t">
+            <h5 className="font-semibold text-sm text-foreground">Quick Filters</h5>
+            <div className="space-y-2">
+              <button
+                onClick={() => onFiltersChange({ ...filters, starredOnly: !filters.starredOnly })}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
+                  filters.starredOnly
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "hover:bg-muted text-foreground"
+                )}
+              >
+                <div className={cn("h-4 w-4 flex items-center justify-center", filters.starredOnly && "text-yellow-600")}>
+                  ⭐
+                </div>
+                <span className="flex-1">Starred only</span>
+                {filters.starredOnly && <Check className="h-4 w-4" />}
+              </button>
+              <button
+                onClick={() => onFiltersChange({ ...filters, unreadOnly: !filters.unreadOnly })}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
+                  filters.unreadOnly
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "hover:bg-muted text-foreground"
+                )}
+              >
+                <div className={cn("h-2 w-2 rounded-full", filters.unreadOnly ? "bg-blue-600" : "bg-gray-400")} />
+                <span className="flex-1">Unread only</span>
+                {filters.unreadOnly && <Check className="h-4 w-4" />}
+              </button>
             </div>
           </div>
         </div>
