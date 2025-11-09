@@ -139,9 +139,10 @@ export default function CallsTable() {
   ]);
   const [filters, setFilters] = useState<FilterState>({
     dateRange: null,
-    callStatus: ["all"],
+    callStatus: [],
     starredOnly: false,
     unreadOnly: false,
+    allCalls: true,
   });
 
   const displayedMetrics = selectedMetrics
@@ -257,9 +258,10 @@ export default function CallsTable() {
   const handleClearAllFilters = () => {
     setFilters({
       dateRange: null,
-      callStatus: ["all"],
+      callStatus: [],
       starredOnly: false,
       unreadOnly: false,
+      allCalls: true,
       customDateFrom: undefined,
       customDateTo: undefined,
     });

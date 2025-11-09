@@ -113,7 +113,7 @@ const mockCalls: Call[] = [
   {
     id: "4",
     caller: "Unknown",
-    duration: "0:00",
+    duration: "0:15",
     date: "Oct 27",
     time: "1:05 PM",
     status: "spam",
@@ -122,7 +122,12 @@ const mockCalls: Call[] = [
     callDate: new Date(2024, 9, 27, 13, 5),
     isStarred: false,
     isRead: true,
-    transcript: [],
+    transcript: [
+      { role: "agent", message: "Thank you for calling. How can I help you today?" },
+      { role: "caller", message: "Hi, This is an important message about your car's extended warranty—" },
+      { role: "agent", message: "I'm sorry, this appears to be an automated call. I'm ending this call now. Goodbye." },
+      { role: "caller", message: "[Call ended]" },
+    ],
   },
 ];
 
@@ -155,9 +160,10 @@ export default function Calls() {
   ]);
   const [filters, setFilters] = useState<FilterState>({
     dateRange: null,
-    callStatus: ["all"],
+    callStatus: [],
     starredOnly: false,
     unreadOnly: false,
+    allCalls: true,
   });
 
   const displayedMetrics = selectedMetrics
@@ -194,7 +200,11 @@ export default function Calls() {
       });
     }
 
-    if (!(filters.callStatus.length === 1 && filters.callStatus[0] === "all")) {
+    if (!filters.allCalls) {
+      return [];
+    }
+
+    if (filters.callStatus.length > 0) {
       filtered = filtered.filter((call) => filters.callStatus.includes(call.status));
     }
 
@@ -243,7 +253,7 @@ export default function Calls() {
       });
     }
 
-    if (!(filters.callStatus.length === 1 && filters.callStatus[0] === "all")) {
+    if (filters.callStatus.length > 0) {
       const statusLabels = filters.callStatus
         .map((id) => {
           switch (id) {
@@ -259,7 +269,7 @@ export default function Calls() {
 
       pills.push({
         label: statusLabels,
-        onRemove: () => setFilters({ ...filters, callStatus: ["all"] }),
+        onRemove: () => setFilters({ ...filters, callStatus: [] }),
       });
     }
 
@@ -286,9 +296,10 @@ export default function Calls() {
   const handleClearAllFilters = () => {
     setFilters({
       dateRange: null,
-      callStatus: ["all"],
+      callStatus: [],
       starredOnly: false,
       unreadOnly: false,
+      allCalls: true,
       customDateFrom: undefined,
       customDateTo: undefined,
     });
@@ -361,31 +372,6 @@ export default function Calls() {
           <p className="text-muted-foreground">
             Track, review, and follow up on every customer interaction with precision.
           </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => setFilters({ ...filters, callStatus: ["follow_up_required"], starredOnly: false, unreadOnly: false })}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
-          >
-            <AlertCircle className="h-4 w-4 text-red-700" />
-            <span className="text-sm font-medium text-red-700">{followUpCount} Follow-ups</span>
-          </button>
-          <button
-            onClick={() => setFilters({ ...filters, starredOnly: true, callStatus: ["all"], unreadOnly: false })}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-50 hover:bg-yellow-100 transition-colors"
-          >
-            <Star className="h-4 w-4 text-yellow-600 fill-yellow-600" />
-            <span className="text-sm font-medium text-yellow-700">{starredCount} Starred</span>
-          </button>
-          <button
-            onClick={() => setFilters({ ...filters, unreadOnly: true, callStatus: ["all"], starredOnly: false })}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-          >
-            <div className="h-2 w-2 rounded-full bg-blue-600" />
-            <span className="text-sm font-medium text-blue-700">{unreadCount} Unread</span>
-          </button>
         </div>
 
         {/* Assistant Metrics */}
@@ -478,9 +464,6 @@ export default function Calls() {
                       {!call.isRead && (
                         <div className="h-2 w-2 rounded-full bg-blue-600 flex-shrink-0" />
                       )}
-                      {call.isStarred && (
-                        <Star className="h-4 w-4 text-yellow-600 fill-yellow-600 flex-shrink-0" />
-                      )}
                       <div className="min-w-0 flex-1">
                         <p className={`text-foreground truncate ${!call.isRead ? 'font-bold' : 'font-semibold'}`}>
                           {call.caller}
@@ -490,8 +473,11 @@ export default function Calls() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex-shrink-0">
+                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
                       {getStatusBadge(call.status)}
+                      {call.isStarred && (
+                        <Star className="h-4 w-4 text-yellow-600 fill-yellow-600" />
+                      )}
                     </div>
                   </div>
 

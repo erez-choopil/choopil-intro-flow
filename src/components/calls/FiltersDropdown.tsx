@@ -12,6 +12,7 @@ export interface FilterState {
   callStatus: string[];
   starredOnly: boolean;
   unreadOnly: boolean;
+  allCalls: boolean;
   customDateFrom?: Date;
   customDateTo?: Date;
 }
@@ -22,7 +23,6 @@ interface FiltersDropdownProps {
 }
 
 const callStatuses = [
-  { id: "all", label: "All calls", icon: null },
   { id: "follow_up_required", label: "Follow-up Required", icon: AlertCircle },
   { id: "no_action_needed", label: "No Action Needed", icon: CheckCircle2 },
   { id: "spam", label: "Spam", icon: Ban },
@@ -46,20 +46,16 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
   };
 
   const handleStatusToggle = (statusId: string) => {
+    const current = filters.callStatus;
     let newStatus: string[];
 
-    if (statusId === "all") {
-      newStatus = ["all"];
-    } else {
-      const currentWithoutAll = filters.callStatus.filter((s) => s !== "all");
-      if (currentWithoutAll.includes(statusId)) {
-        newStatus = currentWithoutAll.filter((s) => s !== statusId);
-        if (newStatus.length === 0) {
-          newStatus = ["all"];
-        }
-      } else {
-        newStatus = [...currentWithoutAll, statusId];
+    if (current.includes(statusId)) {
+      newStatus = current.filter((s) => s !== statusId);
+      if (newStatus.length === 0) {
+        newStatus = [];
       }
+    } else {
+      newStatus = [...current, statusId];
     }
 
     onFiltersChange({ ...filters, callStatus: newStatus });
@@ -68,9 +64,10 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
   const handleClearAll = () => {
     onFiltersChange({
       dateRange: null,
-      callStatus: ["all"],
+      callStatus: [],
       starredOnly: false,
       unreadOnly: false,
+      allCalls: true,
       customDateFrom: undefined,
       customDateTo: undefined,
     });
@@ -78,16 +75,17 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
 
   const isDefaultFilters =
     filters.dateRange === null &&
-    filters.callStatus.length === 1 &&
-    filters.callStatus[0] === "all" &&
+    filters.callStatus.length === 0 &&
     !filters.starredOnly &&
-    !filters.unreadOnly;
+    !filters.unreadOnly &&
+    filters.allCalls;
 
   const activeFilterCount =
     (filters.dateRange !== null ? 1 : 0) +
-    (filters.callStatus.length === 1 && filters.callStatus[0] === "all" ? 0 : 1) +
+    (filters.callStatus.length > 0 ? 1 : 0) +
     (filters.starredOnly ? 1 : 0) +
-    (filters.unreadOnly ? 1 : 0);
+    (filters.unreadOnly ? 1 : 0) +
+    (!filters.allCalls ? 1 : 0);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -109,7 +107,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[600px] p-0" align="start">
+      <PopoverContent className="w-[750px] p-0" align="start">
         <div className="flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
@@ -134,8 +132,8 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
             </div>
           </div>
 
-          {/* Content - Two Columns */}
-          <div className="grid grid-cols-2 gap-6 p-4">
+          {/* Content - Three Columns */}
+          <div className="grid grid-cols-3 gap-6 p-4">
             {/* Left Column - Date Range */}
             <div className="space-y-3">
               <h5 className="font-semibold text-sm text-foreground">Date Range</h5>
@@ -227,9 +225,9 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
               )}
             </div>
 
-            {/* Right Column - Call Status */}
+            {/* Middle Column - AI Status */}
             <div className="space-y-3">
-              <h5 className="font-semibold text-sm text-foreground">Call Status</h5>
+              <h5 className="font-semibold text-sm text-foreground">AI Status</h5>
               <div className="space-y-2">
                 {callStatuses.map((status) => {
                   const isSelected = filters.callStatus.includes(status.id);
@@ -253,40 +251,52 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                 })}
               </div>
             </div>
-          </div>
 
-          {/* Quick Filters - Full Width Below */}
-          <div className="col-span-2 space-y-3 pt-4 border-t">
-            <h5 className="font-semibold text-sm text-foreground">Quick Filters</h5>
-            <div className="space-y-2">
-              <button
-                onClick={() => onFiltersChange({ ...filters, starredOnly: !filters.starredOnly })}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                  filters.starredOnly
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "hover:bg-muted text-foreground"
-                )}
-              >
-                <div className={cn("h-4 w-4 flex items-center justify-center", filters.starredOnly && "text-yellow-600")}>
-                  ⭐
-                </div>
-                <span className="flex-1">Starred only</span>
-                {filters.starredOnly && <Check className="h-4 w-4" />}
-              </button>
-              <button
-                onClick={() => onFiltersChange({ ...filters, unreadOnly: !filters.unreadOnly })}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                  filters.unreadOnly
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "hover:bg-muted text-foreground"
-                )}
-              >
-                <div className={cn("h-2 w-2 rounded-full", filters.unreadOnly ? "bg-blue-600" : "bg-gray-400")} />
-                <span className="flex-1">Unread only</span>
-                {filters.unreadOnly && <Check className="h-4 w-4" />}
-              </button>
+            {/* Right Column - Quick Filters */}
+            <div className="space-y-3">
+              <h5 className="font-semibold text-sm text-foreground">Quick Filters</h5>
+              <div className="space-y-2">
+                <button
+                  onClick={() => onFiltersChange({ ...filters, allCalls: !filters.allCalls })}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
+                    filters.allCalls
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "hover:bg-muted text-foreground"
+                  )}
+                >
+                  <span className="flex-1">All calls</span>
+                  {filters.allCalls && <Check className="h-4 w-4" />}
+                </button>
+                <button
+                  onClick={() => onFiltersChange({ ...filters, starredOnly: !filters.starredOnly })}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
+                    filters.starredOnly
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "hover:bg-muted text-foreground"
+                  )}
+                >
+                  <div className={cn("h-4 w-4 flex items-center justify-center", filters.starredOnly && "text-yellow-600")}>
+                    ⭐
+                  </div>
+                  <span className="flex-1">Starred only</span>
+                  {filters.starredOnly && <Check className="h-4 w-4" />}
+                </button>
+                <button
+                  onClick={() => onFiltersChange({ ...filters, unreadOnly: !filters.unreadOnly })}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
+                    filters.unreadOnly
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "hover:bg-muted text-foreground"
+                  )}
+                >
+                  <div className={cn("h-2 w-2 rounded-full", filters.unreadOnly ? "bg-blue-600" : "bg-gray-400")} />
+                  <span className="flex-1">Unread only</span>
+                  {filters.unreadOnly && <Check className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
