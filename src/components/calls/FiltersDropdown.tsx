@@ -84,8 +84,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
     (filters.dateRange !== null ? 1 : 0) +
     (filters.callStatus.length > 0 ? 1 : 0) +
     (filters.starredOnly ? 1 : 0) +
-    (filters.unreadOnly ? 1 : 0) +
-    (!filters.allCalls ? 1 : 0);
+    (filters.unreadOnly ? 1 : 0);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -289,7 +288,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                   <div className={cn("h-4 w-4 flex items-center justify-center", filters.starredOnly && "text-yellow-600")}>
                     ⭐
                   </div>
-                  <span className="flex-1">Starred only</span>
+                  <span className="flex-1">Starred calls</span>
                   {filters.starredOnly && <Check className="h-4 w-4" />}
                 </button>
                 <button
@@ -306,7 +305,7 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                   )}
                 >
                   <div className={cn("h-2 w-2 rounded-full", filters.unreadOnly ? "bg-blue-600" : "bg-gray-400")} />
-                  <span className="flex-1">Unread only</span>
+                  <span className="flex-1">Unread calls</span>
                   {filters.unreadOnly && <Check className="h-4 w-4" />}
                 </button>
               </div>

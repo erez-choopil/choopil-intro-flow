@@ -200,10 +200,6 @@ export default function Calls() {
       });
     }
 
-    if (!filters.allCalls) {
-      return [];
-    }
-
     if (filters.callStatus.length > 0) {
       filtered = filtered.filter((call) => filters.callStatus.includes(call.status));
     }
