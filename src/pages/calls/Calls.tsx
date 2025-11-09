@@ -234,23 +234,31 @@ export default function Calls() {
 
     if (filters.dateRange !== null) {
       let label = "";
-      if (filters.dateRange === "today") label = "Today";
-      else if (filters.dateRange === "last-7-days") label = "Last 7 days";
-      else if (filters.dateRange === "last-30-days") label = "Last 30 days";
-      else if (filters.dateRange === "custom") {
-        if (filters.customDateFrom && filters.customDateTo) {
-          label = `${format(filters.customDateFrom, "MMM d")} - ${format(
-            filters.customDateTo,
-            "MMM d"
-          )}`;
-        } else {
-          label = "Custom range";
-        }
+      let shouldAddPill = false;
+      
+      if (filters.dateRange === "today") {
+        label = "Today";
+        shouldAddPill = true;
+      } else if (filters.dateRange === "last-7-days") {
+        label = "Last 7 days";
+        shouldAddPill = true;
+      } else if (filters.dateRange === "last-30-days") {
+        label = "Last 30 days";
+        shouldAddPill = true;
+      } else if (filters.dateRange === "custom" && filters.customDateFrom && filters.customDateTo) {
+        label = `${format(filters.customDateFrom, "MMM d")} - ${format(
+          filters.customDateTo,
+          "MMM d"
+        )}`;
+        shouldAddPill = true;
       }
-      pills.push({
-        label,
-        onRemove: () => setFilters({ ...filters, dateRange: null }),
-      });
+      
+      if (shouldAddPill) {
+        pills.push({
+          label,
+          onRemove: () => setFilters({ ...filters, dateRange: null, customDateFrom: undefined, customDateTo: undefined }),
+        });
+      }
     }
 
     if (filters.callStatus.length > 0) {

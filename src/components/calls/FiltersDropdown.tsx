@@ -257,7 +257,12 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
               <h5 className="font-semibold text-sm text-foreground">Quick Filters</h5>
               <div className="space-y-2">
                 <button
-                  onClick={() => onFiltersChange({ ...filters, allCalls: !filters.allCalls })}
+                  onClick={() => onFiltersChange({ 
+                    ...filters, 
+                    allCalls: true,
+                    starredOnly: false,
+                    unreadOnly: false
+                  })}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                     filters.allCalls
@@ -269,7 +274,11 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                   {filters.allCalls && <Check className="h-4 w-4" />}
                 </button>
                 <button
-                  onClick={() => onFiltersChange({ ...filters, starredOnly: !filters.starredOnly })}
+                  onClick={() => onFiltersChange({ 
+                    ...filters, 
+                    starredOnly: !filters.starredOnly,
+                    allCalls: false
+                  })}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                     filters.starredOnly
@@ -284,7 +293,11 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
                   {filters.starredOnly && <Check className="h-4 w-4" />}
                 </button>
                 <button
-                  onClick={() => onFiltersChange({ ...filters, unreadOnly: !filters.unreadOnly })}
+                  onClick={() => onFiltersChange({ 
+                    ...filters, 
+                    unreadOnly: !filters.unreadOnly,
+                    allCalls: false
+                  })}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                     filters.unreadOnly
