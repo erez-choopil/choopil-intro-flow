@@ -400,6 +400,26 @@ export default function Calls() {
           </div>
         )}
 
+        {/* Filter and Search */}
+        <div className="flex items-center gap-3">
+          <FiltersDropdown filters={filters} onFiltersChange={setFilters} />
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setShowCustomizeModal(true)}
+          >
+            <Settings2 className="h-4 w-4" />
+            Customize Metrics
+          </Button>
+          <Input
+            placeholder="Search calls by name, phone number or phrase"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1"
+          />
+        </div>
+
         {/* Active Filter Pills */}
         {hasActiveFilters && (
           <div className="flex items-center gap-2 flex-wrap">
@@ -427,26 +447,6 @@ export default function Calls() {
             </button>
           </div>
         )}
-
-        {/* Filter and Search */}
-        <div className="flex items-center gap-3">
-          <FiltersDropdown filters={filters} onFiltersChange={setFilters} />
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => setShowCustomizeModal(true)}
-          >
-            <Settings2 className="h-4 w-4" />
-            Customize Metrics
-          </Button>
-          <Input
-            placeholder="Search calls by name, phone number or phrase"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
-          />
-        </div>
 
         {/* Split View */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -565,8 +565,17 @@ export default function Calls() {
                   <Button size="icon" className="h-10 w-10 rounded-full">
                     <Play className="h-4 w-4" />
                   </Button>
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full w-0 bg-primary" />
+                  <div className="flex-1 flex items-center gap-0.5 h-12">
+                    {Array.from({ length: 50 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 bg-primary/70 rounded-sm"
+                        style={{
+                          height: `${Math.random() * 100}%`,
+                          minHeight: '10%'
+                        }}
+                      />
+                    ))}
                   </div>
                   <span className="text-sm text-muted-foreground">{selectedCall.duration}</span>
                 </div>

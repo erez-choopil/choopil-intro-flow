@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus, User, Trash2, HelpCircle, X } from "lucide-react";
+import { Plus, User, Trash2, HelpCircle, X, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,7 @@ const initialPeople: NotificationPerson[] = [
 export default function Notifications() {
   const [people, setPeople] = useState<NotificationPerson[]>(initialPeople);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingPerson, setEditingPerson] = useState<NotificationPerson | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -72,23 +73,43 @@ export default function Notifications() {
 
   const handleAddPerson = () => {
     if (formData.name.trim()) {
-      const newPerson: NotificationPerson = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        emailNotification: formData.emailNotification,
-        smsNotification: formData.smsNotification,
-        customCondition: false,
-        spamEmail: formData.spamEmail,
-        spamSMS: formData.spamSMS,
-        blockedEmail: formData.blockedEmail,
-        blockedSMS: formData.blockedSMS,
-        hungUpEmail: formData.hungUpEmail,
-        hungUpSMS: formData.hungUpSMS,
-      };
-      setPeople([...people, newPerson]);
+      if (editingPerson) {
+        // Update existing person
+        setPeople(people.map(p => p.id === editingPerson.id ? {
+          ...editingPerson,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          emailNotification: formData.emailNotification,
+          smsNotification: formData.smsNotification,
+          spamEmail: formData.spamEmail,
+          spamSMS: formData.spamSMS,
+          blockedEmail: formData.blockedEmail,
+          blockedSMS: formData.blockedSMS,
+          hungUpEmail: formData.hungUpEmail,
+          hungUpSMS: formData.hungUpSMS,
+        } : p));
+      } else {
+        // Add new person
+        const newPerson: NotificationPerson = {
+          id: Date.now(),
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          emailNotification: formData.emailNotification,
+          smsNotification: formData.smsNotification,
+          customCondition: false,
+          spamEmail: formData.spamEmail,
+          spamSMS: formData.spamSMS,
+          blockedEmail: formData.blockedEmail,
+          blockedSMS: formData.blockedSMS,
+          hungUpEmail: formData.hungUpEmail,
+          hungUpSMS: formData.hungUpSMS,
+        };
+        setPeople([...people, newPerson]);
+      }
       setIsDialogOpen(false);
+      setEditingPerson(null);
       setFormData({
         name: "",
         email: "",
@@ -103,6 +124,24 @@ export default function Notifications() {
         hungUpSMS: false,
       });
     }
+  };
+
+  const handleEditPerson = (person: NotificationPerson) => {
+    setEditingPerson(person);
+    setFormData({
+      name: person.name,
+      email: person.email || "",
+      phone: person.phone || "",
+      emailNotification: person.emailNotification,
+      smsNotification: person.smsNotification,
+      spamEmail: person.spamEmail,
+      spamSMS: person.spamSMS,
+      blockedEmail: person.blockedEmail,
+      blockedSMS: person.blockedSMS,
+      hungUpEmail: person.hungUpEmail,
+      hungUpSMS: person.hungUpSMS,
+    });
+    setIsDialogOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -156,6 +195,13 @@ export default function Notifications() {
                 <Button 
                   variant="ghost" 
                   size="icon"
+                  onClick={() => handleEditPerson(person)}
+                >
+                  <Edit className="h-4 w-4 text-muted-foreground" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
                   onClick={() => handleDelete(person.id)}
                 >
                   <Trash2 className="h-4 w-4 text-muted-foreground" />
@@ -166,10 +212,28 @@ export default function Notifications() {
           ))}
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) {
+            setEditingPerson(null);
+            setFormData({
+              name: "",
+              email: "",
+              phone: "",
+              emailNotification: "off",
+              smsNotification: "off",
+              spamEmail: false,
+              spamSMS: false,
+              blockedEmail: false,
+              blockedSMS: false,
+              hungUpEmail: false,
+              hungUpSMS: false,
+            });
+          }
+        }}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Who should be notified about calls?</DialogTitle>
+            <DialogTitle>{editingPerson ? "Edit Notification" : "Who should be notified about calls?"}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -404,11 +468,14 @@ export default function Notifications() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline" onClick={() => {
+              setIsDialogOpen(false);
+              setEditingPerson(null);
+            }}>
               Cancel
             </Button>
             <Button className="bg-success hover:bg-success/90" onClick={handleAddPerson}>
-              Add notifications
+              {editingPerson ? "Update notifications" : "Add notifications"}
             </Button>
           </DialogFooter>
         </DialogContent>

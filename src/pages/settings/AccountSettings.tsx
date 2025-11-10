@@ -31,24 +31,6 @@ export default function AccountSettings() {
       return;
     }
 
-    // Validate business details
-    if (!businessName.trim()) {
-      toast({
-        title: "Business name required",
-        description: "Please enter your business name.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!phoneNumber.trim()) {
-      toast({
-        title: "Phone number required",
-        description: "Please enter your business phone number.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     // Validate email change if attempted
     if (newEmail.trim() && !currentPassword.trim()) {
       toast({
@@ -140,49 +122,6 @@ export default function AccountSettings() {
           </CardContent>
         </Card>
 
-        {/* Business Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Business Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>
-                Business name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
-                Business phone number <span className="text-destructive">*</span>
-              </Label>
-              <div className="flex gap-2">
-                <Select value={countryCode} onValueChange={setCountryCode}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="+972">🇮🇱 +972</SelectItem>
-                    <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                    <SelectItem value="+44">🇬🇧 +44</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="flex-1"
-                />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Calling from this number to your agent is free
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Email Settings */}
         <Card>
           <CardHeader>
@@ -238,32 +177,6 @@ export default function AccountSettings() {
                   placeholder="••••••••"
                 />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Preferences */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Preferences</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Time zone</Label>
-              <Select value={timezone} onValueChange={setTimezone}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="eastern">Eastern Time — 07:52 PM</SelectItem>
-                  <SelectItem value="central">Central Time — 06:52 PM</SelectItem>
-                  <SelectItem value="mountain">Mountain Time — 05:52 PM</SelectItem>
-                  <SelectItem value="pacific">Pacific Time — 04:52 PM</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-sm text-muted-foreground">
-                Used to display time in the app
-              </p>
             </div>
           </CardContent>
         </Card>

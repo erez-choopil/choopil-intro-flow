@@ -7,6 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Info, HelpCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+const professionals = ["Lawyer", "Real Estate Agent", "Contractor", "Personal Trainer", "Nutritionist", "Accountant", "Financial Advisor", "Insurance Agent", "Mortgage Broker", "Consultant", "Marketing Specialist", "Architect", "Interior Designer", "Photographer", "Videographer", "Wedding Planner", "Tutor", "Teacher", "Career Coach", "Life Coach", "Business Coach", "Veterinarian", "Groomer", "Plumber", "Electrician", "HVAC Technician", "Landscaper", "Auto Mechanic", "Nail Salon, Spa", "Barber", "Massage Therapist", "Esthetician", "Property Manager", "Roofing Contractor", "Locksmith", "Pest Control", "House Cleaning", "Auto Body Shop", "Car Detailing", "Tax Preparer", "IT Consultant", "Marketing Agency", "Recruiting Agency", "Graphic Designer, Web Designer", "Yoga/Pilates Studio", "Gym/Fitness Center", "Pet Sitter, Dog Trainer", "Event Planner", "Catering", "Music Teacher", "Dance Instructor", "Restaurant", "Cafe", "Retail Store", "Towing Service", "Moving Company", "Funeral Home", "Other"];
 
 interface BusinessDetailsModalProps {
   open: boolean;
@@ -15,11 +19,13 @@ interface BusinessDetailsModalProps {
   businessAddress: string;
   businessPhone: string;
   businessEmail: string;
+  businessType: string;
   onSave: (data: {
     businessName: string;
     businessAddress: string;
     businessPhone: string;
     businessEmail: string;
+    businessType: string;
   }) => void;
 }
 
@@ -30,12 +36,15 @@ export function BusinessDetailsModal({
   businessAddress: initialAddress,
   businessPhone: initialPhone,
   businessEmail: initialEmail,
+  businessType: initialType,
   onSave,
 }: BusinessDetailsModalProps) {
   const [businessName, setBusinessName] = useState(initialName);
   const [businessAddress, setBusinessAddress] = useState(initialAddress);
   const [businessPhone, setBusinessPhone] = useState(initialPhone);
   const [businessEmail, setBusinessEmail] = useState(initialEmail);
+  const [businessType, setBusinessType] = useState(initialType);
+  const [openProfessional, setOpenProfessional] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const formatPhoneNumber = (value: string) => {
@@ -51,11 +60,20 @@ export function BusinessDetailsModal({
   };
 
   const handleSave = async () => {
-    // Validation: Business name is required
+    // Validation: Business name and phone are required
     if (!businessName.trim()) {
       toast({
         title: "Validation Error",
         description: "Business name is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!businessPhone.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Business phone is required",
         variant: "destructive"
       });
       return;
@@ -78,6 +96,7 @@ export function BusinessDetailsModal({
         businessAddress,
         businessPhone,
         businessEmail,
+        businessType,
       });
       toast({
         title: "Success",
@@ -117,7 +136,7 @@ export function BusinessDetailsModal({
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Label htmlFor="businessName">Business Name</Label>
+                <Label htmlFor="businessName">Business Name <span className="text-destructive">*</span></Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -139,6 +158,37 @@ export function BusinessDetailsModal({
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="businessType">Business Type</Label>
+              <Popover open={openProfessional} onOpenChange={setOpenProfessional}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={openProfessional} className="w-full justify-between font-normal hover:bg-background data-[state=open]:bg-background">
+                    <span className={!businessType ? "text-muted-foreground" : ""}>
+                      {businessType || "Select business type"}
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search business type..." />
+                    <CommandList>
+                      <CommandEmpty>No business type found.</CommandEmpty>
+                      <CommandGroup>
+                        {professionals.map(professional => (
+                          <CommandItem key={professional} value={professional} onSelect={() => {
+                            setBusinessType(professional);
+                            setOpenProfessional(false);
+                          }}>
+                            {professional}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="address">Address</Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -153,13 +203,14 @@ export function BusinessDetailsModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Business Primary Phone Number</Label>
+              <Label htmlFor="phone">Business Primary Phone Number <span className="text-destructive">*</span></Label>
               <Input
                 id="phone"
                 placeholder="(000) 000-0000"
                 value={businessPhone}
                 onChange={handlePhoneChange}
                 maxLength={14}
+                required
               />
             </div>
 

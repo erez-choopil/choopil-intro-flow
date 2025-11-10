@@ -11,6 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { TrainingSourcesModal } from "@/components/agent/TrainingSourcesModal";
 import { BusinessDetailsModal } from "@/components/agent/BusinessDetailsModal";
+import { BusinessHoursModal } from "@/components/agent/BusinessHoursModal";
+import { CustomInfoModal } from "@/components/agent/CustomInfoModal";
 
 const CATEGORIES = [
   "General", "Pricing", "Services", "Hours", "Location", "Appointments",
@@ -59,9 +61,12 @@ export default function Knowledge() {
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessEmail, setBusinessEmail] = useState("");
+  const [businessType, setBusinessType] = useState("");
   const [showBusinessDetailsModal, setShowBusinessDetailsModal] = useState(false);
 
   // Business Hours
+  const [showBusinessHoursModal, setShowBusinessHoursModal] = useState(false);
+  const [timezone, setTimezone] = useState("eastern");
   const [schedule, setSchedule] = useState<Record<string, DaySchedule>>({
     Sunday: { enabled: true, slots: [{ id: "1", start: "07:00", end: "08:00", startPeriod: "AM", endPeriod: "AM" }, { id: "2", start: "11:00", end: "08:00", startPeriod: "AM", endPeriod: "PM" }] },
     Monday: { enabled: true, slots: [{ id: "1", start: "9:00", end: "6:00", startPeriod: "AM", endPeriod: "PM" }] },
@@ -74,6 +79,7 @@ export default function Knowledge() {
 
   // Custom Information
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const [showCustomInfoModal, setShowCustomInfoModal] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // FAQs
@@ -108,6 +114,7 @@ export default function Knowledge() {
           setWebsite(data.website || "");
           setBusinessName(data.business_name || "");
           setBusinessAddress(data.business_address || "");
+          setBusinessType(data.business_type || "");
           // Parse business details from additional_info JSON if exists
           try {
             const additionalData = data.additional_info ? JSON.parse(data.additional_info as string) : {};
@@ -181,6 +188,7 @@ export default function Knowledge() {
         website: website,
         business_name: businessName,
         business_address: businessAddress,
+        business_type: businessType,
         additional_info: JSON.stringify(additionalData),
         business_hours: schedule
       };
@@ -355,11 +363,13 @@ export default function Knowledge() {
     businessAddress: string;
     businessPhone: string;
     businessEmail: string;
+    businessType: string;
   }) => {
     setBusinessName(data.businessName);
     setBusinessAddress(data.businessAddress);
     setBusinessPhone(data.businessPhone);
     setBusinessEmail(data.businessEmail);
+    setBusinessType(data.businessType);
     markAsChanged();
   };
 
@@ -447,35 +457,43 @@ export default function Knowledge() {
               </div>
             </div>
             <div className="space-y-3 pl-8">
-              <div className="flex gap-8">
+              <div className="flex">
                 <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
                   Name
                 </span>
-                <span className="text-sm text-foreground">
+                <span className="text-sm text-foreground flex-1">
                   {businessName || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex gap-8">
+              <div className="flex">
+                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+                  Business Type
+                </span>
+                <span className="text-sm text-foreground flex-1">
+                  {businessType || <span className="text-muted-foreground">Not Set</span>}
+                </span>
+              </div>
+              <div className="flex">
                 <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
                   Address
                 </span>
-                <span className="text-sm text-foreground">
+                <span className="text-sm text-foreground flex-1">
                   {businessAddress || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex gap-8">
+              <div className="flex">
                 <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
                   Business Primary Phone Number
                 </span>
-                <span className="text-sm text-foreground">
+                <span className="text-sm text-foreground flex-1">
                   {businessPhone || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex gap-8">
+              <div className="flex">
                 <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
                   Business Email
                 </span>
-                <span className="text-sm text-foreground">
+                <span className="text-sm text-foreground flex-1">
                   {businessEmail || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
@@ -494,20 +512,24 @@ export default function Knowledge() {
           </CardContent>
         </Card>
 
-        {/* Section 3: Business Hours */}
+        {/* Section 3: Business Hours (Read-only with modal) */}
         <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Business Hours</CardTitle>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-start gap-3">
+                <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                    Business Hours
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Set your operating hours so your agent can inform callers when you're available.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Set your operating hours so your agent can inform callers when you're available.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-            {Object.keys(schedule).map((day) => (
+            <div className="space-y-2 pl-8">
+              {Object.keys(schedule).map((day) => (
               <div key={day} className="flex items-center gap-4">
                 <div className="flex items-center gap-3 w-36 shrink-0">
                   <Switch
@@ -588,18 +610,64 @@ export default function Knowledge() {
               </div>
             ))}
             </div>
+            <div className="flex justify-end mt-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowBusinessHoursModal(true)}
+                className="text-primary hover:text-primary hover:bg-primary/10"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Section 4: Custom Business Information */}
+        {/* Section 4: Custom Business Information (Read-only with modal) */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-start gap-3">
+                <FileText className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                    Custom Business Information
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Add any additional information about your business that you want the AI agent to know.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="pl-8">
+              <p className="text-sm text-foreground whitespace-pre-wrap">
+                {additionalInfo || <span className="text-muted-foreground italic">No custom information added yet.</span>}
+              </p>
+            </div>
+            <div className="flex justify-end mt-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowCustomInfoModal(true)}
+                className="text-primary hover:text-primary hover:bg-primary/10"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 5: Frequently Asked Questions */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Custom Business Information</CardTitle>
+              <HelpCircle className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Frequently Asked Questions</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground">
-              Add any additional information about your business that you want the AI agent to know. This can include special policies, services, or instructions.
+              Add common questions and answers that your AI agent should know.
             </p>
           </CardHeader>
           <CardContent>
@@ -844,11 +912,35 @@ export default function Knowledge() {
         businessAddress={businessAddress}
         businessPhone={businessPhone}
         businessEmail={businessEmail}
+        businessType={businessType}
         onSave={async (data) => {
           setBusinessName(data.businessName);
           setBusinessAddress(data.businessAddress);
           setBusinessPhone(data.businessPhone);
           setBusinessEmail(data.businessEmail);
+          setBusinessType(data.businessType);
+          setHasChanges(true);
+        }}
+      />
+
+      <BusinessHoursModal
+        open={showBusinessHoursModal}
+        onOpenChange={setShowBusinessHoursModal}
+        schedule={schedule}
+        timezone={timezone}
+        onSave={(data) => {
+          setSchedule(data.schedule);
+          setTimezone(data.timezone);
+          setHasChanges(true);
+        }}
+      />
+
+      <CustomInfoModal
+        open={showCustomInfoModal}
+        onOpenChange={setShowCustomInfoModal}
+        additionalInfo={additionalInfo}
+        onSave={(info) => {
+          setAdditionalInfo(info);
           setHasChanges(true);
         }}
       />
