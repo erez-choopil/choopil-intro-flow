@@ -485,28 +485,6 @@ export default function Knowledge() {
                 </div>
               </div>
             </div>
-            
-            {/* Timezone Display */}
-            <div className="pl-8 mb-4 pb-4 border-b">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">Time zone</p>
-                <p className="text-sm text-foreground">
-                  {timezone === "eastern" && "Eastern Time — "}
-                  {timezone === "central" && "Central Time — "}
-                  {timezone === "mountain" && "Mountain Time — "}
-                  {timezone === "pacific" && "Pacific Time — "}
-                  {new Date().toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    timeZone: timezone === "eastern" ? "America/New_York" : 
-                              timezone === "central" ? "America/Chicago" : 
-                              timezone === "mountain" ? "America/Denver" : 
-                              "America/Los_Angeles"
-                  })}
-                </p>
-                <p className="text-xs text-muted-foreground">Used to display time in the app</p>
-              </div>
-            </div>
 
             {/* Schedule Display */}
             <div className="space-y-2 pl-8">
@@ -529,6 +507,28 @@ export default function Knowledge() {
                   )}
                 </div>
               ))}
+            </div>
+            
+            {/* Timezone Display */}
+            <div className="pl-8 mt-4 pt-4 border-t">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">Time zone</p>
+                <p className="text-sm text-foreground">
+                  {timezone === "eastern" && "Eastern Time — "}
+                  {timezone === "central" && "Central Time — "}
+                  {timezone === "mountain" && "Mountain Time — "}
+                  {timezone === "pacific" && "Pacific Time — "}
+                  {new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    timeZone: timezone === "eastern" ? "America/New_York" : 
+                              timezone === "central" ? "America/Chicago" : 
+                              timezone === "mountain" ? "America/Denver" : 
+                              "America/Los_Angeles"
+                  })}
+                </p>
+                <p className="text-xs text-muted-foreground">Used to display time in the app</p>
+              </div>
             </div>
             
             <div className="flex justify-end mt-6">
