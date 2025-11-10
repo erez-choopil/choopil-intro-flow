@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Plus, User, Trash2, HelpCircle, X, Edit } from "lucide-react";
+import { Plus, User, Trash2, X, Edit, Mail, MessageSquare, Info, ChevronDown, ChevronRight, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 
 interface NotificationPerson {
@@ -14,26 +16,20 @@ interface NotificationPerson {
   name: string;
   email?: string;
   phone?: string;
-  emailNotification: "off" | "on";
-  smsNotification: "off" | "on";
-  customCondition: boolean;
-  spamEmail: boolean;
-  spamSMS: boolean;
-  hungUpEmail: boolean;
-  hungUpSMS: boolean;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+  frequency: "all" | "follow-up" | "daily";
 }
 
 const initialPeople: NotificationPerson[] = [
   {
     id: 1,
     name: "DJ Esaz",
-    emailNotification: "on",
-    smsNotification: "on",
-    customCondition: false,
-    spamEmail: false,
-    spamSMS: false,
-    hungUpEmail: false,
-    hungUpSMS: false,
+    email: "dj@choopil.com",
+    phone: "(919) 555-2171",
+    emailEnabled: true,
+    smsEnabled: true,
+    frequency: "all",
   },
 ];
 
@@ -41,16 +37,15 @@ export default function Notifications() {
   const [people, setPeople] = useState<NotificationPerson[]>(initialPeople);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<NotificationPerson | null>(null);
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    emailNotification: "off" as "off" | "on",
-    smsNotification: "off" as "off" | "on",
-    spamEmail: false,
-    spamSMS: false,
-    hungUpEmail: false,
-    hungUpSMS: false,
+    emailEnabled: false,
+    smsEnabled: false,
+    frequency: "all" as "all" | "follow-up" | "daily",
   });
 
   // Validation functions
@@ -62,57 +57,62 @@ export default function Notifications() {
     return phone.trim() !== "";
   };
 
-  const showEmailError = formData.emailNotification === "on" && !isValidEmail(formData.email);
-  const showPhoneError = formData.smsNotification === "on" && !isValidPhone(formData.phone);
-  const noNotificationMethod = formData.emailNotification === "off" && formData.smsNotification === "off";
+  const showEmailError = formData.emailEnabled && !isValidEmail(formData.email);
+  const showPhoneError = formData.smsEnabled && !isValidPhone(formData.phone);
+  const noNotificationMethod = !formData.emailEnabled && !formData.smsEnabled;
 
   const handleAddPerson = () => {
-    if (formData.name.trim() && !noNotificationMethod) {
-      if (editingPerson) {
-        // Update existing person
-        setPeople(people.map(p => p.id === editingPerson.id ? {
-          ...editingPerson,
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          emailNotification: formData.emailNotification,
-          smsNotification: formData.smsNotification,
-          spamEmail: formData.spamEmail,
-          spamSMS: formData.spamSMS,
-          hungUpEmail: formData.hungUpEmail,
-          hungUpSMS: formData.hungUpSMS,
-        } : p));
-      } else {
-        // Add new person
-        const newPerson: NotificationPerson = {
-          id: Date.now(),
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          emailNotification: formData.emailNotification,
-          smsNotification: formData.smsNotification,
-          customCondition: false,
-          spamEmail: formData.spamEmail,
-          spamSMS: formData.spamSMS,
-          hungUpEmail: formData.hungUpEmail,
-          hungUpSMS: formData.hungUpSMS,
-        };
-        setPeople([...people, newPerson]);
-      }
-      setIsDialogOpen(false);
-      setEditingPerson(null);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        emailNotification: "off",
-        smsNotification: "off",
-        spamEmail: false,
-        spamSMS: false,
-        hungUpEmail: false,
-        hungUpSMS: false,
-      });
+    // Check if at least one method is selected
+    if (noNotificationMethod) {
+      setShowValidationAlert(true);
+      return;
     }
+
+    // Validate fields
+    if (showEmailError || showPhoneError) {
+      return;
+    }
+
+    if (editingPerson) {
+      // Update existing person
+      setPeople(people.map(p => p.id === editingPerson.id ? {
+        ...editingPerson,
+        name: formData.name.trim() || "Unnamed",
+        email: formData.email,
+        phone: formData.phone,
+        emailEnabled: formData.emailEnabled,
+        smsEnabled: formData.smsEnabled,
+        frequency: formData.frequency,
+      } : p));
+    } else {
+      // Add new person
+      const newPerson: NotificationPerson = {
+        id: Date.now(),
+        name: formData.name.trim() || "Unnamed",
+        email: formData.email,
+        phone: formData.phone,
+        emailEnabled: formData.emailEnabled,
+        smsEnabled: formData.smsEnabled,
+        frequency: formData.frequency,
+      };
+      setPeople([...people, newPerson]);
+    }
+    
+    setIsDialogOpen(false);
+    setEditingPerson(null);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      emailEnabled: false,
+      smsEnabled: false,
+      frequency: "all",
+    });
+    setIsAdvancedOpen(false);
   };
 
   const handleEditPerson = (person: NotificationPerson) => {
@@ -121,12 +121,9 @@ export default function Notifications() {
       name: person.name,
       email: person.email || "",
       phone: person.phone || "",
-      emailNotification: person.emailNotification,
-      smsNotification: person.smsNotification,
-      spamEmail: person.spamEmail,
-      spamSMS: person.spamSMS,
-      hungUpEmail: person.hungUpEmail,
-      hungUpSMS: person.hungUpSMS,
+      emailEnabled: person.emailEnabled,
+      smsEnabled: person.smsEnabled,
+      frequency: person.frequency,
     });
     setIsDialogOpen(true);
   };
@@ -164,20 +161,15 @@ export default function Notifications() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {person.emailNotification !== "off" && (
+                {person.emailEnabled && (
                   <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/20">
                     EMAIL
                   </Badge>
                 )}
-                {person.smsNotification !== "off" && (
+                {person.smsEnabled && (
                   <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/20">
                     SMS
                   </Badge>
-                )}
-                {person.customCondition && (
-                  <Button variant="ghost" size="sm">
-                    CUSTOM CONDITIONS
-                  </Button>
                 )}
                 <Button 
                   variant="ghost" 
@@ -203,243 +195,265 @@ export default function Notifications() {
           setIsDialogOpen(open);
           if (!open) {
             setEditingPerson(null);
-            setFormData({
-              name: "",
-              email: "",
-              phone: "",
-              emailNotification: "off",
-              smsNotification: "off",
-              spamEmail: false,
-              spamSMS: false,
-              hungUpEmail: false,
-              hungUpSMS: false,
-            });
+            resetForm();
           }
         }}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>{editingPerson ? "Edit Notification" : "Who should be notified about calls?"}</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="e.g., Support, Sales, Thomas Anderson"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground">
-                Name of the person or department receiving the notifications
-              </p>
-            </div>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingPerson ? "Edit Notification Settings" : "Add Call Notifications"}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6 py-4">
+              {/* Context Section */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
+                <div className="flex items-start gap-2">
+                  <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-2 text-sm text-gray-700">
+                    <p>Get notified instantly when callers reach your AI receptionist. You can add multiple people or departments.</p>
+                    <div className="space-y-1">
+                      <p className="font-medium">Each notification includes:</p>
+                      <ul className="space-y-0.5 ml-1">
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-0.5">•</span>
+                          <span>Caller name and phone number</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-0.5">•</span>
+                          <span>AI-generated call summary</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-0.5">•</span>
+                          <span>Link to full transcript and recording</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <div className="grid grid-cols-2 gap-4">
+              {/* Notification Method Selection */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">How do you want to receive notifications? *</Label>
+                <div className="space-y-4">
+                  {/* Email Checkbox */}
+                  <div className="flex items-start gap-3 p-4 rounded-lg border border-input hover:border-primary/50 transition-colors cursor-pointer"
+                       onClick={() => setFormData({ ...formData, emailEnabled: !formData.emailEnabled })}>
+                    <Checkbox
+                      id="email-method"
+                      checked={formData.emailEnabled}
+                      onCheckedChange={(checked) => setFormData({ ...formData, emailEnabled: checked as boolean })}
+                      className="mt-0.5"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-5 w-5 text-blue-600" />
+                        <Label htmlFor="email-method" className="font-medium text-base cursor-pointer">Email notifications</Label>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Get instant email alerts with call details</p>
+                    </div>
+                  </div>
+
+                  {/* SMS Checkbox */}
+                  <div className="flex items-start gap-3 p-4 rounded-lg border border-input hover:border-primary/50 transition-colors cursor-pointer"
+                       onClick={() => setFormData({ ...formData, smsEnabled: !formData.smsEnabled })}>
+                    <Checkbox
+                      id="sms-method"
+                      checked={formData.smsEnabled}
+                      onCheckedChange={(checked) => setFormData({ ...formData, smsEnabled: checked as boolean })}
+                      className="mt-0.5"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-5 w-5 text-blue-600" />
+                        <Label htmlFor="sms-method" className="font-medium text-base cursor-pointer">SMS notifications</Label>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Receive text messages on your phone</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Email Details (Conditional) */}
+              {formData.emailEnabled && (
+                <div className="space-y-3 p-4 bg-muted/30 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-blue-600" />
+                    <h4 className="font-medium">Email notification details</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="name@company.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className={showEmailError ? "border-red-500" : ""}
+                    />
+                    {showEmailError && (
+                      <p className="text-sm text-red-600 flex items-center gap-1">
+                        <X className="h-3 w-3" />
+                        Please enter a valid email address
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span>Instant email for every call</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span>Includes full call summary and transcript link</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SMS Details (Conditional) */}
+              {formData.smsEnabled && (
+                <div className="space-y-3 p-4 bg-muted/30 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-blue-600" />
+                    <h4 className="font-medium">SMS notification details</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone number *</Label>
+                    <div className="flex gap-2">
+                      <Select defaultValue="+1">
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="+1">+1</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        id="phone"
+                        placeholder="(919) 555-2171"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className={showPhoneError ? "border-red-500 flex-1" : "flex-1"}
+                      />
+                    </div>
+                    {showPhoneError && (
+                      <p className="text-sm text-red-600 flex items-center gap-1">
+                        <X className="h-3 w-3" />
+                        Please enter a valid phone number
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span>Text message for every call</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span>Includes caller name and brief summary</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Recipient Name (Always Visible) */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="name">Label this recipient (optional)</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@company.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className={showEmailError ? "border-red-500" : ""}
+                  id="name"
+                  placeholder="e.g., Support Team, Sales, Thomas"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
-                {showEmailError && (
-                  <div className="flex items-center gap-1 text-red-500" style={{ fontSize: '12px' }}>
-                    <X className="h-3 w-3" />
-                    <span>Please provide a valid email</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone number</Label>
-                <div className="flex gap-2">
-                  <Select defaultValue="+1">
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="+1">+1</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    id="phone"
-                    placeholder="(919) 555-2171"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className={showPhoneError ? "border-red-500" : ""}
-                  />
-                </div>
-                {showPhoneError && (
-                  <div className="flex items-center gap-1 text-red-500" style={{ fontSize: '12px' }}>
-                    <X className="h-3 w-3" />
-                    <span>Please enter a valid phone number in the international format</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              You must enter either an email, phone number, or both
-            </p>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={formData.emailNotification === "off" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, emailNotification: "off" })}
-                  >
-                    Off
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={formData.emailNotification === "on" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, emailNotification: "on" })}
-                  >
-                    On
-                  </Button>
+                <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>Helps you identify who receives these notifications</span>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>SMS</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={formData.smsNotification === "off" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, smsNotification: "off" })}
-                  >
-                    Off
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={formData.smsNotification === "on" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, smsNotification: "on" })}
-                  >
-                    On
-                  </Button>
-                </div>
-              </div>
+              {/* Advanced Settings (Collapsible) */}
+              <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
+                <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                  {isAdvancedOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  Advanced: When to notify (optional)
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 space-y-3 pl-6">
+                  <RadioGroup value={formData.frequency} onValueChange={(value: "all" | "follow-up" | "daily") => setFormData({ ...formData, frequency: value })}>
+                    <div className="flex items-start gap-2 space-y-0">
+                      <RadioGroupItem value="all" id="freq-all" className="mt-0.5" />
+                      <div className="space-y-1">
+                        <Label htmlFor="freq-all" className="font-medium cursor-pointer">All calls (recommended)</Label>
+                        <p className="text-sm text-muted-foreground">Get notified immediately for every call</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 space-y-0">
+                      <RadioGroupItem value="follow-up" id="freq-followup" className="mt-0.5" />
+                      <div className="space-y-1">
+                        <Label htmlFor="freq-followup" className="font-medium cursor-pointer">Follow-up Required only</Label>
+                        <p className="text-sm text-muted-foreground">Only calls that need your attention</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 space-y-0">
+                      <RadioGroupItem value="daily" id="freq-daily" className="mt-0.5" />
+                      <div className="space-y-1">
+                        <Label htmlFor="freq-daily" className="font-medium cursor-pointer">Daily digest</Label>
+                        <p className="text-sm text-muted-foreground">One summary email each morning at 9:00 AM</p>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </CollapsibleContent>
+              </Collapsible>
             </div>
 
-            {noNotificationMethod && (
-              <div className="flex items-center gap-1 text-red-500 text-sm">
-                <X className="h-4 w-4" />
-                <span>You must select at least one notification method (Email or SMS)</span>
-              </div>
-            )}
-
-            <div className="space-y-3">
-              <div>
-                <h4 className="font-medium mb-2">Unwanted calls</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  These calls don't count toward your plan. Check the box if you still want notifications about them.
-                </p>
-              </div>
-
-              <TooltipProvider>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Label className="font-normal">Spam</Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="bg-gray-900 text-white">
-                          <p>Detected as spam based on the content of the call</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center gap-8">
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="spam-email"
-                          checked={formData.spamEmail}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, spamEmail: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="spam-email" className="text-sm">Email</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="spam-sms"
-                          checked={formData.spamSMS}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, spamSMS: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="spam-sms" className="text-sm">SMS</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Label className="font-normal">Hung up</Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="bg-gray-900 text-white">
-                          <p>Caller didn't say anything or hung up in under 15 seconds</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center gap-8">
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="hung-email"
-                          checked={formData.hungUpEmail}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, hungUpEmail: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="hung-email" className="text-sm">Email</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="hung-sms"
-                          checked={formData.hungUpSMS}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, hungUpSMS: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="hung-sms" className="text-sm">SMS</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TooltipProvider>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setIsDialogOpen(false);
-              setEditingPerson(null);
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              className="bg-success hover:bg-success/90" 
-              onClick={handleAddPerson}
-              disabled={showEmailError || showPhoneError || noNotificationMethod}
-            >
-              {editingPerson ? "Update notifications" : "Add notifications"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => {
+                setIsDialogOpen(false);
+                setEditingPerson(null);
+                resetForm();
+              }}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleAddPerson}
+                disabled={showEmailError || showPhoneError}
+              >
+                {editingPerson ? "Save Changes" : "Add notifications"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
+
+        {/* Validation Alert Dialog */}
+        <AlertDialog open={showValidationAlert} onOpenChange={setShowValidationAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Info className="h-5 w-5 text-orange-600" />
+                </div>
+                Please select a notification method
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-4 pt-2">
+                <p>Choose at least one way to receive notifications:</p>
+                <div className="space-y-2 pl-4">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span>Email notifications</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <span>SMS notifications</span>
+                  </div>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction>OK</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
