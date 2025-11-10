@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Building2, Clock, FileText, HelpCircle, Plus, X, Edit, Trash2, Upload, Eye, EyeOff } from "lucide-react";
@@ -121,6 +120,7 @@ export default function Knowledge() {
             setBusinessPhone(additionalData.business_phone || "");
             setBusinessEmail(additionalData.business_email || "");
             setAdditionalInfo(additionalData.custom_info || "");
+            setTimezone(additionalData.timezone || "eastern");
           } catch {
             setAdditionalInfo(data.additional_info || "");
           }
@@ -179,7 +179,8 @@ export default function Knowledge() {
       const additionalData = {
         business_phone: businessPhone,
         business_email: businessEmail,
-        custom_info: additionalInfo
+        custom_info: additionalInfo,
+        timezone: timezone
       };
 
       const profileData = {
@@ -216,50 +217,6 @@ export default function Knowledge() {
     }
   };
 
-  const toggleDay = (day: string) => {
-    setSchedule(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        enabled: !prev[day].enabled,
-        slots: !prev[day].enabled ? [{ id: Date.now().toString(), start: "9:00", end: "5:00", startPeriod: "AM", endPeriod: "PM" }] : prev[day].slots
-      }
-    }));
-    markAsChanged();
-  };
-
-  const addTimeSlot = (day: string) => {
-    setSchedule(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        slots: [...prev[day].slots, { id: Date.now().toString(), start: "9:00", end: "5:00", startPeriod: "AM", endPeriod: "PM" }]
-      }
-    }));
-    markAsChanged();
-  };
-
-  const removeTimeSlot = (day: string, slotId: string) => {
-    setSchedule(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        slots: prev[day].slots.filter(s => s.id !== slotId)
-      }
-    }));
-    markAsChanged();
-  };
-
-  const updateTimeSlot = (day: string, slotId: string, field: keyof TimeSlot, value: string) => {
-    setSchedule(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        slots: prev[day].slots.map(s => s.id === slotId ? { ...s, [field]: value } : s)
-      }
-    }));
-    markAsChanged();
-  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -523,93 +480,57 @@ export default function Knowledge() {
                     Business Hours
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Set your operating hours so your agent can inform callers when you're available.
+                    Your operating hours so your agent can inform callers when you're available.
                   </p>
                 </div>
               </div>
             </div>
+            
+            {/* Timezone Display */}
+            <div className="pl-8 mb-4 pb-4 border-b">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">Time zone</p>
+                <p className="text-sm text-foreground">
+                  {timezone === "eastern" && "Eastern Time — "}
+                  {timezone === "central" && "Central Time — "}
+                  {timezone === "mountain" && "Mountain Time — "}
+                  {timezone === "pacific" && "Pacific Time — "}
+                  {new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    timeZone: timezone === "eastern" ? "America/New_York" : 
+                              timezone === "central" ? "America/Chicago" : 
+                              timezone === "mountain" ? "America/Denver" : 
+                              "America/Los_Angeles"
+                  })}
+                </p>
+                <p className="text-xs text-muted-foreground">Used to display time in the app</p>
+              </div>
+            </div>
+
+            {/* Schedule Display */}
             <div className="space-y-2 pl-8">
               {Object.keys(schedule).map((day) => (
-              <div key={day} className="flex items-center gap-4">
-                <div className="flex items-center gap-3 w-36 shrink-0">
-                  <Switch
-                    checked={schedule[day].enabled}
-                    onCheckedChange={() => toggleDay(day)}
-                  />
-                  <span className="text-sm font-medium text-foreground">{day}</span>
+                <div key={day} className="flex items-start gap-4">
+                  <span className="text-sm font-medium text-foreground min-w-[100px]">
+                    {day}
+                  </span>
+                  {schedule[day].enabled ? (
+                    <div className="flex-1 text-sm text-foreground">
+                      {schedule[day].slots.map((slot, idx) => (
+                        <span key={slot.id}>
+                          {idx > 0 && " and "}
+                          {slot.start} {slot.startPeriod} to {slot.end} {slot.endPeriod}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground flex-1">Closed</div>
+                  )}
                 </div>
-
-                {schedule[day].enabled ? (
-                  <div className="flex-1 space-y-2 min-w-0">
-                    {schedule[day].slots.map((slot, idx) => (
-                      <>
-                        {idx > 0 && (
-                          <div className="text-sm text-muted-foreground py-1">and</div>
-                        )}
-                        <div key={slot.id} className="flex items-center gap-2">
-                          <Input
-                            value={slot.start}
-                            onChange={(e) => updateTimeSlot(day, slot.id, "start", e.target.value)}
-                            className="w-20 shrink-0"
-                          />
-                          <Select value={slot.startPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "startPeriod", v)}>
-                            <SelectTrigger className="w-20 shrink-0">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="AM">AM</SelectItem>
-                              <SelectItem value="PM">PM</SelectItem>
-                            </SelectContent>
-                          </Select>
-
-                          <span className="text-muted-foreground shrink-0">to</span>
-
-                          <Input
-                            value={slot.end}
-                            onChange={(e) => updateTimeSlot(day, slot.id, "end", e.target.value)}
-                            className="w-20 shrink-0"
-                          />
-                          <Select value={slot.endPeriod} onValueChange={(v) => updateTimeSlot(day, slot.id, "endPeriod", v)}>
-                            <SelectTrigger className="w-20 shrink-0">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="AM">AM</SelectItem>
-                              <SelectItem value="PM">PM</SelectItem>
-                            </SelectContent>
-                          </Select>
-
-                          <div className="flex items-center gap-1 ml-2 shrink-0">
-                            {schedule[day].slots.length > 1 && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeTimeSlot(day, slot.id)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-
-                            {idx === schedule[day].slots.length - 1 && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => addTimeSlot(day)}
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-sm text-muted-foreground flex-1">Closed</div>
-                )}
-              </div>
-            ))}
+              ))}
             </div>
+            
             <div className="flex justify-end mt-6">
               <Button
                 variant="ghost"
