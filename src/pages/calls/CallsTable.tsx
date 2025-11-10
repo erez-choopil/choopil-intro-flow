@@ -53,7 +53,7 @@ const mockCalls: Call[] = [
     status: "completed",
     summary: "Customer called regarding a refund for a cancelled appointment.",
     phone: "+18484209420",
-    callDate: new Date(2024, 10, 10, 17, 52),
+    callDate: new Date(2025, 10, 10, 17, 52),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -68,7 +68,7 @@ const mockCalls: Call[] = [
     status: "completed",
     summary: "Customer called regarding a refund for a cancelled appointment. Agent confirmed the refund would be processed within 5-7 business days and provided the reference number. Customer satisfied with resolution.",
     phone: "+15552341234",
-    callDate: new Date(2024, 10, 7, 15, 20),
+    callDate: new Date(2025, 10, 7, 15, 20),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "Hi, I had to cancel my appointment last week and was told I would get a refund." },
@@ -91,7 +91,7 @@ const mockCalls: Call[] = [
     status: "test-call",
     summary: "Customer inquiry about service availability.",
     phone: "+15559876543",
-    callDate: new Date(2024, 10, 2, 14, 10),
+    callDate: new Date(2025, 10, 2, 14, 10),
     transcript: [
       { role: "agent", message: "Thank you for calling. How may I assist you today?" },
       { role: "caller", message: "I wanted to check if you have availability next week." },
@@ -106,7 +106,7 @@ const mockCalls: Call[] = [
     status: "missed",
     summary: "Missed call - no voicemail left.",
     phone: "+15551234567",
-    callDate: new Date(2024, 9, 30, 13, 5),
+    callDate: new Date(2025, 9, 30, 13, 5),
     transcript: [],
   },
 ];
