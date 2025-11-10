@@ -19,8 +19,6 @@ interface NotificationPerson {
   customCondition: boolean;
   spamEmail: boolean;
   spamSMS: boolean;
-  blockedEmail: boolean;
-  blockedSMS: boolean;
   hungUpEmail: boolean;
   hungUpSMS: boolean;
 }
@@ -34,8 +32,6 @@ const initialPeople: NotificationPerson[] = [
     customCondition: false,
     spamEmail: false,
     spamSMS: false,
-    blockedEmail: false,
-    blockedSMS: false,
     hungUpEmail: false,
     hungUpSMS: false,
   },
@@ -53,8 +49,6 @@ export default function Notifications() {
     smsNotification: "off" as "off" | "on",
     spamEmail: false,
     spamSMS: false,
-    blockedEmail: false,
-    blockedSMS: false,
     hungUpEmail: false,
     hungUpSMS: false,
   });
@@ -70,9 +64,10 @@ export default function Notifications() {
 
   const showEmailError = formData.emailNotification === "on" && !isValidEmail(formData.email);
   const showPhoneError = formData.smsNotification === "on" && !isValidPhone(formData.phone);
+  const noNotificationMethod = formData.emailNotification === "off" && formData.smsNotification === "off";
 
   const handleAddPerson = () => {
-    if (formData.name.trim()) {
+    if (formData.name.trim() && !noNotificationMethod) {
       if (editingPerson) {
         // Update existing person
         setPeople(people.map(p => p.id === editingPerson.id ? {
@@ -84,8 +79,6 @@ export default function Notifications() {
           smsNotification: formData.smsNotification,
           spamEmail: formData.spamEmail,
           spamSMS: formData.spamSMS,
-          blockedEmail: formData.blockedEmail,
-          blockedSMS: formData.blockedSMS,
           hungUpEmail: formData.hungUpEmail,
           hungUpSMS: formData.hungUpSMS,
         } : p));
@@ -101,8 +94,6 @@ export default function Notifications() {
           customCondition: false,
           spamEmail: formData.spamEmail,
           spamSMS: formData.spamSMS,
-          blockedEmail: formData.blockedEmail,
-          blockedSMS: formData.blockedSMS,
           hungUpEmail: formData.hungUpEmail,
           hungUpSMS: formData.hungUpSMS,
         };
@@ -118,8 +109,6 @@ export default function Notifications() {
         smsNotification: "off",
         spamEmail: false,
         spamSMS: false,
-        blockedEmail: false,
-        blockedSMS: false,
         hungUpEmail: false,
         hungUpSMS: false,
       });
@@ -136,8 +125,6 @@ export default function Notifications() {
       smsNotification: person.smsNotification,
       spamEmail: person.spamEmail,
       spamSMS: person.spamSMS,
-      blockedEmail: person.blockedEmail,
-      blockedSMS: person.blockedSMS,
       hungUpEmail: person.hungUpEmail,
       hungUpSMS: person.hungUpSMS,
     });
@@ -224,8 +211,6 @@ export default function Notifications() {
               smsNotification: "off",
               spamEmail: false,
               spamSMS: false,
-              blockedEmail: false,
-              blockedSMS: false,
               hungUpEmail: false,
               hungUpSMS: false,
             });
@@ -345,6 +330,13 @@ export default function Notifications() {
               </div>
             </div>
 
+            {noNotificationMethod && (
+              <div className="flex items-center gap-1 text-red-500 text-sm">
+                <X className="h-4 w-4" />
+                <span>You must select at least one notification method (Email or SMS)</span>
+              </div>
+            )}
+
             <div className="space-y-3">
               <div>
                 <h4 className="font-medium mb-2">Unwanted calls</h4>
@@ -387,42 +379,6 @@ export default function Notifications() {
                           }
                         />
                         <label htmlFor="spam-sms" className="text-sm">SMS</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Label className="font-normal">Blocked</Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="bg-gray-900 text-white">
-                          <p>Calls from numbers you've put on your block list</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center gap-8">
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="blocked-email"
-                          checked={formData.blockedEmail}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, blockedEmail: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="blocked-email" className="text-sm">Email</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="blocked-sms"
-                          checked={formData.blockedSMS}
-                          onCheckedChange={(checked) => 
-                            setFormData({ ...formData, blockedSMS: checked as boolean })
-                          }
-                        />
-                        <label htmlFor="blocked-sms" className="text-sm">SMS</label>
                       </div>
                     </div>
                   </div>
@@ -474,7 +430,11 @@ export default function Notifications() {
             }}>
               Cancel
             </Button>
-            <Button className="bg-success hover:bg-success/90" onClick={handleAddPerson}>
+            <Button 
+              className="bg-success hover:bg-success/90" 
+              onClick={handleAddPerson}
+              disabled={showEmailError || showPhoneError || noNotificationMethod}
+            >
               {editingPerson ? "Update notifications" : "Add notifications"}
             </Button>
           </DialogFooter>
