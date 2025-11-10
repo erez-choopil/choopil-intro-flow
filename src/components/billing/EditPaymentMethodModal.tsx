@@ -1,32 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield } from "lucide-react";
+import { Shield, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface AddPaymentMethodModalProps {
+interface EditPaymentMethodModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  method: {
+    id: string;
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+    holderName?: string;
+    billingZip?: string;
+    country?: string;
+    isDefault: boolean;
+  } | null;
 }
 
-export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodModalProps) {
+export function EditPaymentMethodModal({ open, onOpenChange, method }: EditPaymentMethodModalProps) {
   const { toast } = useToast();
-  const [cardNumber, setCardNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
-  const [cvv, setCvv] = useState("");
   const [cardholderName, setCardholderName] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [country, setCountry] = useState("US");
   const [setAsDefault, setSetAsDefault] = useState(false);
 
+  useEffect(() => {
+    if (method) {
+      setExpMonth(method.expMonth.toString().padStart(2, '0'));
+      setExpYear(method.expYear.toString());
+      setCardholderName(method.holderName || "");
+      setZipCode(method.billingZip || "");
+      setCountry(method.country || "US");
+      setSetAsDefault(method.isDefault);
+    }
+  }, [method]);
+
   const handleSave = () => {
-    // Validation
-    if (!cardNumber || !expMonth || !expYear || !cvv || !cardholderName || !zipCode) {
+    if (!expMonth || !expYear || !cardholderName || !zipCode) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -35,34 +54,35 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
       return;
     }
 
-    // Save payment method logic
     toast({
       title: "Success",
-      description: "Payment method added successfully!"
+      description: "Payment method updated successfully!"
     });
     onOpenChange(false);
   };
+
+  if (!method) return null;
+
+  const brandName = method.brand.charAt(0).toUpperCase() + method.brand.slice(1);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Payment Method</DialogTitle>
+          <DialogTitle>Update Payment Method</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="cardNumber">Card Number *</Label>
-            <Input
-              id="cardNumber"
-              placeholder="1234 5678 9012 3456"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              maxLength={19}
-            />
+          {/* Card Display */}
+          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+            <CreditCard className="h-5 w-5 text-muted-foreground" />
+            <div>
+              <div className="font-medium">{brandName} •••• {method.last4}</div>
+              <div className="text-xs text-muted-foreground">Card number cannot be changed</div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="expMonth">Exp Month *</Label>
               <Select value={expMonth} onValueChange={setExpMonth}>
@@ -82,27 +102,16 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
               <Label htmlFor="expYear">Exp Year *</Label>
               <Select value={expYear} onValueChange={setExpYear}>
                 <SelectTrigger id="expYear">
-                  <SelectValue placeholder="YY" />
+                  <SelectValue placeholder="YYYY" />
                 </SelectTrigger>
                 <SelectContent>
                   {Array.from({ length: 20 }, (_, i) => new Date().getFullYear() + i).map((year) => (
-                    <SelectItem key={year} value={year.toString().slice(-2)}>
+                    <SelectItem key={year} value={year.toString()}>
                       {year}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div>
-              <Label htmlFor="cvv">CVV *</Label>
-              <Input
-                id="cvv"
-                placeholder="123"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                maxLength={4}
-                type="password"
-              />
             </div>
           </div>
 
@@ -159,13 +168,14 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
             </div>
           </div>
 
-          <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
-            <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" />
-            <div>
-              <div>Your payment information is encrypted and secure.</div>
-              <div>We never store your full card number.</div>
-            </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
+            <Shield className="h-4 w-4 flex-shrink-0" />
+            <span>Your payment info is encrypted and secure</span>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            To update card number, please add a new payment method
+          </p>
         </div>
 
         <DialogFooter>
@@ -173,7 +183,7 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
             Cancel
           </Button>
           <Button onClick={handleSave}>
-            Save Payment Method
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>

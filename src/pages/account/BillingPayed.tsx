@@ -6,19 +6,26 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { 
   Phone, Clock, MessageSquare, Users, CreditCard, 
-  Download, ChevronRight, Shield, AlertTriangle, CheckCircle2
+  Download, ChevronRight, Shield, AlertTriangle, CheckCircle2, Plus
 } from "lucide-react";
 import { ChangePlanModal } from "@/components/billing/ChangePlanModal";
 import { CancelSubscriptionModal } from "@/components/billing/CancelSubscriptionModal";
 import { PaymentMethodCard } from "@/components/billing/PaymentMethodCard";
 import { AddPaymentMethodModal } from "@/components/billing/AddPaymentMethodModal";
+import { EditPaymentMethodModal } from "@/components/billing/EditPaymentMethodModal";
+import { RemovePaymentMethodDialog } from "@/components/billing/RemovePaymentMethodDialog";
 import { UpdateBillingInfoModal } from "@/components/billing/UpdateBillingInfoModal";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Billing() {
+  const { toast } = useToast();
   const [changePlanOpen, setChangePlanOpen] = useState(false);
   const [cancelSubOpen, setCancelSubOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
   const [updateBillingOpen, setUpdateBillingOpen] = useState(false);
+  const [editPaymentOpen, setEditPaymentOpen] = useState(false);
+  const [removePaymentOpen, setRemovePaymentOpen] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<typeof paymentMethods[0] | null>(null);
 
   // Mock data - replace with real data from API
   const subscription = {
@@ -47,8 +54,25 @@ export default function Billing() {
   };
 
   const paymentMethods = [
-    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true }
+    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true, holderName: "John Doe", billingZip: "12345", country: "US" }
   ];
+
+  const handleEditPayment = (method: typeof paymentMethods[0]) => {
+    setSelectedPaymentMethod(method);
+    setEditPaymentOpen(true);
+  };
+
+  const handleRemovePayment = (method: typeof paymentMethods[0]) => {
+    setSelectedPaymentMethod(method);
+    setRemovePaymentOpen(true);
+  };
+
+  const handleSetDefault = (method: typeof paymentMethods[0]) => {
+    toast({
+      title: "Success",
+      description: `${method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} ••••${method.last4} set as default payment method`
+    });
+  };
 
   const billingInfo = {
     businessName: "Acme Corp",
@@ -231,18 +255,31 @@ export default function Billing() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {paymentMethods.map((method) => (
-                  <PaymentMethodCard key={method.id} method={method} />
+                  <PaymentMethodCard 
+                    key={method.id} 
+                    method={method}
+                    onEdit={() => handleEditPayment(method)}
+                    onRemove={() => handleRemovePayment(method)}
+                    onSetDefault={() => handleSetDefault(method)}
+                    canRemove={!method.isDefault && !(paymentMethods.length === 1 && subscription.status === 'active')}
+                  />
                 ))}
+                
                 <Button 
                   variant="outline" 
-                  className="w-full"
+                  className="w-full h-11 border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 text-primary"
                   onClick={() => setAddPaymentOpen(true)}
                 >
-                  + Add Payment Method
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Payment Method
                 </Button>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Your payment information is encrypted and secure</span>
+                
+                <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg border">
+                  <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div>Your payment information is encrypted and secure.</div>
+                    <div>We never store your full card number.</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -375,6 +412,18 @@ export default function Billing() {
       <ChangePlanModal open={changePlanOpen} onOpenChange={setChangePlanOpen} currentPlan={subscription.planId} />
       <CancelSubscriptionModal open={cancelSubOpen} onOpenChange={setCancelSubOpen} subscription={subscription} />
       <AddPaymentMethodModal open={addPaymentOpen} onOpenChange={setAddPaymentOpen} />
+      <EditPaymentMethodModal 
+        open={editPaymentOpen} 
+        onOpenChange={setEditPaymentOpen} 
+        method={selectedPaymentMethod}
+      />
+      <RemovePaymentMethodDialog
+        open={removePaymentOpen}
+        onOpenChange={setRemovePaymentOpen}
+        method={selectedPaymentMethod}
+        hasActiveSubscription={subscription.status === 'active'}
+        isOnlyCard={paymentMethods.length === 1}
+      />
       <UpdateBillingInfoModal open={updateBillingOpen} onOpenChange={setUpdateBillingOpen} billingInfo={billingInfo} />
     </div>
   );
