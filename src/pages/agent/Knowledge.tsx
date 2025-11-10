@@ -659,34 +659,6 @@ export default function Knowledge() {
           </CardContent>
         </Card>
 
-        {/* Section 5: Frequently Asked Questions */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Frequently Asked Questions</CardTitle>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Add common questions and answers that your AI agent should know.
-            </p>
-          </CardHeader>
-          <CardContent>
-
-          <div className="space-y-2">
-            <Textarea
-              id="additionalInfo"
-              placeholder="Example: We offer free consultations for first-time clients. Our specialty is family law cases..."
-              value={additionalInfo}
-              onChange={(e) => { setAdditionalInfo(e.target.value); markAsChanged(); }}
-              className="min-h-[120px] resize-none"
-              maxLength={5000}
-            />
-            <p className="text-xs text-muted-foreground">
-              {additionalInfo.length}/5000 characters
-            </p>
-          </div>
-          </CardContent>
-        </Card>
 
         {/* Section 4: Documents */}
         <div className="hidden space-y-6 pt-4 pb-6 px-6 bg-muted/20 rounded-lg border border-border/50">

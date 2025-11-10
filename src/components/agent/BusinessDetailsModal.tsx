@@ -137,16 +137,14 @@ export function BusinessDetailsModal({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Label htmlFor="businessName">Business Name <span className="text-destructive">*</span></Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Your official business name</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Your official business name</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <Input
                 id="businessName"
@@ -217,16 +215,14 @@ export function BusinessDetailsModal({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Label htmlFor="email">Business Email</Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Contact email for your business</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Contact email for your business</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <Input
                 id="email"
