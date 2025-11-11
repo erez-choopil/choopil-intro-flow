@@ -75,11 +75,21 @@ export default function Billing() {
   };
 
   const billingInfo = {
-    businessName: "Acme Corp",
-    email: "billing@acme.com",
-    address: "123 Main St, San Francisco, CA 94102",
-    country: "United States",
-    vatId: ""
+    customerType: 'business' as const,
+    legalName: "Acme Corp",
+    displayName: "Acme",
+    billingEmails: ["billing@acme.com"],
+    billingContactName: "John Doe",
+    address: {
+      line1: "123 Main St",
+      line2: "Suite 400",
+      city: "San Francisco",
+      state: "CA",
+      postalCode: "94102",
+      country: "US"
+    },
+    phone: "+15551234567",
+    taxIds: []
   };
 
   const invoices = [
@@ -236,18 +246,22 @@ export default function Billing() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">Business Name</div>
-                  <div className="text-sm font-semibold mt-1">{billingInfo.businessName}</div>
+                  <div className="text-sm font-semibold mt-1">{billingInfo.legalName}</div>
                 </div>
                 <Separator />
                 <div>
-                  <div className="text-sm font-medium text-muted-foreground">Billing Email</div>
-                  <div className="text-sm mt-1">{billingInfo.email}</div>
+                  <div className="text-sm font-medium text-muted-foreground">Billing Email(s)</div>
+                  <div className="text-sm mt-1">{billingInfo.billingEmails.join(', ')}</div>
                 </div>
                 <Separator />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">Billing Address</div>
-                  <div className="text-sm mt-1">{billingInfo.address}</div>
-                  <div className="text-sm text-muted-foreground">{billingInfo.country}</div>
+                  <div className="text-sm mt-1">{billingInfo.address.line1}</div>
+                  {billingInfo.address.line2 && <div className="text-sm mt-1">{billingInfo.address.line2}</div>}
+                  <div className="text-sm text-muted-foreground">
+                    {billingInfo.address.city}, {billingInfo.address.state} {billingInfo.address.postalCode}
+                  </div>
+                  <div className="text-sm text-muted-foreground">{billingInfo.address.country}</div>
                 </div>
                 <Button 
                   variant="outline" 
@@ -352,7 +366,24 @@ export default function Billing() {
       {/* Modals */}
       <ChangePlanModal open={changePlanOpen} onOpenChange={setChangePlanOpen} currentPlan={subscription.planId} />
       <CancelSubscriptionModal open={cancelSubOpen} onOpenChange={setCancelSubOpen} subscription={subscription} />
-      <AddPaymentMethodModal open={addPaymentOpen} onOpenChange={setAddPaymentOpen} />
+      <AddPaymentMethodModal 
+        open={addPaymentOpen} 
+        onOpenChange={setAddPaymentOpen}
+        billingAddress={{
+          line1: billingInfo.address.line1,
+          line2: billingInfo.address.line2,
+          city: billingInfo.address.city,
+          state: billingInfo.address.state,
+          postalCode: billingInfo.address.postalCode,
+          country: billingInfo.address.country,
+          businessName: billingInfo.legalName,
+          email: billingInfo.billingEmails[0]
+        }}
+        onEditBillingInfo={() => {
+          setAddPaymentOpen(false);
+          setUpdateBillingOpen(true);
+        }}
+      />
       <EditPaymentMethodModal 
         open={editPaymentOpen} 
         onOpenChange={setEditPaymentOpen} 
