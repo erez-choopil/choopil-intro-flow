@@ -19,30 +19,20 @@ All colors MUST be HSL.
 
     --primary: 216 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 216 100% 40%;
 
-    --coral: 8 100% 74%;
-    --coral-foreground: 0 0% 10%;
-
-    --lime: 75 100% 50%;
-    --lime-foreground: 0 0% 10%;
-
-    --secondary: 8 100% 74%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 216 100% 65%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 75 100% 50%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 216 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --success: 160 84% 39%;
+    --success: 216 100% 50%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 96%;
@@ -52,12 +42,19 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 0 0% 10%;
+
     --sidebar-primary: 216 100% 50%;
+
     --sidebar-primary-foreground: 0 0% 100%;
+
     --sidebar-accent: 0 0% 96%;
+
     --sidebar-accent-foreground: 0 0% 10%;
+
     --sidebar-border: 0 0% 96%;
+
     --sidebar-ring: 216 100% 50%;
   }
 
@@ -73,36 +70,25 @@ All colors MUST be HSL.
 
     --primary: 216 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 216 100% 40%;
 
-    --coral: 8 100% 74%;
-    --coral-foreground: 0 0% 10%;
-
-    --lime: 75 100% 50%;
-    --lime-foreground: 0 0% 10%;
-
-    --secondary: 8 100% 74%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 216 100% 65%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 20%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 75 100% 50%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 216 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --success: 160 84% 39%;
+    --success: 216 100% 50%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
+    --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 216 100% 50%;
-
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 216 100% 50%;

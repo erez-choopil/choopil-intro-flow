@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Phone, Copy, ExternalLink, Rocket, AlertCircle, BookOpen, RefreshCw, Search, Info, ChevronDown, ChevronUp, CheckCircle2, CreditCard, PlayCircle, Award } from "lucide-react";
+import { Phone, Copy, ExternalLink, Rocket, AlertCircle, BookOpen, RefreshCw, Search, Info, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
 
 type PhoneSystemType = "cell" | "voip" | "landline";
-type LaunchOption = "forward" | "use-number" | null;
+type LaunchOption = "forward" | "use-number";
 type AreaCodeFlowStep = "info" | "select" | "confirm";
 
 interface AreaCode {
@@ -27,10 +26,9 @@ const CHOOPIL_NUMBER = "(229) 738-7078";
 const CHOOPIL_NUMBER_RAW = "2297387078";
 
 const LaunchInstructions = () => {
-  const [selectedOption, setSelectedOption] = useState<LaunchOption>(null);
+  const [selectedOption, setSelectedOption] = useState<LaunchOption>("forward");
   const [phoneSystemType, setPhoneSystemType] = useState<PhoneSystemType>("cell");
   const [selectedProvider, setSelectedProvider] = useState<string>("");
-  const [instructionsExpanded, setInstructionsExpanded] = useState(false);
   const { toast } = useToast();
 
   // Area code flow state
@@ -151,328 +149,196 @@ const LaunchInstructions = () => {
     });
   };
 
-  const copyDialCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    toast({ 
-      title: "Copied!", 
-      description: "Dial code copied to clipboard" 
-    });
-  };
-
   const renderInstructions = () => {
     if (!selectedProvider) {
-      return null;
+      return (
+        <div className="text-center py-12 text-primary">
+          Select your phone system type & provider
+        </div>
+      );
     }
 
-    const instructions = getInstructionsForProvider(selectedProvider, copyDialCode);
+    const instructions = getInstructionsForProvider(selectedProvider);
     
     return (
-      <div className="space-y-6">
-        <div className="space-y-4">
+      <div className="grid md:grid-cols-[2fr_1fr] gap-6">
+        <div>
+          <h3 className="font-semibold mb-2">Forwarding Instructions</h3>
+          <p className="text-primary font-semibold mb-4">{selectedProvider}</p>
           {instructions.content}
+          {instructions.detailedLink && (
+            <Button variant="ghost" className="w-full mt-4 text-primary" asChild>
+              <a href={instructions.detailedLink} target="_blank" rel="noopener noreferrer">
+                Detailed Instructions <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          )}
         </div>
-        
-        {instructions.notes && instructions.notes.length > 0 && (
-          <div className="border-t pt-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Info className="h-4 w-4 text-primary" />
-              Important Notes
-            </h3>
-            <div className="space-y-2">
-              {instructions.notes.map((note, index) => {
-                const isWarning = note.startsWith("⚠️");
-                const isInfo = note.startsWith("ℹ️");
-                const icon = isWarning ? "⚠️" : isInfo ? "ℹ️" : "💡";
-                return (
-                  <div 
-                    key={index} 
-                    className={`flex gap-3 p-3 rounded-lg text-sm ${
-                      isWarning ? "bg-warning/5 border border-warning/20" : "bg-muted/50"
-                    }`}
-                  >
-                    <span className="text-base flex-shrink-0">{icon}</span>
-                    <span className="text-foreground/90">{note.replace(/^[⚠️ℹ️]\s*/, "")}</span>
-                  </div>
-                );
-              })}
-            </div>
+        {instructions.notes && (
+          <div>
+            <h3 className="font-semibold mb-2">Notes:</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              {instructions.notes.map((note, index) => (
+                <li key={index} className="flex gap-2">
+                  <span className={note.startsWith("⚠️") ? "" : "•"}>{note}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
-
-        {instructions.detailedLink && (
-          <Button variant="outline" className="w-full" asChild>
-            <a href={instructions.detailedLink} target="_blank" rel="noopener noreferrer">
-              <BookOpen className="h-4 w-4 mr-2" />
-              View Detailed Instructions
-              <ExternalLink className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
         )}
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background p-6 space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="space-y-3">
-          <h1 className="text-3xl md:text-4xl font-bold">Launch Your Agent</h1>
-          <p className="text-muted-foreground text-base">
-            Choose how you want customers to reach your AI assistant - takes about 2 minutes
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Launch Instructions</h1>
+          <p className="text-muted-foreground">
+            Forward your existing business number to Choopil or share Choopil's number directly with your customers so it can start answering your calls.
           </p>
         </div>
 
-        {/* Action Required Alert */}
-        <Alert className="bg-warning/10 border-warning border-2">
-          <AlertCircle className="h-5 w-5 text-warning" />
-          <div className="flex-1">
-            <AlertTitle className="text-warning-foreground font-semibold mb-2">
-              Action Required to Go Live
-            </AlertTitle>
-            <AlertDescription className="text-warning-foreground/90 mb-3">
-              Your agent is in test mode. Add a credit card to start handling real customer calls.
-            </AlertDescription>
-            <Button size="sm" className="bg-warning hover:bg-warning/90 text-warning-foreground">
-              <CreditCard className="h-4 w-4 mr-2" />
-              Add Credit Card
-            </Button>
+        {/* Call to Action Card */}
+        <Card className="p-4 bg-muted/50 border-l-4 border-l-primary">
+          <div className="flex items-start gap-3">
+            <Rocket className="h-5 w-5 text-primary mt-0.5" />
+            <div>
+              <h3 className="font-semibold mb-1">Have Choopil start answering your calls</h3>
+            </div>
           </div>
+        </Card>
+
+        {/* Warning Banner */}
+        <Alert className="bg-warning/10 border-warning">
+          <AlertCircle className="h-4 w-4 text-warning" />
+          <AlertDescription className="text-warning-foreground">
+            Choopil is in test mode and can't answer calls from real customers. Add a credit card to launch your agent.
+          </AlertDescription>
         </Alert>
 
-        {/* Step 1: Choose Setup Method */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold">
-              1
-            </div>
-            <h2 className="text-xl font-semibold">Choose Your Setup Method</h2>
-            <Badge variant="outline" className="text-xs">
-              <Award className="h-3 w-3 mr-1" />
-              Most people choose Forward Calls
-            </Badge>
-          </div>
+        {/* Description */}
+        <p className="text-muted-foreground">
+          You can forward calls from your existing business number to your agent's number, use your agent's number directly, or a combination of both.
+        </p>
 
-          <RadioGroup value={selectedOption || ""} onValueChange={(value) => setSelectedOption(value as LaunchOption)}>
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Forward Calls Option */}
-              <Card
-                className={`relative p-6 cursor-pointer transition-all border-2 ${
-                  selectedOption === "forward"
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border hover:border-muted-foreground/30"
-                }`}
-                onClick={() => setSelectedOption("forward")}
-              >
-                <div className="flex items-start gap-4">
-                  <RadioGroupItem value="forward" id="forward" className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor="forward" className="cursor-pointer">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Phone className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold text-lg">Forward Calls</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Keep your existing number. Forward calls to Choopil when you can't answer.
-                      </p>
-                      <p className="text-xs text-primary font-medium mt-2">✓ Recommended for most businesses</p>
-                    </Label>
-                  </div>
-                  {selectedOption === "forward" && (
-                    <CheckCircle2 className="h-5 w-5 text-primary absolute top-4 right-4" />
-                  )}
-                </div>
-              </Card>
-
-              {/* Use Choopil Number Option */}
-              <Card
-                className={`relative p-6 cursor-pointer transition-all border-2 ${
-                  selectedOption === "use-number"
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border hover:border-muted-foreground/30"
-                }`}
-                onClick={() => setSelectedOption("use-number")}
-              >
-                <div className="flex items-start gap-4">
-                  <RadioGroupItem value="use-number" id="use-number" className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor="use-number" className="cursor-pointer">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Phone className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold text-lg">Use Choopil Number</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Share Choopil's number as your main business line. Choopil handles all calls.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-2">✓ Perfect for new businesses</p>
-                    </Label>
-                  </div>
-                  {selectedOption === "use-number" && (
-                    <CheckCircle2 className="h-5 w-5 text-primary absolute top-4 right-4" />
-                  )}
-                </div>
-              </Card>
+        {/* Option Cards */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <Card
+            className={`p-6 cursor-pointer transition-all ${
+              selectedOption === "forward"
+                ? "border-primary bg-primary/5"
+                : "hover:border-muted-foreground/50"
+            }`}
+            onClick={() => setSelectedOption("forward")}
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-lg bg-primary/10">
+                <Phone className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Forward Calls</h3>
+                <p className="text-sm text-muted-foreground">
+                  Send calls from your existing number to Choopil.
+                </p>
+              </div>
             </div>
-          </RadioGroup>
+          </Card>
+
+          <Card
+            className={`p-6 cursor-pointer transition-all ${
+              selectedOption === "use-number"
+                ? "border-primary bg-primary/5"
+                : "hover:border-muted-foreground/50"
+            }`}
+            onClick={() => setSelectedOption("use-number")}
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-lg bg-muted">
+                <Phone className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Use Choopil Number</h3>
+                <p className="text-sm text-muted-foreground">
+                  Share the agent's number as your new business line.
+                </p>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        {/* Step 2: Configure Phone System (Forward Calls) */}
+        {/* Forward Calls Section */}
         {selectedOption === "forward" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                2
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="font-semibold mb-2 block">Phone System Type</label>
+                <Select
+                  value={phoneSystemType}
+                  onValueChange={(value) => {
+                    setPhoneSystemType(value as PhoneSystemType);
+                    setSelectedProvider("");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cell">Cell Phone Networks</SelectItem>
+                    <SelectItem value="voip">VOIP & Web Phone Systems</SelectItem>
+                    <SelectItem value="landline">Landline</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <h2 className="text-xl font-semibold">Configure Your Phone System</h2>
+
+              <div>
+                <label className="font-semibold mb-2 block">Select Your Provider</label>
+                <Select value={selectedProvider} onValueChange={setSelectedProvider}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getProviderOptions().map((provider) => (
+                      <SelectItem key={provider} value={provider}>
+                        {provider}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <Card className="p-6 border-2">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="phone-type" className="text-base font-semibold">Phone System Type</Label>
-                  <Select
-                    value={phoneSystemType}
-                    onValueChange={(value) => {
-                      setPhoneSystemType(value as PhoneSystemType);
-                      setSelectedProvider("");
-                      setInstructionsExpanded(false);
-                    }}
-                  >
-                    <SelectTrigger id="phone-type" className="h-11">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      <SelectItem value="cell">📱 Cell Phone Networks</SelectItem>
-                      <SelectItem value="voip">💻 VOIP & Web Phone Systems</SelectItem>
-                      <SelectItem value="landline">☎️ Landline</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="provider" className="text-base font-semibold">Select Your Provider</Label>
-                  <Select 
-                    value={selectedProvider} 
-                    onValueChange={(value) => {
-                      setSelectedProvider(value);
-                      setInstructionsExpanded(false);
-                    }}
-                  >
-                    <SelectTrigger id="provider" className="h-11">
-                      <SelectValue placeholder="Choose provider" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      {getProviderOptions().map((provider) => (
-                        <SelectItem key={provider} value={provider}>
-                          {provider}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+            <Card className="p-6 bg-muted/30">
+              {renderInstructions()}
             </Card>
-
-            {/* Step 3: Follow Instructions */}
-            {selectedProvider && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                    3
-                  </div>
-                  <h2 className="text-xl font-semibold">Follow Instructions</h2>
-                  <Badge variant="outline" className="text-xs">
-                    <Info className="h-3 w-3 mr-1" />
-                    Works with all major carriers
-                  </Badge>
-                </div>
-
-                <Collapsible open={instructionsExpanded} onOpenChange={setInstructionsExpanded}>
-                  <Card className="border-2">
-                    <CollapsibleTrigger asChild>
-                      <button className="w-full p-6 flex items-center justify-between hover:bg-muted/30 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <BookOpen className="h-5 w-5 text-primary" />
-                          <div className="text-left">
-                            <h3 className="font-semibold text-lg">Forwarding Instructions for {selectedProvider}</h3>
-                            <p className="text-sm text-muted-foreground">Click to expand step-by-step guide</p>
-                          </div>
-                        </div>
-                        {instructionsExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                        ) : (
-                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                        )}
-                      </button>
-                    </CollapsibleTrigger>
-                    
-                    <CollapsibleContent>
-                      <div className="border-t p-6 bg-muted/20">
-                        {renderInstructions()}
-                      </div>
-                    </CollapsibleContent>
-                  </Card>
-                </Collapsible>
-
-                {/* Test Setup CTA */}
-                <Card className="p-6 bg-primary/5 border-primary/20 border-2">
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div>
-                      <h3 className="font-semibold text-lg mb-1">Ready to Test?</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Call your business number from another phone to verify it forwards to Choopil
-                      </p>
-                    </div>
-                    <Button size="lg" className="w-full md:w-auto">
-                      <PlayCircle className="h-5 w-5 mr-2" />
-                      Test Your Setup
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-            )}
           </div>
         )}
 
-        {/* Step 2: Use Choopil Number */}
+        {/* Use Choopil Number Section */}
         {selectedOption === "use-number" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                2
-              </div>
-              <h2 className="text-xl font-semibold">Your Choopil Number</h2>
-            </div>
-
+          <div className="space-y-4">
             {/* Success Banner */}
             {showSuccessBanner && (
-              <Alert className="bg-success/10 border-success border-2">
-                <CheckCircle2 className="h-5 w-5 text-success" />
-                <div>
-                  <AlertTitle className="text-success-foreground font-semibold">
-                    Number Updated Successfully!
-                  </AlertTitle>
-                  <AlertDescription className="text-success-foreground/90">
-                    Your new Choopil number is ready to use
-                  </AlertDescription>
-                </div>
+              <Alert className="bg-success/10 border-success">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <AlertDescription className="text-success-foreground font-semibold">
+                  ✅ Your Choopil Number Has Been Updated
+                </AlertDescription>
               </Alert>
             )}
 
             {/* Main Number Card */}
-            <Card className="p-8 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <Card className="p-6 bg-primary/5">
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Phone className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-medium text-primary">Your Choopil Number</p>
-                  </div>
-                  <p className="text-4xl font-bold mb-4">{showSuccessBanner ? newPhoneNumber : CHOOPIL_NUMBER}</p>
+                  <h3 className="text-primary font-semibold mb-1">Your Choopil Number</h3>
+                  <p className="text-2xl font-bold mb-3">{showSuccessBanner ? newPhoneNumber : CHOOPIL_NUMBER}</p>
                   <Button 
                     onClick={openAreaCodeFlow} 
-                    variant="ghost" 
-                    size="sm"
-                    className="gap-2 text-primary hover:text-primary hover:bg-primary/10"
+                    variant="link" 
+                    className="h-auto p-0 text-sm gap-2 text-primary"
                   >
                     <RefreshCw className="h-4 w-4" />
                     Request Different Area Code
@@ -480,98 +346,43 @@ const LaunchInstructions = () => {
                 </div>
                 <Button 
                   onClick={copyNumber} 
-                  size="lg"
-                  className="gap-2 w-full md:w-auto"
+                  variant="outline" 
+                  className="gap-2"
                 >
                   <Copy className="h-4 w-4" />
-                  Copy Number
+                  Copy
                 </Button>
               </div>
             </Card>
 
-            {/* Next Steps */}
-            <Card className="p-6 border-2">
-              <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                <Info className="h-5 w-5 text-primary" />
-                Next Steps
-              </h3>
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm flex-shrink-0">
-                    1
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">Share with Customers</p>
-                    <p className="text-sm text-muted-foreground">
-                      Add this number to your website, business cards, and marketing materials
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm flex-shrink-0">
-                    2
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">Test the Setup</p>
-                    <p className="text-sm text-muted-foreground">
-                      Call your Choopil number to hear your AI assistant in action
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm flex-shrink-0">
-                    3
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">Go Live</p>
-                    <p className="text-sm text-muted-foreground">
-                      Add a credit card to start handling real customer calls 24/7
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Warning if number changed */}
+            {/* Next Steps Section */}
             {showSuccessBanner && (
-              <Alert className="bg-warning/10 border-warning border-2">
-                <AlertCircle className="h-5 w-5 text-warning" />
-                <div>
-                  <AlertTitle className="text-warning-foreground font-semibold mb-2">
-                    ⚠️ Update Your Forwarding (If Applicable)
-                  </AlertTitle>
-                  <AlertDescription className="space-y-2">
-                    <p className="text-warning-foreground/90">
-                      If you're forwarding calls from another number, update it to: <span className="font-bold">{newPhoneNumber}</span>
-                    </p>
-                    <Button 
-                      variant="link" 
-                      size="sm"
-                      className="h-auto p-0 text-warning hover:text-warning/80" 
-                      onClick={() => setSelectedOption("forward")}
-                    >
-                      View Forwarding Instructions →
-                    </Button>
-                  </AlertDescription>
-                </div>
+              <Alert className="bg-warning/10 border-warning">
+                <AlertCircle className="h-4 w-4 text-warning" />
+                <AlertDescription>
+                  <div className="space-y-3">
+                    <p className="font-semibold text-warning-foreground">⚠️ Important Next Steps:</p>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <p className="font-medium">1. Update Your Call Forwarding</p>
+                        <p className="text-muted-foreground mt-1">
+                          Forward calls from your business number to: <span className="font-bold">{newPhoneNumber}</span>
+                        </p>
+                        <Button variant="link" className="h-auto p-0 text-sm mt-1" onClick={() => setSelectedOption("forward")}>
+                          View Forwarding Instructions
+                        </Button>
+                      </div>
+                      <div>
+                        <p className="font-medium">2. Share Your New Number</p>
+                        <p className="text-muted-foreground mt-1">
+                          Update your website, business cards, and marketing materials
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDescription>
               </Alert>
             )}
-
-            {/* Test Setup CTA */}
-            <Card className="p-6 bg-primary/5 border-primary/20 border-2">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Ready to Test?</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Call your Choopil number to experience your AI assistant
-                  </p>
-                </div>
-                <Button size="lg" className="w-full md:w-auto">
-                  <PlayCircle className="h-5 w-5 mr-2" />
-                  Test Your Setup
-                </Button>
-              </div>
-            </Card>
           </div>
         )}
 
@@ -809,7 +620,7 @@ const LaunchInstructions = () => {
   );
 };
 
-const getInstructionsForProvider = (provider: string, copyDialCode: (code: string) => void) => {
+const getInstructionsForProvider = (provider: string) => {
   const instructions: Record<string, {
     content: JSX.Element;
     notes?: string[];
@@ -817,66 +628,39 @@ const getInstructionsForProvider = (provider: string, copyDialCode: (code: strin
   }> = {
     "AT&T": {
       content: (
-        <div className="space-y-4">
-          <Card className="p-5 bg-background border-2">
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm flex-shrink-0">
-                1
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold mb-3">Unconditional Forwarding (All Calls)</h4>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">Open your phone dialer and enter:</p>
-                    <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
-                      <code className="text-xl font-mono font-bold text-primary flex-1">**21*{CHOOPIL_NUMBER_RAW}#</code>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => copyDialCode(`**21*${CHOOPIL_NUMBER_RAW}#`)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-sm">Press <span className="font-semibold text-primary">Call</span>. You'll hear a confirmation tone.</p>
-                </div>
-              </div>
-            </div>
-          </Card>
+        <div className="space-y-4 text-sm">
+          <div>
+            <p className="font-semibold mb-2">Unconditional Forwarding (All Calls):</p>
+            <p>Dial: <span className="text-primary font-mono">**21*{CHOOPIL_NUMBER_RAW}#</span></p>
+            <p>Press <span className="text-primary">Call</span>. You'll hear a confirmation tone.</p>
+          </div>
 
-          <Card className="p-5 bg-background border-2">
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm flex-shrink-0">
-                2
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold mb-3">Conditional Forwarding (Optional)</h4>
-                <p className="text-sm text-muted-foreground mb-3">Set up each scenario separately:</p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                    <span className="text-xs font-medium min-w-[90px]">If busy:</span>
-                    <code className="font-mono text-sm">**67*{CHOOPIL_NUMBER_RAW}#</code>
-                  </div>
-                  <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                    <span className="text-xs font-medium min-w-[90px]">If no answer:</span>
-                    <code className="font-mono text-sm">**61*{CHOOPIL_NUMBER_RAW}#</code>
-                  </div>
-                  <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                    <span className="text-xs font-medium min-w-[90px]">If unreachable:</span>
-                    <code className="font-mono text-sm">**62*{CHOOPIL_NUMBER_RAW}#</code>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <div>
+            <p className="font-semibold mb-2">Conditional Forwarding:</p>
+            <p className="mb-1">Set each one up separately:</p>
+            <ul className="ml-4 space-y-1">
+              <li>If busy: <span className="text-primary font-mono">**67*{CHOOPIL_NUMBER_RAW}#</span></li>
+              <li>If no answer: <span className="text-primary font-mono">**61*{CHOOPIL_NUMBER_RAW}#</span></li>
+              <li>If unreachable: <span className="text-primary font-mono">**62*{CHOOPIL_NUMBER_RAW}#</span></li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold mb-2">To Disable Forwarding:</p>
+            <ul className="ml-4 space-y-1">
+              <li>Disable all forwarding configuration: <span className="text-primary font-mono">##21#</span></li>
+              <li>Disable busy forwarding: <span className="text-primary font-mono">##67#</span></li>
+              <li>Disable no answer forwarding: <span className="text-primary font-mono">##61#</span></li>
+              <li>Disable unreachable forwarding: <span className="text-primary font-mono">##62#</span></li>
+            </ul>
+          </div>
         </div>
       ),
       notes: [
-        "iPhone users can go to Settings > Phone > Call Forwarding for unconditional forwarding",
-        "Conditional forwarding requires using dial codes from your phone app",
-        "Works on AT&T and most MVNOs using the AT&T network",
-        "⚠️ iPhone users: Make sure Live Voicemail is turned off in Settings > Phone"
+        "iPhone users can go to Settings > Phone > Call Forwarding",
+        "Conditional forwarding requires dial codes",
+        "Works on AT&T and most MVNOs",
+        "⚠️ iPhone users: Make sure Live Voicemail is turned off"
       ]
     },
     "Verizon": {
