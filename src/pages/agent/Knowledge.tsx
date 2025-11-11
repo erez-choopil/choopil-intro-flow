@@ -440,7 +440,7 @@ export default function Knowledge() {
               </div>
               <div className="flex">
                 <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
-                  Business Primary Phone Number
+                  Business Phone Number
                 </span>
                 <span className="text-sm text-foreground flex-1">
                   {businessPhone || <span className="text-muted-foreground">Not Set</span>}

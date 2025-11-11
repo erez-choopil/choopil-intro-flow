@@ -184,65 +184,6 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        {/* Usage & Limits Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Usage This Month</CardTitle>
-            <CardDescription>November 1 - November 30, 2025</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="h-4 w-4" />
-                  <span className="text-sm font-medium">Calls Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.calls.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.calls.limit} calls</div>
-                </div>
-                <Progress value={callsPercentage} className="h-2" />
-                <div className="text-xs text-muted-foreground">{callsPercentage.toFixed(0)}% used</div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm font-medium">Minutes Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.minutes.used.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Unlimited</div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MessageSquare className="h-4 w-4" />
-                  <span className="text-sm font-medium">SMS Sent</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.sms.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.sms.limit} messages</div>
-                </div>
-                <Progress value={smsPercentage} className="h-2" />
-                <div className="text-xs text-muted-foreground">{smsPercentage.toFixed(0)}% used</div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span className="text-sm font-medium">Seats Used</span>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold">{usage.seats.used}</div>
-                  <div className="text-sm text-muted-foreground">of {usage.seats.total} seats</div>
-                </div>
-                <Button variant="link" className="h-auto p-0 text-sm">Manage Seats</Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Payment & Billing Info Section */}
         <div className="grid gap-8 lg:grid-cols-5">
