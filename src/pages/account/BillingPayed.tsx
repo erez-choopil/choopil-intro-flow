@@ -53,9 +53,23 @@ export default function Billing() {
     seats: { used: 3, total: 5 }
   };
 
-  const paymentMethods = [
-    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true, holderName: "John Doe", billingZip: "12345", country: "US" }
-  ];
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true }
+  ]);
+
+  const handleAddPaymentMethod = (newMethod: { brand: string; last4: string; expMonth: number; expYear: number; isDefault: boolean }) => {
+    const newPaymentMethod = {
+      id: (paymentMethods.length + 1).toString(),
+      ...newMethod
+    };
+    
+    // If new method is default, unset other default methods
+    if (newMethod.isDefault) {
+      setPaymentMethods(paymentMethods.map(pm => ({ ...pm, isDefault: false })).concat(newPaymentMethod));
+    } else {
+      setPaymentMethods([...paymentMethods, newPaymentMethod]);
+    }
+  };
 
   const handleEditPayment = (method: typeof paymentMethods[0]) => {
     setSelectedPaymentMethod(method);
@@ -383,6 +397,7 @@ export default function Billing() {
           setAddPaymentOpen(false);
           setUpdateBillingOpen(true);
         }}
+        onSuccess={handleAddPaymentMethod}
       />
       <EditPaymentMethodModal 
         open={editPaymentOpen} 

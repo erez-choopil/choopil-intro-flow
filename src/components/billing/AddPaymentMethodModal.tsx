@@ -25,13 +25,15 @@ interface AddPaymentMethodModalProps {
   onOpenChange: (open: boolean) => void;
   billingAddress?: BillingAddress;
   onEditBillingInfo?: () => void;
+  onSuccess?: (paymentMethod: { brand: string; last4: string; expMonth: number; expYear: number; isDefault: boolean }) => void;
 }
 
 export function AddPaymentMethodModal({ 
   open, 
   onOpenChange, 
   billingAddress,
-  onEditBillingInfo 
+  onEditBillingInfo,
+  onSuccess 
 }: AddPaymentMethodModalProps) {
   const { toast } = useToast();
   const [cardNumber, setCardNumber] = useState("");
@@ -95,11 +97,39 @@ export function AddPaymentMethodModal({
       return;
     }
 
-    // Save payment method logic
+    // Extract card details
+    const [expMonth, expYear] = expiration.split('/');
+    const last4 = cardNumber.replace(/\s/g, '').slice(-4);
+    const brand = getCardBrand(cardNumber);
+
+    // Call onSuccess callback with new payment method
+    if (onSuccess) {
+      onSuccess({
+        brand,
+        last4,
+        expMonth: parseInt(expMonth),
+        expYear: 2000 + parseInt(expYear),
+        isDefault: setAsDefault
+      });
+    }
+
     toast({
       title: "Success",
       description: "Payment method added successfully!"
     });
+    
+    // Reset form
+    setCardNumber("");
+    setExpiration("");
+    setCvv("");
+    setCardholderName("");
+    setSetAsDefault(false);
+    setAddressLine1("");
+    setAddressLine2("");
+    setCity("");
+    setState("");
+    setPostalCode("");
+    
     onOpenChange(false);
   };
 
