@@ -71,11 +71,6 @@ export default function QuickStart() {
                 </p>
               </CardContent>
             </Card>
-
-            {/* Trust Badge */}
-            <p className="text-center text-muted-foreground">
-              Trusted by 2,000+ small businesses to handle their calls professionally.
-            </p>
           </div>
         </div>
       </div>
