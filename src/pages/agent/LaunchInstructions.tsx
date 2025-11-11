@@ -1,13 +1,26 @@
 import { useState } from "react";
-import { Phone, Copy, ExternalLink, Rocket, AlertCircle, BookOpen } from "lucide-react";
+import { Phone, Copy, ExternalLink, Rocket, AlertCircle, BookOpen, RefreshCw, Search, Info, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type PhoneSystemType = "cell" | "voip" | "landline";
 type LaunchOption = "forward" | "use-number";
+type AreaCodeFlowStep = "info" | "select" | "confirm";
+
+interface AreaCode {
+  areaCode: string;
+  city: string;
+  state: string;
+}
 
 const CHOOPIL_NUMBER = "(229) 738-7078";
 const CHOOPIL_NUMBER_RAW = "2297387078";
@@ -18,9 +31,102 @@ const LaunchInstructions = () => {
   const [selectedProvider, setSelectedProvider] = useState<string>("");
   const { toast } = useToast();
 
+  // Area code flow state
+  const [areaCodeFlowOpen, setAreaCodeFlowOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState<AreaCodeFlowStep>("info");
+  const [selectedAreaCode, setSelectedAreaCode] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [newPhoneNumber, setNewPhoneNumber] = useState<string>("(404) 582-3194");
+  const [confirmationChecked, setConfirmationChecked] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showNextSteps, setShowNextSteps] = useState(true);
+
+  // Mock data for area codes
+  const yourRegionAreaCodes: AreaCode[] = [
+    { areaCode: "404", city: "Atlanta", state: "GA" },
+    { areaCode: "470", city: "Atlanta (overlay)", state: "GA" },
+    { areaCode: "678", city: "Atlanta suburbs", state: "GA" },
+    { areaCode: "770", city: "Atlanta metro", state: "GA" },
+    { areaCode: "912", city: "Savannah", state: "GA" },
+  ];
+
+  const nearbyStatesAreaCodes: AreaCode[] = [
+    { areaCode: "256", city: "Huntsville", state: "AL" },
+    { areaCode: "205", city: "Birmingham", state: "AL" },
+    { areaCode: "334", city: "Montgomery", state: "AL" },
+    { areaCode: "864", city: "Greenville", state: "SC" },
+    { areaCode: "803", city: "Columbia", state: "SC" },
+    { areaCode: "843", city: "Charleston", state: "SC" },
+  ];
+
+  const filteredYourRegion = yourRegionAreaCodes.filter(code =>
+    code.areaCode.includes(searchQuery) ||
+    code.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    code.state.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredNearby = nearbyStatesAreaCodes.filter(code =>
+    code.areaCode.includes(searchQuery) ||
+    code.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    code.state.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const cellProviders = ["AT&T", "Verizon", "T-Mobile", "Boost Mobile", "Sprint", "Other"];
   const voipProviders = ["OpenPhone", "RingCentral", "Google Voice", "Zoom Phone"];
   const landlineProviders = ["General Instructions"];
+
+  const openAreaCodeFlow = () => {
+    setAreaCodeFlowOpen(true);
+    setCurrentStep("info");
+    setSelectedAreaCode("");
+    setSearchQuery("");
+    setConfirmationChecked(false);
+  };
+
+  const closeAreaCodeFlow = () => {
+    setAreaCodeFlowOpen(false);
+    setCurrentStep("info");
+    setSelectedAreaCode("");
+    setSearchQuery("");
+    setConfirmationChecked(false);
+  };
+
+  const handleContinueToSelection = () => {
+    setCurrentStep("select");
+  };
+
+  const handleBackToInfo = () => {
+    setCurrentStep("info");
+  };
+
+  const handleRequestNewNumber = () => {
+    if (selectedAreaCode) {
+      // Generate preview number (mock)
+      const randomDigits = Math.floor(1000000 + Math.random() * 9000000);
+      setNewPhoneNumber(`(${selectedAreaCode}) ${randomDigits.toString().slice(0, 3)}-${randomDigits.toString().slice(3, 7)}`);
+      setCurrentStep("confirm");
+    }
+  };
+
+  const handleBackToSelection = () => {
+    setCurrentStep("select");
+    setConfirmationChecked(false);
+  };
+
+  const handleConfirmChange = () => {
+    // Simulate API call
+    toast({
+      title: "Success!",
+      description: "Your Choopil number has been updated",
+    });
+    setShowSuccessBanner(true);
+    closeAreaCodeFlow();
+    
+    // Hide success banner after 10 seconds
+    setTimeout(() => {
+      setShowSuccessBanner(false);
+    }, 10000);
+  };
 
   const getProviderOptions = () => {
     switch (phoneSystemType) {
@@ -212,19 +318,303 @@ const LaunchInstructions = () => {
 
         {/* Use Choopil Number Section */}
         {selectedOption === "use-number" && (
-          <Card className="p-6 bg-primary/5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-primary font-semibold mb-1">Your Choopil Number</h3>
-                <p className="text-2xl font-bold">{CHOOPIL_NUMBER}</p>
+          <div className="space-y-4">
+            {/* Success Banner */}
+            {showSuccessBanner && (
+              <Alert className="bg-success/10 border-success">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <AlertDescription className="text-success-foreground font-semibold">
+                  ✅ Your Choopil Number Has Been Updated
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Main Number Card */}
+            <Card className="p-6 bg-primary/5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-primary font-semibold mb-1">Your Choopil Number</h3>
+                  <p className="text-2xl font-bold mb-3">{showSuccessBanner ? newPhoneNumber : CHOOPIL_NUMBER}</p>
+                  <Button 
+                    onClick={openAreaCodeFlow} 
+                    variant="link" 
+                    className="h-auto p-0 text-sm gap-2 text-primary"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Request Different Area Code
+                  </Button>
+                </div>
+                <Button 
+                  onClick={copyNumber} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copy
+                </Button>
               </div>
-              <Button onClick={copyNumber} variant="outline" className="gap-2">
-                <Copy className="h-4 w-4" />
-                Copy
-              </Button>
-            </div>
-          </Card>
+            </Card>
+
+            {/* Next Steps Section */}
+            {showSuccessBanner && (
+              <Alert className="bg-warning/10 border-warning">
+                <AlertCircle className="h-4 w-4 text-warning" />
+                <AlertDescription>
+                  <div className="space-y-3">
+                    <p className="font-semibold text-warning-foreground">⚠️ Important Next Steps:</p>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <p className="font-medium">1. Update Your Call Forwarding</p>
+                        <p className="text-muted-foreground mt-1">
+                          Forward calls from your business number to: <span className="font-bold">{newPhoneNumber}</span>
+                        </p>
+                        <Button variant="link" className="h-auto p-0 text-sm mt-1" onClick={() => setSelectedOption("forward")}>
+                          View Forwarding Instructions
+                        </Button>
+                      </div>
+                      <div>
+                        <p className="font-medium">2. Share Your New Number</p>
+                        <p className="text-muted-foreground mt-1">
+                          Update your website, business cards, and marketing materials
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
         )}
+
+        {/* Area Code Flow Modals */}
+        <Dialog open={areaCodeFlowOpen} onOpenChange={setAreaCodeFlowOpen}>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            {/* Modal 1: Information */}
+            {currentStep === "info" && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl">Request a Different Area Code</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-6 py-4">
+                  {/* What You Need to Know */}
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-5">
+                    <div className="flex items-start gap-2 mb-3">
+                      <Info className="h-5 w-5 text-primary mt-0.5" />
+                      <h3 className="font-semibold text-base">What You Need to Know</h3>
+                    </div>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex gap-2">
+                        <span>•</span>
+                        <span>Your entire Choopil number will change, not just the area code</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span>•</span>
+                        <span>Your current number <strong>{CHOOPIL_NUMBER}</strong> will stop working immediately</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span>•</span>
+                        <span>You'll need to update call forwarding with your new number</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span>•</span>
+                        <span>Update any business materials (website, business cards) with your new number</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Why Request */}
+                  <div>
+                    <h3 className="font-semibold mb-2">Why Request a Different Area Code?</h3>
+                    <div className="h-px bg-border mb-3" />
+                    <p className="text-sm text-muted-foreground">
+                      A local area code can increase trust and answer rates. Customers are more likely to answer calls from familiar area codes in their region.
+                    </p>
+                  </div>
+                </div>
+
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={closeAreaCodeFlow}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleContinueToSelection}>
+                    Continue
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+
+            {/* Modal 2: Area Code Selection */}
+            {currentStep === "select" && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl">Select Your Area Code</DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4 py-4">
+                  {/* Search Box */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search area codes or city names..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+
+                  {/* Area Code List */}
+                  <div className="border border-border rounded-lg p-4 max-h-[350px] overflow-y-auto">
+                    <RadioGroup value={selectedAreaCode} onValueChange={setSelectedAreaCode}>
+                      {/* Your Region */}
+                      {filteredYourRegion.length > 0 && (
+                        <div className="mb-4">
+                          <h3 className="text-sm font-bold text-muted-foreground mb-3">📍 Your Region (Georgia)</h3>
+                          <div className="space-y-3">
+                            {filteredYourRegion.map((code) => (
+                              <div key={code.areaCode} className="flex items-center space-x-2 hover:bg-primary/5 p-2 rounded-md transition-colors cursor-pointer">
+                                <RadioGroupItem value={code.areaCode} id={code.areaCode} />
+                                <Label htmlFor={code.areaCode} className="cursor-pointer flex-1 text-sm">
+                                  {code.areaCode} - {code.city}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Nearby States */}
+                      {filteredNearby.length > 0 && (
+                        <div>
+                          {filteredYourRegion.length > 0 && <div className="h-px bg-border my-4" />}
+                          <h3 className="text-sm font-bold text-muted-foreground mb-3">📍 Nearby States</h3>
+                          <div className="space-y-3">
+                            {filteredNearby.map((code) => (
+                              <div key={code.areaCode} className="flex items-center space-x-2 hover:bg-primary/5 p-2 rounded-md transition-colors cursor-pointer">
+                                <RadioGroupItem value={code.areaCode} id={code.areaCode} />
+                                <Label htmlFor={code.areaCode} className="cursor-pointer flex-1 text-sm">
+                                  {code.areaCode} - {code.city}, {code.state}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </RadioGroup>
+                  </div>
+
+                  {/* Preview Box */}
+                  {selectedAreaCode && (
+                    <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-warning mt-0.5" />
+                          <span className="font-medium text-warning-foreground">
+                            Your new number will be: ({selectedAreaCode}) XXX-XXXX
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Info className="h-4 w-4 text-primary mt-0.5" />
+                          <span className="text-muted-foreground">
+                            Exact digits assigned randomly for security
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={handleBackToInfo}>
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={handleRequestNewNumber}
+                    disabled={!selectedAreaCode}
+                  >
+                    Request New Number
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+
+            {/* Modal 3: Final Confirmation */}
+            {currentStep === "confirm" && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl">Confirm Number Change</DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-5 py-4">
+                  {/* Warning Header */}
+                  <div className="bg-warning/10 border-2 border-warning/30 rounded-lg p-4">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-warning" />
+                      <p className="font-semibold text-warning-foreground">
+                        Are you sure you want to change your number?
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Number Comparison */}
+                  <div className="border border-border rounded-lg p-6 text-center space-y-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Current Number:</p>
+                      <p className="text-2xl font-bold">{CHOOPIL_NUMBER}</p>
+                    </div>
+                    <div className="text-4xl text-muted-foreground">↓</div>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">New Number:</p>
+                      <p className="text-2xl font-bold text-primary">{newPhoneNumber}</p>
+                    </div>
+                  </div>
+
+                  {/* Warning Message */}
+                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-center">
+                    <p className="text-sm font-medium text-destructive">
+                      ⚠️ This change is immediate and cannot be undone
+                    </p>
+                  </div>
+
+                  {/* Action Items */}
+                  <div>
+                    <p className="text-sm font-medium mb-2">After changing your number:</p>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      <p>✓ Update call forwarding settings</p>
+                      <p>✓ Share new number with customers</p>
+                      <p>✓ Update your website and marketing materials</p>
+                    </div>
+                  </div>
+
+                  {/* Confirmation Checkbox */}
+                  <div className="flex items-start space-x-3 p-4 bg-muted/30 rounded-lg">
+                    <Checkbox 
+                      id="confirm-change" 
+                      checked={confirmationChecked}
+                      onCheckedChange={(checked) => setConfirmationChecked(checked as boolean)}
+                      className="mt-1"
+                    />
+                    <Label htmlFor="confirm-change" className="text-sm cursor-pointer leading-relaxed">
+                      I understand my current number will stop working and I need to update my forwarding
+                    </Label>
+                  </div>
+                </div>
+
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={handleBackToSelection}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleConfirmChange}
+                    disabled={!confirmationChecked}
+                  >
+                    Confirm Change
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
