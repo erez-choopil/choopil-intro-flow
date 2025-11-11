@@ -38,6 +38,7 @@ export default function Notifications() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<NotificationPerson | null>(null);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [showCannotDeleteAlert, setShowCannotDeleteAlert] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -129,6 +130,11 @@ export default function Notifications() {
   };
 
   const handleDelete = (id: number) => {
+    // Prevent deleting the last person
+    if (people.length === 1) {
+      setShowCannotDeleteAlert(true);
+      return;
+    }
     setPeople(people.filter(p => p.id !== id));
   };
 
@@ -182,6 +188,8 @@ export default function Notifications() {
                   variant="ghost" 
                   size="icon"
                   onClick={() => handleDelete(person.id)}
+                  disabled={people.length === 1}
+                  className={people.length === 1 ? "cursor-not-allowed opacity-50" : ""}
                 >
                   <Trash2 className="h-4 w-4 text-muted-foreground" />
                 </Button>
@@ -450,6 +458,29 @@ export default function Notifications() {
                     <span>SMS notifications</span>
                   </div>
                 </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction>OK</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Cannot Delete Last Person Alert */}
+        <AlertDialog open={showCannotDeleteAlert} onOpenChange={setShowCannotDeleteAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Info className="h-5 w-5 text-orange-600" />
+                </div>
+                Cannot delete last person
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-4 pt-2">
+                <p>You must have at least one person configured for call notifications.</p>
+                <p className="text-sm text-muted-foreground">
+                  Add another person before removing this one, or edit this person's details instead.
+                </p>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
