@@ -58,22 +58,32 @@ export default function Billing() {
   ]);
 
   const handleAddPaymentMethod = (newMethod: { brand: string; last4: string; expMonth: number; expYear: number; isDefault: boolean }) => {
-    const newPaymentMethod = {
-      id: (paymentMethods.length + 1).toString(),
-      ...newMethod
-    };
-    
-    // If new method is default, unset other default methods
-    if (newMethod.isDefault) {
-      setPaymentMethods(paymentMethods.map(pm => ({ ...pm, isDefault: false })).concat(newPaymentMethod));
+    if (selectedPaymentMethod) {
+      // Update existing payment method
+      setPaymentMethods(paymentMethods.map(pm => 
+        pm.id === selectedPaymentMethod.id 
+          ? { ...pm, ...newMethod }
+          : newMethod.isDefault ? { ...pm, isDefault: false } : pm
+      ));
     } else {
-      setPaymentMethods([...paymentMethods, newPaymentMethod]);
+      // Add new payment method
+      const newPaymentMethod = {
+        id: (paymentMethods.length + 1).toString(),
+        ...newMethod
+      };
+      
+      // If new method is default, unset other default methods
+      if (newMethod.isDefault) {
+        setPaymentMethods(paymentMethods.map(pm => ({ ...pm, isDefault: false })).concat(newPaymentMethod));
+      } else {
+        setPaymentMethods([...paymentMethods, newPaymentMethod]);
+      }
     }
   };
 
   const handleEditPayment = (method: typeof paymentMethods[0]) => {
     setSelectedPaymentMethod(method);
-    setEditPaymentOpen(true);
+    setAddPaymentOpen(true);
   };
 
   const handleRemovePayment = (method: typeof paymentMethods[0]) => {
@@ -233,7 +243,10 @@ export default function Billing() {
                 <Button 
                   variant="outline" 
                   className="w-full h-11 border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 text-primary"
-                  onClick={() => setAddPaymentOpen(true)}
+                  onClick={() => {
+                    setSelectedPaymentMethod(null);
+                    setAddPaymentOpen(true);
+                  }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Payment Method
@@ -382,7 +395,10 @@ export default function Billing() {
       <CancelSubscriptionModal open={cancelSubOpen} onOpenChange={setCancelSubOpen} subscription={subscription} />
       <AddPaymentMethodModal 
         open={addPaymentOpen} 
-        onOpenChange={setAddPaymentOpen}
+        onOpenChange={(open) => {
+          setAddPaymentOpen(open);
+          if (!open) setSelectedPaymentMethod(null);
+        }}
         billingAddress={{
           line1: billingInfo.address.line1,
           line2: billingInfo.address.line2,
@@ -398,6 +414,8 @@ export default function Billing() {
           setUpdateBillingOpen(true);
         }}
         onSuccess={handleAddPaymentMethod}
+        editMode={!!selectedPaymentMethod}
+        existingMethod={selectedPaymentMethod || undefined}
       />
       <EditPaymentMethodModal 
         open={editPaymentOpen} 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,12 +20,29 @@ interface BillingAddress {
   email?: string;
 }
 
+interface PaymentMethodData {
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
+}
+
 interface AddPaymentMethodModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   billingAddress?: BillingAddress;
   onEditBillingInfo?: () => void;
-  onSuccess?: (paymentMethod: { brand: string; last4: string; expMonth: number; expYear: number; isDefault: boolean }) => void;
+  onSuccess?: (paymentMethod: PaymentMethodData) => void;
+  editMode?: boolean;
+  existingMethod?: {
+    id: string;
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+    isDefault: boolean;
+  };
 }
 
 export function AddPaymentMethodModal({ 
@@ -33,7 +50,9 @@ export function AddPaymentMethodModal({
   onOpenChange, 
   billingAddress,
   onEditBillingInfo,
-  onSuccess 
+  onSuccess,
+  editMode = false,
+  existingMethod
 }: AddPaymentMethodModalProps) {
   const { toast } = useToast();
   const [cardNumber, setCardNumber] = useState("");
@@ -41,6 +60,14 @@ export function AddPaymentMethodModal({
   const [cvv, setCvv] = useState("");
   const [cardholderName, setCardholderName] = useState("");
   const [setAsDefault, setSetAsDefault] = useState(false);
+
+  // Pre-populate fields in edit mode
+  useEffect(() => {
+    if (editMode && existingMethod) {
+      setExpiration(`${existingMethod.expMonth.toString().padStart(2, '0')}/${existingMethod.expYear.toString().slice(-2)}`);
+      setSetAsDefault(existingMethod.isDefault);
+    }
+  }, [editMode, existingMethod]);
   
   // Inline address fields (when no billing info exists)
   const [addressLine1, setAddressLine1] = useState("");
@@ -79,7 +106,17 @@ export function AddPaymentMethodModal({
   };
 
   const handleSave = () => {
-    if (!cardNumber || !expiration || !cvv || !cardholderName) {
+    // In edit mode, card number and CVV are not required
+    if (!editMode && (!cardNumber || !cvv)) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required card details",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!expiration || !cardholderName) {
       toast({
         title: "Error",
         description: "Please fill in all required card details",
@@ -99,10 +136,10 @@ export function AddPaymentMethodModal({
 
     // Extract card details
     const [expMonth, expYear] = expiration.split('/');
-    const last4 = cardNumber.replace(/\s/g, '').slice(-4);
-    const brand = getCardBrand(cardNumber);
+    const last4 = editMode && existingMethod ? existingMethod.last4 : cardNumber.replace(/\s/g, '').slice(-4);
+    const brand = editMode && existingMethod ? existingMethod.brand : getCardBrand(cardNumber);
 
-    // Call onSuccess callback with new payment method
+    // Call onSuccess callback with new/updated payment method
     if (onSuccess) {
       onSuccess({
         brand,
@@ -115,7 +152,7 @@ export function AddPaymentMethodModal({
 
     toast({
       title: "Success",
-      description: "Payment method added successfully!"
+      description: editMode ? "Payment method updated successfully!" : "Payment method added successfully!"
     });
     
     // Reset form
@@ -137,7 +174,7 @@ export function AddPaymentMethodModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add Payment Method</DialogTitle>
+          <DialogTitle>{editMode ? "Update Payment Method" : "Add Payment Method"}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -146,30 +183,40 @@ export function AddPaymentMethodModal({
             <h3 className="font-semibold">Card Details</h3>
             <div className="h-px bg-border" />
 
-            <div>
-              <Label htmlFor="cardNumber">Card Number *</Label>
-              <div className="relative">
-                <Input
-                  id="cardNumber"
-                  value={cardNumber}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, '');
-                    if (value.length <= 16 && /^\d*$/.test(value)) {
-                      const formatted = value.match(/.{1,4}/g)?.join(' ') || value;
-                      setCardNumber(formatted);
-                    }
-                  }}
-                  placeholder="1234 5678 9012 3456"
-                  maxLength={19}
-                  className="pr-10"
-                />
-                {cardNumber && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CardBrandIcon brand={getCardBrand(cardNumber)} />
-                  </div>
-                )}
+            {editMode && existingMethod ? (
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                <CardBrandIcon brand={existingMethod.brand} />
+                <div>
+                  <div className="font-medium">{existingMethod.brand.toUpperCase()} •••• {existingMethod.last4}</div>
+                  <div className="text-xs text-muted-foreground">Card number cannot be changed</div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <Label htmlFor="cardNumber">Card Number *</Label>
+                <div className="relative">
+                  <Input
+                    id="cardNumber"
+                    value={cardNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\s/g, '');
+                      if (value.length <= 16 && /^\d*$/.test(value)) {
+                        const formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+                        setCardNumber(formatted);
+                      }
+                    }}
+                    placeholder="1234 5678 9012 3456"
+                    maxLength={19}
+                    className="pr-10"
+                  />
+                  {cardNumber && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CardBrandIcon brand={getCardBrand(cardNumber)} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -191,22 +238,24 @@ export function AddPaymentMethodModal({
                 />
               </div>
 
-              <div>
-                <Label htmlFor="cvv">CVC *</Label>
-                <Input
-                  id="cvv"
-                  type="password"
-                  value={cvv}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    if (value.length <= 4) {
-                      setCvv(value);
-                    }
-                  }}
-                  placeholder="123"
-                  maxLength={4}
-                />
-              </div>
+              {!editMode && (
+                <div>
+                  <Label htmlFor="cvv">CVC *</Label>
+                  <Input
+                    id="cvv"
+                    type="password"
+                    value={cvv}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      if (value.length <= 4) {
+                        setCvv(value);
+                      }
+                    }}
+                    placeholder="123"
+                    maxLength={4}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
@@ -370,7 +419,7 @@ export function AddPaymentMethodModal({
             Cancel
           </Button>
           <Button onClick={handleSave}>
-            Add Payment Method
+            {editMode ? "Update Payment Method" : "Add Payment Method"}
           </Button>
         </DialogFooter>
       </DialogContent>

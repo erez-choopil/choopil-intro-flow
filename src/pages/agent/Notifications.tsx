@@ -395,10 +395,13 @@ export default function Notifications() {
                         <p className="text-sm text-muted-foreground">Only calls that need your attention</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2 space-y-0">
-                      <RadioGroupItem value="daily" id="freq-daily" className="mt-0.5" />
+                    <div className="flex items-start gap-2 space-y-0 opacity-50 cursor-not-allowed">
+                      <RadioGroupItem value="daily" id="freq-daily" className="mt-0.5" disabled />
                       <div className="space-y-1">
-                        <Label htmlFor="freq-daily" className="font-medium cursor-pointer">Daily digest</Label>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="freq-daily" className="font-medium">Daily digest</Label>
+                          <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full border">Coming soon</span>
+                        </div>
                         <p className="text-sm text-muted-foreground">One summary email each morning at 9:00 AM</p>
                       </div>
                     </div>
