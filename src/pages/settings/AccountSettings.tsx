@@ -13,7 +13,9 @@ export default function AccountSettings() {
   const [businessName, setBusinessName] = useState("בריכת מרדכי");
   const [phoneNumber, setPhoneNumber] = useState("(73) 384-4422");
   const [countryCode, setCountryCode] = useState("+972");
+  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,13 +34,31 @@ export default function AccountSettings() {
     }
 
     // Validate email change if attempted
-    if (newEmail.trim() && !currentPassword.trim()) {
-      toast({
-        title: "Password required",
-        description: "Please enter your current password to verify the email change.",
-        variant: "destructive",
-      });
-      return;
+    if (currentPasswordForEmail.trim() || newEmail.trim() || confirmEmail.trim()) {
+      if (!currentPasswordForEmail.trim()) {
+        toast({
+          title: "Current password required",
+          description: "Please enter your current password to verify the email change.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!newEmail.trim()) {
+        toast({
+          title: "New email required",
+          description: "Please enter a new email address.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (newEmail !== confirmEmail) {
+        toast({
+          title: "Emails don't match",
+          description: "Please make sure your new email addresses match.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Validate password change if attempted
@@ -82,9 +102,11 @@ export default function AccountSettings() {
       setConfirmPassword("");
     }
     
-    // Clear email change field
-    if (newEmail.trim()) {
+    // Clear email change fields
+    if (currentPasswordForEmail.trim()) {
+      setCurrentPasswordForEmail("");
       setNewEmail("");
+      setConfirmEmail("");
     }
   };
 
@@ -125,21 +147,41 @@ export default function AccountSettings() {
         {/* Email Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Email</CardTitle>
+            <CardTitle className="text-xl">Change Email</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>New email address</Label>
+              <Label>Current password</Label>
               <Input
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="name@company.com"
+                type="password"
+                value={currentPasswordForEmail}
+                onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
+                placeholder="••••••••"
               />
-              <p className="text-sm text-muted-foreground">
-                We'll send a confirmation link to verify your new email address
-              </p>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>New email address</Label>
+                <Input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="name@company.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Confirm new email</Label>
+                <Input
+                  type="email"
+                  value={confirmEmail}
+                  onChange={(e) => setConfirmEmail(e.target.value)}
+                  placeholder="name@company.com"
+                />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              We'll send a confirmation link to verify your new email address
+            </p>
           </CardContent>
         </Card>
 
