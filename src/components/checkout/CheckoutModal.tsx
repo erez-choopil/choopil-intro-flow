@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, CreditCard } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
+import CheckoutSuccessModal from "./CheckoutSuccessModal";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -22,8 +23,6 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true }: CheckoutModalProps) {
-  const { toast } = useToast();
-  
   const displayPrice = isAnnual ? planDetails.annualPrice : planDetails.price;
   
   const [cardNumber, setCardNumber] = useState("");
@@ -32,6 +31,7 @@ export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true
   const [cardholderName, setCardholderName] = useState("");
   const [country, setCountry] = useState("Israel");
   const [promoCode, setPromoCode] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubscribe = () => {
     if (!cardNumber.trim() || !expiry.trim() || !cvc.trim() || !cardholderName.trim()) {
@@ -43,16 +43,13 @@ export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true
       return;
     }
     
-    toast({
-      title: "Subscription successful",
-      description: `You've been subscribed to the ${planDetails.name} plan.`,
-    });
-    
     onOpenChange(false);
+    setShowSuccessModal(true);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
         <div className="flex flex-col md:flex-row bg-[#F6F9FC]">
           {/* Left side - Summary */}
@@ -228,5 +225,13 @@ export function CheckoutModal({ open, onOpenChange, planDetails, isAnnual = true
         </div>
       </DialogContent>
     </Dialog>
+
+    <CheckoutSuccessModal
+      open={showSuccessModal}
+      onOpenChange={setShowSuccessModal}
+      planName={planDetails.name}
+      isAnnual={isAnnual}
+    />
+    </>
   );
 }

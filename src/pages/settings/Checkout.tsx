@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import choopilLogo from "@/assets/choopil-logo.svg";
+import CheckoutSuccessModal from "@/components/checkout/CheckoutSuccessModal";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function Checkout() {
   const [cardholderName, setCardholderName] = useState("");
   const [country, setCountry] = useState("Israel");
   const [promoCode, setPromoCode] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubscribe = () => {
     if (!cardNumber.trim() || !expiry.trim() || !cvc.trim() || !cardholderName.trim()) {
@@ -34,16 +36,12 @@ export default function Checkout() {
       return;
     }
     
-    toast({
-      title: "Subscription successful",
-      description: `You've been subscribed to the ${planDetails.name} plan.`,
-    });
-    
-    navigate("/dashboard/settings/billing");
+    setShowSuccessModal(true);
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F9FC] flex">
+    <>
+      <div className="min-h-screen bg-[#F6F9FC] flex">
       {/* Left side - Summary */}
       <div className="w-2/5 bg-white p-8 flex flex-col">
         <Button
@@ -212,6 +210,14 @@ export default function Checkout() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      <CheckoutSuccessModal
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        planName={planDetails.name}
+        isAnnual={isAnnual}
+      />
+    </>
   );
 }
