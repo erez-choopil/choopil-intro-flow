@@ -1,315 +1,200 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Phone, Clock, MessageSquare, Users, CreditCard, 
-  Download, ChevronRight, Shield, AlertTriangle, CheckCircle2, Plus
-} from "lucide-react";
+import { Shield, Download, Plus } from "lucide-react";
 import { ChangePlanModal } from "@/components/billing/ChangePlanModal";
-import { CancelSubscriptionModal } from "@/components/billing/CancelSubscriptionModal";
-import { PaymentMethodCard } from "@/components/billing/PaymentMethodCard";
 import { AddPaymentMethodModal } from "@/components/billing/AddPaymentMethodModal";
-import { EditPaymentMethodModal } from "@/components/billing/EditPaymentMethodModal";
-import { RemovePaymentMethodDialog } from "@/components/billing/RemovePaymentMethodDialog";
 import { UpdateBillingInfoModal } from "@/components/billing/UpdateBillingInfoModal";
+import { CardBrandIcon } from "@/components/billing/CardBrandIcon";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Billing() {
   const { toast } = useToast();
   const [changePlanOpen, setChangePlanOpen] = useState(false);
-  const [cancelSubOpen, setCancelSubOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
   const [updateBillingOpen, setUpdateBillingOpen] = useState(false);
-  const [editPaymentOpen, setEditPaymentOpen] = useState(false);
-  const [removePaymentOpen, setRemovePaymentOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<typeof paymentMethods[0] | null>(null);
 
-  // Mock data - replace with real data from API
+  // Mock data
   const subscription = {
     planName: "Scale",
     planId: "scale",
     price: 149,
-    billingCycle: "monthly",
     nextBillingDate: "December 15, 2025",
-    status: "active",
-    features: [
-      "Up to 500 calls per month",
-      "24/7 AI receptionist",
-      "Industry-specific training",
-      "Call transcripts & summaries",
-      "SMS capabilities",
-      "Call forwarding",
-      "Priority support"
-    ]
+    nextBillingAmount: 149
   };
 
   const usage = {
-    calls: { used: 127, limit: 500 },
-    minutes: { used: 3240, limit: null },
-    sms: { used: 89, limit: 1000 },
-    seats: { used: 3, total: 5 }
+    calls: { used: 127, limit: 500 }
   };
 
-  const [paymentMethods, setPaymentMethods] = useState([
-    { id: "1", brand: "visa", last4: "4242", expMonth: 12, expYear: 2026, isDefault: true }
-  ]);
-
-  const handleAddPaymentMethod = (newMethod: { brand: string; last4: string; expMonth: number; expYear: number; isDefault: boolean }) => {
-    if (selectedPaymentMethod) {
-      // Update existing payment method
-      setPaymentMethods(paymentMethods.map(pm => 
-        pm.id === selectedPaymentMethod.id 
-          ? { ...pm, ...newMethod }
-          : newMethod.isDefault ? { ...pm, isDefault: false } : pm
-      ));
-    } else {
-      // Add new payment method
-      const newPaymentMethod = {
-        id: (paymentMethods.length + 1).toString(),
-        ...newMethod
-      };
-      
-      // If new method is default, unset other default methods
-      if (newMethod.isDefault) {
-        setPaymentMethods(paymentMethods.map(pm => ({ ...pm, isDefault: false })).concat(newPaymentMethod));
-      } else {
-        setPaymentMethods([...paymentMethods, newPaymentMethod]);
-      }
-    }
-  };
-
-  const handleEditPayment = (method: typeof paymentMethods[0]) => {
-    setSelectedPaymentMethod(method);
-    setAddPaymentOpen(true);
-  };
-
-  const handleRemovePayment = (method: typeof paymentMethods[0]) => {
-    setSelectedPaymentMethod(method);
-    setRemovePaymentOpen(true);
-  };
-
-  const handleSetDefault = (method: typeof paymentMethods[0]) => {
-    toast({
-      title: "Success",
-      description: `${method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} ••••${method.last4} set as default payment method`
-    });
+  const paymentMethod = {
+    brand: "visa",
+    last4: "4242",
+    expMonth: 12,
+    expYear: 2026
   };
 
   const billingInfo = {
-    customerType: 'business' as const,
     legalName: "Acme Corp",
-    displayName: "Acme",
     billingEmails: ["billing@acme.com"],
-    billingContactName: "John Doe",
     address: {
       line1: "123 Main St",
       line2: "Suite 400",
       city: "San Francisco",
       state: "CA",
-      postalCode: "94102",
-      country: "US"
-    },
-    phone: "+15551234567",
-    taxIds: []
+      postalCode: "94102"
+    }
   };
 
   const invoices = [
     { id: "1", number: "INV-2024-1125", date: "Nov 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
     { id: "2", number: "INV-2024-1025", date: "Oct 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
-    { id: "3", number: "INV-2024-0925", date: "Sep 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" },
-    { id: "4", number: "INV-2024-0825", date: "Aug 25, 2024", description: "Professional Plan - Monthly", amount: 49.00, status: "paid" }
+    { id: "3", number: "INV-2024-0925", date: "Sep 25, 2024", description: "Scale Plan - Monthly", amount: 149.00, status: "paid" }
   ];
 
-  const getUsagePercentage = (used: number, limit: number | null) => {
-    if (!limit) return 0;
-    return (used / limit) * 100;
-  };
-
-  const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return "text-destructive";
-    if (percentage >= 70) return "text-yellow-600";
-    return "text-success";
-  };
-
-  const callsPercentage = getUsagePercentage(usage.calls.used, usage.calls.limit);
-  const smsPercentage = getUsagePercentage(usage.sms.used, usage.sms.limit);
+  const usagePercentage = (usage.calls.used / usage.calls.limit) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto">
         
-        {/* Usage Warning Banner */}
-        {callsPercentage >= 90 && (
-          <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
-            <CardContent className="flex items-center gap-3 py-4">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
-              <p className="text-sm text-yellow-900 dark:text-yellow-100">
-                You've used {callsPercentage.toFixed(0)}% of your monthly calls. Consider upgrading your plan.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Current Plan Section */}
-        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center gap-3">
-                  <CardTitle className="text-3xl">{subscription.planName} Plan</CardTitle>
-                  <Badge className="bg-success text-success-foreground">ACTIVE</Badge>
-                </div>
-                <CardDescription className="text-base">
-                  ${subscription.price}/month • Billed {subscription.billingCycle}
-                </CardDescription>
-              </div>
-              <Button onClick={() => setChangePlanOpen(true)}>
-                Change Plan
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-3">Next Billing Date</h4>
-                <p className="text-lg font-semibold">{subscription.nextBillingDate}</p>
-                <p className="text-sm text-muted-foreground mt-1">Total Amount: ${subscription.price}.00 USD</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-3">Features Included</h4>
-                <ul className="space-y-1">
-                  {subscription.features.slice(0, 3).map((feature, idx) => (
-                    <li key={idx} className="text-sm flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      {feature}
-                    </li>
-                  ))}
-                  <li className="text-sm text-muted-foreground">+ {subscription.features.length - 3} more features</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Usage Progress */}
-            <div className="bg-background/50 rounded-lg p-4 space-y-3">
-              <h4 className="text-sm font-medium">This Month's Usage</h4>
+        {/* Hero Section - Current Plan Status */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary via-primary to-[hsl(270,100%,60%)] px-8 py-12 mb-8">
+          <div className="relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+              {/* Left: Plan Info */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Calls</span>
-                  <span className={`font-semibold ${getUsageColor(callsPercentage)}`}>
-                    {usage.calls.used} / {usage.calls.limit} calls
-                  </span>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl font-bold text-primary-foreground">{subscription.planName}</h1>
+                  <Badge className="bg-accent text-accent-foreground border-0">ACTIVE</Badge>
                 </div>
-                <Progress value={callsPercentage} className="h-2" />
+                <p className="text-2xl font-bold text-primary-foreground">${subscription.price}/month</p>
+              </div>
+
+              {/* Center: Next Billing */}
+              <div className="text-center space-y-2">
+                <p className="text-sm text-primary-foreground/80 uppercase tracking-wider">Next Billing Date</p>
+                <p className="text-2xl font-bold text-primary-foreground">{subscription.nextBillingDate}</p>
+                <p className="text-lg text-primary-foreground/90">${subscription.nextBillingAmount}.00</p>
+              </div>
+
+              {/* Right: CTA */}
+              <div className="flex justify-end">
+                <Button 
+                  size="lg" 
+                  variant="secondary"
+                  onClick={() => setChangePlanOpen(true)}
+                  className="bg-background text-foreground hover:bg-background/90"
+                >
+                  Change Plan
+                </Button>
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
-              <Button 
-                variant="ghost" 
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => setCancelSubOpen(true)}
-              >
-                Cancel Subscription
-              </Button>
+            {/* Usage Progress Bar */}
+            <div className="mt-8 space-y-2">
+              <div className="flex items-center justify-between text-sm text-primary-foreground/90">
+                <span>Monthly Usage</span>
+                <span className="font-semibold">{usage.calls.used}/{usage.calls.limit} calls used this month</span>
+              </div>
+              <Progress value={usagePercentage} className="h-3 bg-primary-foreground/20" />
             </div>
-          </CardContent>
-        </Card>
-
-
-        {/* Payment & Billing Info Section */}
-        <div className="grid gap-8 lg:grid-cols-5">
-          {/* Payment Methods */}
-          <div className="lg:col-span-3 space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Methods</CardTitle>
-                <CardDescription>Manage your payment methods</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {paymentMethods.map((method) => (
-                  <PaymentMethodCard 
-                    key={method.id} 
-                    method={method}
-                    onEdit={() => handleEditPayment(method)}
-                    onRemove={() => handleRemovePayment(method)}
-                    onSetDefault={() => handleSetDefault(method)}
-                    canRemove={!method.isDefault && !(paymentMethods.length === 1 && subscription.status === 'active')}
-                  />
-                ))}
-                
-                <Button 
-                  variant="outline" 
-                  className="w-full h-11 border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 text-primary"
-                  onClick={() => {
-                    setSelectedPaymentMethod(null);
-                    setAddPaymentOpen(true);
-                  }}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Payment Method
-                </Button>
-                
-                <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg border">
-                  <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <div>Your payment information is encrypted and secure.</div>
-                    <div>We never store your full card number.</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Billing Information */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Billing Information</CardTitle>
-                <CardDescription>Update your billing details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Business Name</div>
-                  <div className="text-sm font-semibold mt-1">{billingInfo.legalName}</div>
-                </div>
-                <Separator />
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Billing Email(s)</div>
-                  <div className="text-sm mt-1">{billingInfo.billingEmails.join(', ')}</div>
-                </div>
-                <Separator />
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Billing Address</div>
-                  <div className="text-sm mt-1">{billingInfo.address.line1}</div>
-                  {billingInfo.address.line2 && <div className="text-sm mt-1">{billingInfo.address.line2}</div>}
-                  <div className="text-sm text-muted-foreground">
-                    {billingInfo.address.city}, {billingInfo.address.state} {billingInfo.address.postalCode}
-                  </div>
-                  <div className="text-sm text-muted-foreground">{billingInfo.address.country}</div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setUpdateBillingOpen(true)}
-                >
-                  Edit Billing Information
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
 
-        {/* Invoice History */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Invoice History</CardTitle>
-            <CardDescription>View and download your past invoices</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+        {/* Two-Column Layout */}
+        <div className="px-8 pb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+            {/* Left Column (60%) - Payment Method */}
+            <div className="lg:col-span-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Method</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Payment Method Card */}
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 border rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-4">
+                      <CardBrandIcon brand={paymentMethod.brand} className="w-12 h-8" />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold capitalize">{paymentMethod.brand}</span>
+                          <span className="text-muted-foreground">•••• {paymentMethod.last4}</span>
+                          <Badge variant="secondary" className="text-xs">Default</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Expires {paymentMethod.expMonth}/{paymentMethod.expYear}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="sm">Edit</Button>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">Remove</Button>
+                    </div>
+                  </div>
+
+                  {/* Add Payment Method Button */}
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setAddPaymentOpen(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Payment Method
+                  </Button>
+
+                  {/* Security Notice */}
+                  <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                    <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                    <p>Your payment information is encrypted and secure</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column (40%) - Billing Information */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Billing Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Business Name</p>
+                    <p className="font-medium">{billingInfo.legalName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-medium">{billingInfo.billingEmails[0]}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Address</p>
+                    <p className="font-medium">{billingInfo.address.line1}</p>
+                    {billingInfo.address.line2 && <p className="font-medium">{billingInfo.address.line2}</p>}
+                    <p className="font-medium">
+                      {billingInfo.address.city}, {billingInfo.address.state} {billingInfo.address.postalCode}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="link" 
+                    className="p-0 h-auto text-primary"
+                    onClick={() => setUpdateBillingOpen(true)}
+                  >
+                    Edit Billing Information
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Invoice History Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Invoice History</CardTitle>
+            </CardHeader>
+            <CardContent>
               {/* Desktop Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
@@ -325,22 +210,16 @@ export default function Billing() {
                   </thead>
                   <tbody>
                     {invoices.map((invoice) => (
-                      <tr key={invoice.id} className="border-b hover:bg-muted/50">
-                        <td className="py-4 px-4">
-                          <Button variant="link" className="h-auto p-0 font-mono text-sm">
-                            {invoice.number}
-                          </Button>
-                        </td>
+                      <tr key={invoice.id} className="border-b hover:bg-muted/50 transition-colors">
+                        <td className="py-4 px-4 font-mono text-sm">{invoice.number}</td>
                         <td className="py-4 px-4 text-sm">{invoice.date}</td>
                         <td className="py-4 px-4 text-sm">{invoice.description}</td>
                         <td className="py-4 px-4 text-sm text-right font-semibold">${invoice.amount.toFixed(2)}</td>
                         <td className="py-4 px-4 text-center">
-                          <Badge className="bg-success text-success-foreground">
-                            {invoice.status.toUpperCase()}
-                          </Badge>
+                          <Badge className="bg-success text-success-foreground">PAID</Badge>
                         </td>
                         <td className="py-4 px-4 text-right">
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="hover:bg-primary/10">
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -354,14 +233,12 @@ export default function Billing() {
               {/* Mobile Cards */}
               <div className="md:hidden space-y-3">
                 {invoices.map((invoice) => (
-                  <Card key={invoice.id}>
+                  <Card key={invoice.id} className="border">
                     <CardContent className="pt-6">
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="font-mono text-sm font-semibold">{invoice.number}</span>
-                          <Badge className="bg-success text-success-foreground">
-                            {invoice.status.toUpperCase()}
-                          </Badge>
+                          <Badge className="bg-success text-success-foreground">PAID</Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">{invoice.date}</div>
                         <div className="text-sm">{invoice.description}</div>
@@ -377,59 +254,51 @@ export default function Billing() {
                   </Card>
                 ))}
               </div>
-
-              <div className="flex justify-center pt-4">
-                <Button variant="outline">
-                  Load More Invoices
-                  <ChevronRight className="h-4 w-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Modals */}
       <ChangePlanModal open={changePlanOpen} onOpenChange={setChangePlanOpen} currentPlan={subscription.planId} />
-      <CancelSubscriptionModal open={cancelSubOpen} onOpenChange={setCancelSubOpen} subscription={subscription} />
       <AddPaymentMethodModal 
         open={addPaymentOpen} 
-        onOpenChange={(open) => {
-          setAddPaymentOpen(open);
-          if (!open) setSelectedPaymentMethod(null);
-        }}
+        onOpenChange={setAddPaymentOpen}
         billingAddress={{
           line1: billingInfo.address.line1,
           line2: billingInfo.address.line2,
           city: billingInfo.address.city,
           state: billingInfo.address.state,
           postalCode: billingInfo.address.postalCode,
-          country: billingInfo.address.country,
-          businessName: billingInfo.legalName,
-          email: billingInfo.billingEmails[0]
+          country: "US"
         }}
-        onEditBillingInfo={() => {
-          setAddPaymentOpen(false);
-          setUpdateBillingOpen(true);
+        onSuccess={() => {
+          toast({
+            title: "Success",
+            description: "Payment method added successfully"
+          });
         }}
-        onSuccess={handleAddPaymentMethod}
-        editMode={!!selectedPaymentMethod}
-        existingMethod={selectedPaymentMethod || undefined}
       />
-      <EditPaymentMethodModal 
-        open={editPaymentOpen} 
-        onOpenChange={setEditPaymentOpen} 
-        method={selectedPaymentMethod}
+      <UpdateBillingInfoModal 
+        open={updateBillingOpen} 
+        onOpenChange={setUpdateBillingOpen}
+        billingInfo={{
+          customerType: 'business',
+          legalName: billingInfo.legalName,
+          displayName: billingInfo.legalName,
+          billingEmails: billingInfo.billingEmails,
+          billingContactName: "",
+          address: { ...billingInfo.address, country: "US" },
+          phone: "",
+          taxIds: []
+        }}
+        onSave={() => {
+          toast({
+            title: "Success",
+            description: "Billing information updated successfully"
+          });
+        }}
       />
-      <RemovePaymentMethodDialog
-        open={removePaymentOpen}
-        onOpenChange={setRemovePaymentOpen}
-        method={selectedPaymentMethod}
-        hasActiveSubscription={subscription.status === 'active'}
-        isOnlyCard={paymentMethods.length === 1}
-      />
-      <UpdateBillingInfoModal open={updateBillingOpen} onOpenChange={setUpdateBillingOpen} billingInfo={billingInfo} />
     </div>
   );
 }
