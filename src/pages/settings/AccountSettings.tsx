@@ -13,7 +13,7 @@ export default function AccountSettings() {
   const [businessName, setBusinessName] = useState("בריכת מרדכי");
   const [phoneNumber, setPhoneNumber] = useState("(73) 384-4422");
   const [countryCode, setCountryCode] = useState("+972");
-  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
+  const [currentEmail, setCurrentEmail] = useState("user@example.com");
   const [newEmail, setNewEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -34,15 +34,7 @@ export default function AccountSettings() {
     }
 
     // Validate email change if attempted
-    if (currentPasswordForEmail.trim() || newEmail.trim() || confirmEmail.trim()) {
-      if (!currentPasswordForEmail.trim()) {
-        toast({
-          title: "Current password required",
-          description: "Please enter your current password to verify the email change.",
-          variant: "destructive",
-        });
-        return;
-      }
+    if (newEmail.trim() || confirmEmail.trim()) {
       if (!newEmail.trim()) {
         toast({
           title: "New email required",
@@ -55,6 +47,14 @@ export default function AccountSettings() {
         toast({
           title: "Emails don't match",
           description: "Please make sure your new email addresses match.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (newEmail === currentEmail) {
+        toast({
+          title: "Same email",
+          description: "New email must be different from current email.",
           variant: "destructive",
         });
         return;
@@ -103,8 +103,7 @@ export default function AccountSettings() {
     }
     
     // Clear email change fields
-    if (currentPasswordForEmail.trim()) {
-      setCurrentPasswordForEmail("");
+    if (newEmail.trim()) {
       setNewEmail("");
       setConfirmEmail("");
     }
@@ -151,12 +150,12 @@ export default function AccountSettings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Current password</Label>
+              <Label>Current email</Label>
               <Input
-                type="password"
-                value={currentPasswordForEmail}
-                onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
-                placeholder="••••••••"
+                type="email"
+                value={currentEmail}
+                disabled
+                className="bg-muted"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
