@@ -1,9 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Phone, Calendar } from "lucide-react";
+import { useState } from "react";
+import { WebCallActiveModal } from "@/components/calls/WebCallActiveModal";
 
 export default function Scheduling() {
+  const [webCallActive, setWebCallActive] = useState(false);
+
   return (
-    <div className="p-8">
+    <>
+      <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Scheduling</h1>
@@ -13,7 +18,11 @@ export default function Scheduling() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-foreground">(415) 413-5501</span>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setWebCallActive(true)}
+          >
             Web call
           </Button>
         </div>
@@ -46,5 +55,11 @@ export default function Scheduling() {
         </div>
       </div>
     </div>
+
+    <WebCallActiveModal 
+      open={webCallActive} 
+      onEndCall={() => setWebCallActive(false)} 
+    />
+    </>
   );
 }
