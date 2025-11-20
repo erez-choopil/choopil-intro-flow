@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Play, Phone } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { WebCallActiveModal } from "@/components/calls/WebCallActiveModal";
 
 const voices = [
   { value: "aria", label: "Aria", gender: "Female" },
@@ -21,6 +22,7 @@ export default function AgentSettings() {
   const [selectedVoice, setSelectedVoice] = useState("aria");
   const [agentName, setAgentName] = useState("Cassidy");
   const [greetingMessage, setGreetingMessage] = useState("You've reached Goody. How can I help you today?");
+  const [webCallActive, setWebCallActive] = useState(false);
 
   const greetingCharCount = greetingMessage.length;
 
@@ -40,7 +42,8 @@ export default function AgentSettings() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <>
+      <div className="p-8 max-w-2xl mx-auto">
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -64,7 +67,11 @@ export default function AgentSettings() {
                 <a href="#" className="text-primary hover:underline">View instructions</a>
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setWebCallActive(true)}
+            >
               Web call
             </Button>
           </div>
@@ -156,5 +163,11 @@ export default function AgentSettings() {
         </div>
       </div>
     </div>
+
+    <WebCallActiveModal 
+      open={webCallActive} 
+      onEndCall={() => setWebCallActive(false)} 
+    />
+    </>
   );
 }
