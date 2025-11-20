@@ -49,19 +49,16 @@ export function WebCallActiveModal({ open, onEndCall }: WebCallActiveModalProps)
     setTimeout(() => {
       onEndCall();
       toast({
-        title: "Call ended",
-        description: "Your test call has been disconnected.",
+        title: "Test call ended",
+        description: "Your call has been added to the Calls page",
+        duration: 3000,
       });
-    }, 500);
+    }, 1000);
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent 
-        className="max-w-[400px] p-8 gap-6"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+    <Dialog open={open} onOpenChange={(open) => !open && handleEndCall()}>
+      <DialogContent className="max-w-[400px] p-8 gap-6">
         <div className="flex flex-col items-center text-center space-y-6">
           {/* Phone Icon with Pulse Animation */}
           <div className="relative">
@@ -79,7 +76,7 @@ export function WebCallActiveModal({ open, onEndCall }: WebCallActiveModalProps)
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold text-foreground">
               {status === "connecting" && "Connecting..."}
-              {status === "active" && "Call in Progress"}
+              {status === "active" && "Test Call in Progress"}
               {status === "ending" && "Ending call..."}
             </h2>
 
