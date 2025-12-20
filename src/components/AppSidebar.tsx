@@ -274,7 +274,7 @@ export function AppSidebar() {
               <Sparkles className="h-3 w-3" />
               <span>Trial</span>
             </div>
-            <span className="text-sm font-medium text-primary">14 days left</span>
+            <span className="text-sm font-medium text-primary">7 days left</span>
           </div>
           
           <Button 
