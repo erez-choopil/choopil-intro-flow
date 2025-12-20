@@ -26,8 +26,8 @@ All colors MUST be HSL.
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 75 74% 62%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 216 100% 95%;
+    --accent-foreground: 216 100% 50%;
 
     --lavender: 242 78% 91%;
     --lavender-foreground: 0 0% 10%;
@@ -80,8 +80,8 @@ All colors MUST be HSL.
     --muted: 0 0% 20%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 75 74% 62%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 216 100% 25%;
+    --accent-foreground: 216 100% 70%;
 
     --lavender: 242 78% 91%;
     --lavender-foreground: 0 0% 10%;
