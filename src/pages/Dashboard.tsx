@@ -19,6 +19,7 @@ import AccountSettings from "./settings/AccountSettings";
 import Checkout from "./settings/Checkout";
 import Billing from "./account/Billing";
 import BillingPayed from "./account/BillingPayed";
+import BillingCanceled from "./account/BillingCanceled";
 
 // Calls pages
 import QuickStart from "./calls/QuickStart";
@@ -56,6 +57,7 @@ export default function Dashboard() {
             <Route path="settings/notifications" element={<Notifications />} />
             <Route path="settings/billing" element={<Billing />} />
             <Route path="settings/billing/payed" element={<BillingPayed />} />
+            <Route path="settings/billing/canceled" element={<BillingCanceled />} />
             <Route path="settings/checkout" element={<Checkout />} />
             
             <Route path="integrations" element={<IntegrationsPage />} />
