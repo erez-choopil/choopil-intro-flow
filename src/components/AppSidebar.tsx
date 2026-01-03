@@ -40,6 +40,7 @@ const settingsSubItems: Array<{
     url: "/dashboard/settings/billing",
     subItems: [
       { title: "Payed", url: "/dashboard/settings/billing/payed" },
+      { title: "Canceled", url: "/dashboard/settings/billing/canceled" },
     ]
   },
   { title: "Call notifications", url: "/dashboard/settings/notifications" },
