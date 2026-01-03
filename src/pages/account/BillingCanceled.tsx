@@ -202,23 +202,12 @@ export default function BillingCanceled() {
                   }
                 </CardDescription>
               </div>
-              <div className="flex gap-3 flex-wrap">
-                <Button onClick={() => {
-                  const previousPlan = plans.find(p => p.name === canceledSubscription.previousPlan);
-                  if (previousPlan) handleSelectPlan(previousPlan);
-                }}>
-                  Restart Subscription
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    const plansSection = document.getElementById('pricing-plans');
-                    plansSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  View Plans
-                </Button>
-              </div>
+              <Button onClick={() => {
+                const previousPlan = plans.find(p => p.name === canceledSubscription.previousPlan);
+                if (previousPlan) handleSelectPlan(previousPlan);
+              }}>
+                Restart Subscription
+              </Button>
             </div>
           </CardHeader>
         </Card>
