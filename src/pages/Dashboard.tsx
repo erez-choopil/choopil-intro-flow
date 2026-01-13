@@ -1,7 +1,8 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { DashboardTrialBanner } from "@/components/DashboardTrialBanner";
+import { Menu } from "lucide-react";
 
 // Agent pages
 import AgentSettings from "./agent/AgentSettings";
@@ -36,7 +37,14 @@ export default function Dashboard() {
   return <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <main className="flex-1">
+        <main className="flex-1 flex flex-col">
+          {/* Mobile header with menu trigger */}
+          <div className="md:hidden flex items-center gap-3 p-4 border-b bg-background sticky top-0 z-40">
+            <SidebarTrigger className="h-9 w-9">
+              <Menu className="h-5 w-5" />
+            </SidebarTrigger>
+            <span className="font-semibold text-foreground">Choopil</span>
+          </div>
           <DashboardTrialBanner />
           <Routes>
             <Route path="/" element={<Navigate to="quick-start" replace />} />
