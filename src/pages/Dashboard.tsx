@@ -24,6 +24,7 @@ import BillingCanceled from "./account/BillingCanceled";
 // Calls pages
 import QuickStart from "./calls/QuickStart";
 import Calls from "./calls/Calls";
+import CallDetail from "./calls/CallDetail";
 
 function IntegrationsPage() {
   return <div className="p-8">
@@ -40,6 +41,7 @@ export default function Dashboard() {
           <Routes>
             <Route path="/" element={<Navigate to="quick-start" replace />} />
             <Route path="quick-start" element={<QuickStart />} />
+            <Route path="calls/:callId" element={<CallDetail />} />
             <Route path="calls" element={<Calls />} />
             
             {/* Agent routes */}

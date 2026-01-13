@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +8,6 @@ import {
   Phone,
   Users,
   PhoneMissed,
-  Play,
-  MessageSquare,
-  Download,
   Settings2,
   X,
   ShieldOff,
@@ -24,12 +22,11 @@ import {
   CheckCircle2,
   Ban,
   Beaker,
+  ChevronRight,
 } from "lucide-react";
 import { CustomizeMetricsModal } from "@/components/calls/CustomizeMetricsModal";
 import type { Metric } from "@/components/calls/CustomizeMetricsModal";
 import { FiltersDropdown, type FilterState } from "@/components/calls/FiltersDropdown";
-import { FeedbackModal } from "@/components/calls/FeedbackModal";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { format, isToday, isWithinInterval, subDays } from "date-fns";
 
 interface Call {
@@ -146,12 +143,10 @@ const allMetrics: Metric[] = [
 ];
 
 export default function Calls() {
+  const navigate = useNavigate();
   const [calls, setCalls] = useState<Call[]>(mockCalls);
-  const [selectedCall, setSelectedCall] = useState<Call | null>(calls[1]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackCallId, setFeedbackCallId] = useState<string>("");
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([
     "total-calls",
     "avg-duration",
@@ -310,88 +305,79 @@ export default function Calls() {
   };
 
   const handleCallClick = (call: Call) => {
+    // Mark as read
     if (!call.isRead) {
       setCalls(calls.map(c => c.id === call.id ? { ...c, isRead: true } : c));
     }
-    setSelectedCall(call);
+    // Navigate to detail page
+    navigate(`/dashboard/calls/${call.id}`);
   };
 
-  const handleToggleStar = (callId: string) => {
+  const handleToggleStar = (e: React.MouseEvent, callId: string) => {
+    e.stopPropagation();
     setCalls(calls.map(c => c.id === callId ? { ...c, isStarred: !c.isStarred } : c));
-    if (selectedCall?.id === callId) {
-      setSelectedCall({ ...selectedCall, isStarred: !selectedCall.isStarred });
-    }
   };
 
   const getStatusBadge = (status: Call["status"]) => {
     switch (status) {
       case "follow_up_required":
         return (
-          <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0 gap-1.5">
+          <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0 gap-1 text-xs">
             <AlertCircle className="h-3 w-3" />
-            Follow-up Required
+            <span className="hidden sm:inline">Follow-up</span>
           </Badge>
         );
       case "no_action_needed":
         return (
-          <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-0 gap-1.5">
+          <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-0 gap-1 text-xs">
             <CheckCircle2 className="h-3 w-3" />
-            No Action Needed
+            <span className="hidden sm:inline">Resolved</span>
           </Badge>
         );
       case "spam":
         return (
-          <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-0 gap-1.5">
+          <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-0 gap-1 text-xs">
             <Ban className="h-3 w-3" />
-            Spam
+            <span className="hidden sm:inline">Spam</span>
           </Badge>
         );
       case "test_call":
         return (
-          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0 gap-1.5">
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0 gap-1 text-xs">
             <Beaker className="h-3 w-3" />
-            Test Call
+            <span className="hidden sm:inline">Test</span>
           </Badge>
         );
     }
   };
 
-  const followUpCount = calls.filter(c => c.status === "follow_up_required").length;
-  const starredCount = calls.filter(c => c.isStarred).length;
-  const unreadCount = calls.filter(c => !c.isRead).length;
-
-  const handleLeaveFeedback = (callId: string) => {
-    setFeedbackCallId(callId);
-    setShowFeedbackModal(true);
-  };
-
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="space-y-8">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
+      <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
             Call History
           </h1>
-          <p className="text-muted-foreground">
-            Track, review, and follow up on every customer interaction with precision.
+          <p className="text-sm md:text-base text-muted-foreground">
+            Track, review, and follow up on every customer interaction.
           </p>
         </div>
 
         {/* Assistant Metrics */}
         {selectedMetrics.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-foreground">Assistant Metrics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold text-foreground">Assistant Metrics</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {displayedMetrics.map((metric) => (
-                <div key={metric.id} className="rounded-lg border border-border bg-card p-6">
-                  <div className="flex items-start gap-3">
-                    <div className={`p-3 rounded-lg ${metric.color}`}>
-                      <metric.icon className="h-6 w-6" />
+                <div key={metric.id} className="rounded-lg border border-border bg-card p-4">
+                  <div className="flex items-start gap-2">
+                    <div className={`p-2 rounded-lg ${metric.color}`}>
+                      <metric.icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-muted-foreground mb-1">{metric.label}</p>
-                      <p className="text-2xl font-bold text-foreground">{metric.value}</p>
+                      <p className="text-xs text-muted-foreground mb-0.5 truncate">{metric.label}</p>
+                      <p className="text-lg font-bold text-foreground">{metric.value}</p>
                     </div>
                   </div>
                 </div>
@@ -401,19 +387,21 @@ export default function Calls() {
         )}
 
         {/* Filter and Search */}
-        <div className="flex items-center gap-3">
-          <FiltersDropdown filters={filters} onFiltersChange={setFilters} />
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => setShowCustomizeModal(true)}
-          >
-            <Settings2 className="h-4 w-4" />
-            Customize Metrics
-          </Button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex gap-2">
+            <FiltersDropdown filters={filters} onFiltersChange={setFilters} />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setShowCustomizeModal(true)}
+            >
+              <Settings2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Customize</span>
+            </Button>
+          </div>
           <Input
-            placeholder="Search calls by name, phone number or phrase"
+            placeholder="Search calls..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1"
@@ -423,7 +411,7 @@ export default function Calls() {
         {/* Active Filter Pills */}
         {hasActiveFilters && (
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm text-muted-foreground">Active filters:</span>
+            <span className="text-sm text-muted-foreground">Filters:</span>
             {activeFilterPills.map((pill, index) => (
               <Badge
                 key={index}
@@ -448,165 +436,75 @@ export default function Calls() {
           </div>
         )}
 
-        {/* Split View */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Calls List */}
-          <div className="lg:col-span-1 space-y-3">
-            {filteredCalls.map((call) => (
+        {/* Calls List - Outlook Style */}
+        <div className="rounded-lg border border-border bg-card divide-y divide-border overflow-hidden">
+          {filteredCalls.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              No calls found
+            </div>
+          ) : (
+            filteredCalls.map((call) => (
               <div
                 key={call.id}
-                className={`cursor-pointer transition-all p-4 rounded-lg border border-border ${
-                  selectedCall?.id === call.id 
-                    ? "bg-muted border-primary" 
-                    : "bg-muted/30 hover:bg-muted/50"
-                }`}
+                className="flex items-center gap-3 p-4 cursor-pointer hover:bg-muted/50 transition-colors active:bg-muted"
                 onClick={() => handleCallClick(call)}
               >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      {!call.isRead && (
-                        <div className="h-2 w-2 rounded-full bg-blue-600 flex-shrink-0" />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-foreground truncate ${!call.isRead ? 'font-bold' : 'font-semibold'}`}>
-                          {call.caller}
-                        </p>
-                        <p className={`text-sm text-muted-foreground truncate ${!call.isRead ? 'font-semibold' : ''}`}>
-                          {call.phone}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                      {getStatusBadge(call.status)}
-                      {call.isStarred && (
-                        <Star className="h-4 w-4 text-yellow-600 fill-yellow-600" />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-border">
-                    <span className="text-xs text-muted-foreground">
-                      {call.date}, {call.time}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      {call.duration}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Right: Call Details */}
-          <div className="lg:col-span-2">
-            {selectedCall ? (
-              <div className="space-y-6 p-6 rounded-lg border border-border bg-muted/30">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">{selectedCall.caller}</h3>
-                    <p className="text-sm text-muted-foreground">{selectedCall.phone}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {selectedCall.date}, 2025, {selectedCall.time}
-                    </p>
-                  </div>
-                  <TooltipProvider>
-                    <div className="flex items-center gap-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleLeaveFeedback(selectedCall.id)}
-                          >
-                            <MessageSquare className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Leave Feedback</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Download call audio</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleToggleStar(selectedCall.id)}
-                          >
-                            <Star className={`h-5 w-5 ${selectedCall.isStarred ? 'text-yellow-600 fill-yellow-600' : 'text-gray-400'}`} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {selectedCall.isStarred ? 'Unstar this call' : 'Star this call'}
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </TooltipProvider>
+                {/* Unread indicator + Star */}
+                <div className="flex flex-col items-center gap-1 w-6 flex-shrink-0">
+                  {!call.isRead && (
+                    <div className="h-2.5 w-2.5 rounded-full bg-primary" />
+                  )}
+                  <button
+                    onClick={(e) => handleToggleStar(e, call.id)}
+                    className="p-0.5 hover:bg-muted rounded"
+                  >
+                    <Star 
+                      className={`h-4 w-4 ${
+                        call.isStarred 
+                          ? 'text-yellow-500 fill-yellow-500' 
+                          : 'text-muted-foreground/40'
+                      }`} 
+                    />
+                  </button>
                 </div>
 
-                <div className="rounded-lg border border-border bg-card p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MessageSquare className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold text-foreground">Call Summary</h4>
+                {/* Main content */}
+                <div className="flex-1 min-w-0">
+                  {/* Row 1: Caller name + Date/Time */}
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className={`text-sm truncate ${!call.isRead ? 'font-bold text-foreground' : 'font-medium text-foreground'}`}>
+                      {call.caller}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex-shrink-0">
+                      {call.date}
+                    </span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {selectedCall.summary}
+                  
+                  {/* Row 2: Phone + Status */}
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className={`text-xs truncate ${!call.isRead ? 'font-semibold text-muted-foreground' : 'text-muted-foreground'}`}>
+                      {call.phone}
+                    </span>
+                    {getStatusBadge(call.status)}
+                  </div>
+
+                  {/* Row 3: Summary preview */}
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    {call.summary}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card">
-                  <Button size="icon" className="h-10 w-10 rounded-full">
-                    <Play className="h-4 w-4" />
-                  </Button>
-                  <div className="flex-1 flex items-center gap-0.5 h-12">
-                    {Array.from({ length: 50 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 bg-primary/70 rounded-sm"
-                        style={{
-                          height: `${Math.random() * 100}%`,
-                          minHeight: '10%'
-                        }}
-                      />
-                    ))}
+                {/* Duration + Chevron */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {call.duration}
                   </div>
-                  <span className="text-sm text-muted-foreground">{selectedCall.duration}</span>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-foreground">Transcript</h4>
-                  <div className="space-y-3">
-                    {selectedCall.transcript.map((item, index) => (
-                      <div
-                        key={index}
-                        className={`p-4 rounded-lg ${
-                          item.role === "agent"
-                            ? "bg-primary/10 ml-8"
-                            : "bg-muted mr-8"
-                        }`}
-                      >
-                        <p className="text-xs font-semibold text-muted-foreground mb-1">
-                          {item.role === "agent" ? "Agent" : "Caller"}
-                        </p>
-                        <p className="text-sm text-foreground">{item.message}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
-            ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                Select a call to view details
-              </div>
-            )}
-          </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -615,12 +513,6 @@ export default function Calls() {
         onOpenChange={setShowCustomizeModal}
         selectedMetrics={selectedMetrics}
         onSave={setSelectedMetrics}
-      />
-
-      <FeedbackModal
-        open={showFeedbackModal}
-        onOpenChange={setShowFeedbackModal}
-        callId={feedbackCallId}
       />
     </div>
   );
