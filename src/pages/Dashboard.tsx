@@ -40,10 +40,10 @@ export default function Dashboard() {
         <main className="flex-1 flex flex-col">
           {/* Mobile header with menu trigger */}
           <div className="md:hidden flex items-center gap-3 p-4 border-b bg-background sticky top-0 z-40">
-            <SidebarTrigger className="h-9 w-9">
-              <Menu className="h-5 w-5" />
+            <SidebarTrigger className="h-10 w-10 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-lg flex items-center justify-center">
+              <Menu className="h-6 w-6 text-primary" />
             </SidebarTrigger>
-            <span className="font-semibold text-foreground">Choopil</span>
+            <span className="font-semibold text-primary">Choopil</span>
           </div>
           <DashboardTrialBanner />
           <Routes>

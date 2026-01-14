@@ -346,72 +346,76 @@ export function FiltersDropdown({ filters, onFiltersChange }: FiltersDropdownPro
     }
   };
 
-  // Mobile Drawer
+  // Mobile - use Popover positioned below the button
   if (isMobile) {
     return (
-      <>
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn(
-            "gap-2 relative",
-            activeFilterCount > 0 && "border-primary bg-primary/5"
-          )}
-          onClick={() => setOpen(true)}
+      <Popover open={open} onOpenChange={handleOpenChange}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              "gap-2 relative",
+              activeFilterCount > 0 && "border-primary bg-primary/5"
+            )}
+          >
+            <Filter className="h-4 w-4" />
+            Filter
+            {activeFilterCount > 0 && (
+              <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full">
+                {activeFilterCount}
+              </Badge>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent 
+          className="w-[280px] p-0 bg-background" 
+          align="start"
+          sideOffset={8}
         >
-          <Filter className="h-4 w-4" />
-          Filter
-          {activeFilterCount > 0 && (
-            <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full">
-              {activeFilterCount}
-            </Badge>
-          )}
-        </Button>
-
-        <Drawer open={open} onOpenChange={handleOpenChange}>
-          <DrawerContent className="max-h-[85vh]">
-            <DrawerHeader className="border-b">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {activeTopic && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setActiveTopic(null)}
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </Button>
-                  )}
-                  <DrawerTitle>{getTopicTitle()}</DrawerTitle>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!isDefaultFilters && (
-                    <button
-                      onClick={handleClearAll}
-                      className="text-sm text-primary hover:text-primary/80 font-medium"
-                    >
-                      Clear all
-                    </button>
-                  )}
-                  <DrawerClose asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <X className="h-5 w-5" />
-                    </Button>
-                  </DrawerClose>
-                </div>
-              </div>
-            </DrawerHeader>
-
-            <div className="overflow-y-auto">
-              {activeTopic === null && renderTopicsMenu()}
-              {activeTopic === "date" && renderDateFilters()}
-              {activeTopic === "status" && renderStatusFilters()}
-              {activeTopic === "quick" && renderQuickFilters()}
+          {/* Header */}
+          <div className="flex items-center justify-between p-3 border-b">
+            <div className="flex items-center gap-2">
+              {activeTopic && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setActiveTopic(null)}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              )}
+              <h4 className="font-semibold text-sm text-foreground">{getTopicTitle()}</h4>
             </div>
-          </DrawerContent>
-        </Drawer>
-      </>
+            <div className="flex items-center gap-2">
+              {!isDefaultFilters && (
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs text-primary hover:text-primary/80 font-medium"
+                >
+                  Clear
+                </button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="max-h-[300px] overflow-y-auto">
+            {activeTopic === null && renderTopicsMenu()}
+            {activeTopic === "date" && renderDateFilters()}
+            {activeTopic === "status" && renderStatusFilters()}
+            {activeTopic === "quick" && renderQuickFilters()}
+          </div>
+        </PopoverContent>
+      </Popover>
     );
   }
 

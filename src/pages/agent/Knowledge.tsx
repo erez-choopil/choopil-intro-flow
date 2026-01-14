@@ -339,45 +339,45 @@ export default function Knowledge() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="space-y-8">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      <div className="space-y-4 md:space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
             Business Knowledge
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Train your AI agent with information about your business. All fields are optional, but more information helps your agent provide better responses.
           </p>
         </div>
 
         {/* Section 1: Training Sources (Read-only with modal) */}
         <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1">
-                <Sparkles className="h-5 w-5 text-primary shrink-0 mt-1" />
+          <CardContent className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 md:gap-4">
+              <div className="flex items-start gap-2 md:gap-3 flex-1">
+                <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-1" />
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
                     Training Sources
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">
                     These sources help Choopil learn about your business
                   </p>
                   <div className="space-y-2">
-                    <div className="flex gap-8">
-                      <span className="text-sm font-medium text-foreground min-w-[180px]">
+                    <div className="flex flex-col md:flex-row md:gap-8">
+                      <span className="text-xs md:text-sm font-medium text-foreground md:min-w-[180px]">
                         Google Business Profile
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs md:text-sm text-muted-foreground">
                         {googleProfile || "Not Set"}
                       </span>
                     </div>
-                    <div className="flex gap-8">
-                      <span className="text-sm font-medium text-foreground min-w-[180px]">
+                    <div className="flex flex-col md:flex-row md:gap-8">
+                      <span className="text-xs md:text-sm font-medium text-foreground md:min-w-[180px]">
                         Business Website
                       </span>
-                      <span className="text-sm text-muted-foreground break-all">
+                      <span className="text-xs md:text-sm text-muted-foreground break-all">
                         {website || "Not Set"}
                       </span>
                     </div>
@@ -388,7 +388,7 @@ export default function Knowledge() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowTrainingSourcesModal(true)}
-                className="text-primary hover:text-primary hover:bg-primary/10 shrink-0"
+                className="text-primary hover:text-primary hover:bg-primary/10 shrink-0 self-end md:self-auto"
               >
                 <Edit className="h-4 w-4 mr-1" />
                 Edit
@@ -399,63 +399,63 @@ export default function Knowledge() {
 
         {/* Section 2: Business Details (Read-only with modal) */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div className="flex items-start gap-3">
-                <Building2 className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-start justify-between gap-3 md:gap-4 mb-3 md:mb-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <Building2 className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
                     Business Details
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     Core information gathered from your training sources
                   </p>
                 </div>
               </div>
             </div>
-            <div className="space-y-3 pl-8">
-              <div className="flex">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+            <div className="space-y-2 md:space-y-3 pl-6 md:pl-8">
+              <div className="flex flex-col md:flex-row">
+                <span className="text-xs md:text-sm font-medium text-muted-foreground md:min-w-[180px]">
                   Name
                 </span>
-                <span className="text-sm text-foreground flex-1">
+                <span className="text-xs md:text-sm text-foreground flex-1">
                   {businessName || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+              <div className="flex flex-col md:flex-row">
+                <span className="text-xs md:text-sm font-medium text-muted-foreground md:min-w-[180px]">
                   Business Type
                 </span>
-                <span className="text-sm text-foreground flex-1">
+                <span className="text-xs md:text-sm text-foreground flex-1">
                   {businessType || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+              <div className="flex flex-col md:flex-row">
+                <span className="text-xs md:text-sm font-medium text-muted-foreground md:min-w-[180px]">
                   Address
                 </span>
-                <span className="text-sm text-foreground flex-1">
+                <span className="text-xs md:text-sm text-foreground flex-1">
                   {businessAddress || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+              <div className="flex flex-col md:flex-row">
+                <span className="text-xs md:text-sm font-medium text-muted-foreground md:min-w-[180px]">
                   Business Phone Number
                 </span>
-                <span className="text-sm text-foreground flex-1">
+                <span className="text-xs md:text-sm text-foreground flex-1">
                   {businessPhone || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
-              <div className="flex">
-                <span className="text-sm font-medium text-muted-foreground min-w-[180px]">
+              <div className="flex flex-col md:flex-row">
+                <span className="text-xs md:text-sm font-medium text-muted-foreground md:min-w-[180px]">
                   Business Email
                 </span>
-                <span className="text-sm text-foreground flex-1">
+                <span className="text-xs md:text-sm text-foreground flex-1">
                   {businessEmail || <span className="text-muted-foreground">Not Set</span>}
                 </span>
               </div>
             </div>
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-4 md:mt-6">
               <Button
                 variant="ghost"
                 size="sm"
@@ -471,15 +471,15 @@ export default function Knowledge() {
 
         {/* Section 3: Business Hours (Read-only with modal) */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-start justify-between gap-3 md:gap-4 mb-3 md:mb-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <Clock className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
                     Business Hours
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     Your operating hours so your agent can inform callers when you're available.
                   </p>
                 </div>
@@ -487,14 +487,14 @@ export default function Knowledge() {
             </div>
 
             {/* Schedule Display */}
-            <div className="space-y-2 pl-8">
+            <div className="space-y-2 pl-6 md:pl-8">
               {Object.keys(schedule).map((day) => (
-                <div key={day} className="flex items-start gap-4">
-                  <span className="text-sm font-medium text-foreground min-w-[100px]">
+                <div key={day} className="flex flex-col md:flex-row md:items-start gap-0 md:gap-4">
+                  <span className="text-xs md:text-sm font-medium text-foreground md:min-w-[100px]">
                     {day}
                   </span>
                   {schedule[day].enabled ? (
-                    <div className="flex-1 text-sm text-foreground">
+                    <div className="flex-1 text-xs md:text-sm text-foreground">
                       {schedule[day].slots.map((slot, idx) => (
                         <span key={slot.id}>
                           {idx > 0 && " and "}
@@ -503,17 +503,17 @@ export default function Knowledge() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-sm text-muted-foreground flex-1">Closed</div>
+                    <div className="text-xs md:text-sm text-muted-foreground flex-1">Closed</div>
                   )}
                 </div>
               ))}
             </div>
             
             {/* Timezone Display */}
-            <div className="pl-8 mt-4 pt-4 border-t">
+            <div className="pl-6 md:pl-8 mt-3 md:mt-4 pt-3 md:pt-4 border-t">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">Time zone</p>
-                <p className="text-sm text-foreground">
+                <p className="text-xs md:text-sm font-medium text-foreground">Time zone</p>
+                <p className="text-xs md:text-sm text-foreground">
                   {timezone === "eastern" && "Eastern Time — "}
                   {timezone === "central" && "Central Time — "}
                   {timezone === "mountain" && "Mountain Time — "}
@@ -527,11 +527,11 @@ export default function Knowledge() {
                               "America/Los_Angeles"
                   })}
                 </p>
-                <p className="text-xs text-muted-foreground">Used to display time in the app</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground">Used to display time in the app</p>
               </div>
             </div>
             
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-4 md:mt-6">
               <Button
                 variant="ghost"
                 size="sm"
@@ -547,26 +547,26 @@ export default function Knowledge() {
 
         {/* Section 4: Custom Business Information (Read-only with modal) */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-start justify-between gap-3 md:gap-4 mb-3 md:mb-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <FileText className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
                     Custom Business Information
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     Add any additional information about your business that you want the AI agent to know.
                   </p>
                 </div>
               </div>
             </div>
-            <div className="pl-8">
-              <p className="text-sm text-foreground whitespace-pre-wrap">
+            <div className="pl-6 md:pl-8">
+              <p className="text-xs md:text-sm text-foreground whitespace-pre-wrap">
                 {additionalInfo || <span className="text-muted-foreground italic">No custom information added yet.</span>}
               </p>
             </div>
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-4 md:mt-6">
               <Button
                 variant="ghost"
                 size="sm"
