@@ -46,12 +46,6 @@ export default function CallFiltering() {
             Block spam and unwanted calls
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-foreground">(415) 413-5501</span>
-          <Button variant="outline" size="sm">
-            Web call
-          </Button>
-        </div>
       </div>
 
       <div className="space-y-6">
