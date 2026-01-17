@@ -22,11 +22,9 @@ const agentSubItems = [
   { title: "Business knowledge", url: "/dashboard/agent/knowledge" },
   { title: "Launch instructions", url: "/dashboard/agent/launch" },
   { title: "Send texts", url: "/dashboard/agent/texts" },
+  { title: "Call filtering", url: "/dashboard/agent/filtering" },
   { title: "Ask questions", url: "/dashboard/agent/questions", comingSoon: true },
   { title: "Transfer calls", url: "/dashboard/agent/transfer", comingSoon: true },
-  // Hidden but kept in structure for future use
-  // { title: "Scheduling", url: "/dashboard/agent/scheduling" },
-  // { title: "Call filtering", url: "/dashboard/agent/filtering" },
 ];
 
 const settingsSubItems: Array<{ 
